@@ -7,27 +7,65 @@
  */
 class UserIdentity extends CUserIdentity
 {
+    static $_salt = 'ZZ4lt__';    // this is the static salt that is applied to every user password
+    private $_id;
+    
+    
+    /**
+     * salt a password
+     * @param String $rawPassword the raw password to salt
+     * @param String $userSalt the individual user's personalized salt
+     * @static
+     */
+    static function saltPassword($rawPassword='', $userSalt='')
+    {
+	    return sha1($userSalt . md5($rawPassword) . self::$_salt);
+    }
+    
 	/**
 	 * Authenticates a user.
-	 * The example implementation makes sure if the username and password
-	 * are both 'demo'.
-	 * In practical applications, this should be changed to authenticate
-	 * against some persistent user identity storage (e.g. database).
 	 * @return boolean whether authentication succeeds.
 	 */
 	public function authenticate()
 	{
-		$users=array(
-			// username => password
-			'demo'=>'demo',
-			'admin'=>'admin',
-		);
-		if(!isset($users[$this->username]))
-			$this->errorCode=self::ERROR_USERNAME_INVALID;
-		elseif($users[$this->username]!==$this->password)
-			$this->errorCode=self::ERROR_PASSWORD_INVALID;
-		else
-			$this->errorCode=self::ERROR_NONE;
-		return !$this->errorCode;
+        $record = User::model()->findByAttributes(array('username'=>$this->username, 'active'=>1));
+        if ($record === null) {
+            $this->errorCode = self::ERROR_USERNAME_INVALID;
+            $this->errorMessage = 'Invalid username or password.';
+        } else if ($record->password !== self::saltPassword($this->password, $record->salt)) {
+            $this->errorCode = self::ERROR_PASSWORD_INVALID;
+            $this->errorMessage = 'Invalid username or password.';
+        } else {
+            $this->errorCode = self::ERROR_NONE;
+            $this->_id = $record->id;
+        }
+        return !$this->errorCode;
+	}
+	
+	/**
+	 * Refresh the current user's flags from the database
+	 * @return boolean whether the refresh succeeds.
+	 */
+	public function refreshUser($username = '', $saltedPassword = '')
+	{
+        $record = User::model()->findByAttributes(array(
+        	'username' => $username ? $username : user()->name,
+            'password' => $saltedPassword ? $saltedPassword : user()->getSaltedPassword(),
+            'active'   => 1
+        ));
+        if ($record) {
+            $this->_id = $record->id;
+            return true;
+        }
+        return false;
+	}
+	
+	/**
+	 * Overriding getId, which by default returns username, to instead return
+	 * the actual user ID that we store in a private var.
+	 * @see CUserIdentity::getId()
+	 */
+	public function getId() {
+	    return $this->_id;
 	}
 }

@@ -29,7 +29,7 @@ class User extends DeepActiveRecord
     {
         return array(
             // KDHTODO add other relations
-            //'portfolio' => array(self::BELONGS_TO, 'Portfolio', 'portfolio_id'),
+            'picks' => array(self::HAS_MANY, 'Pick', 'userid'),
         );
     }
     
@@ -45,9 +45,10 @@ class User extends DeepActiveRecord
             array('username', 'required', 'except'=>'delete'),
             array('username', 'unique'),
             array('username, firstname, lastname', 'length', 'max'=>32),
+            array('email', 'length', 'max'=>128),
             array('password', 'length', 'on'=>'insert, changepw', 'max'=>40, 'min'=>40),
-            // KDHTODO add other rules
-            //array('portfolio_owner, can_budget, can_transfer_categories, can_transact, can_reconcile_budget, can_clear_spending', 'in', 'range'=>array(0,1)),
+            array('active', 'in', 'range'=>array(0,1)),
+            // KDHTODO add other rules?
         );
     }
     

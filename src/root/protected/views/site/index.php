@@ -30,6 +30,5 @@ if (Yii::app()->user->isGuest) {
 } else {
     ?><a href="<?php echo $this->createUrl('site/logout')?>">Logout</a><br /><?php
 }
-var_dump(Yii::app()->user);
 ?>
 </pre>

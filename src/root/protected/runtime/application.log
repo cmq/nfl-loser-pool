@@ -21,3 +21,243 @@ Stack trace:
 #18 {main}
 REQUEST_URI=/
 ---
+2014/01/18 22:30:31 [error] [exception.CException] exception 'CException' with message 'Property "SiteController.breadcrumbs" is not defined.' in /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CComponent.php:173
+Stack trace:
+#0 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/views/site/login.php(7): CComponent->__set('breadcrumbs', Array)
+#1 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(126): require('/Users/kirkhemm...')
+#2 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/kirkhemm...', Array, true)
+#3 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(869): CBaseController->renderFile('/Users/kirkhemm...', Array, true)
+#4 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(782): CController->renderPartial('login', Array, true)
+#5 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php(98): CController->render('login', Array)
+#6 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/actions/CInlineAction.php(49): SiteController->actionLogin()
+#7 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#9 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#10 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(282): CController->run('login')
+#11 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(141): CWebApplication->runController('site/login')
+#12 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#13 /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php(13): CApplication->run()
+#14 {main}
+REQUEST_URI=/index.php/site/login
+HTTP_REFERER=http://loserpool2.localhost:8888/
+---
+2014/01/18 22:31:07 [error] [exception.CException] exception 'CException' with message 'Property "SiteController.breadcrumbs" is not defined.' in /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CComponent.php:173
+Stack trace:
+#0 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/views/site/login.php(7): CComponent->__set('breadcrumbs', Array)
+#1 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(126): require('/Users/kirkhemm...')
+#2 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/kirkhemm...', Array, true)
+#3 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(869): CBaseController->renderFile('/Users/kirkhemm...', Array, true)
+#4 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(782): CController->renderPartial('login', Array, true)
+#5 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php(98): CController->render('login', Array)
+#6 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/actions/CInlineAction.php(49): SiteController->actionLogin()
+#7 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#9 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#10 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(282): CController->run('login')
+#11 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(141): CWebApplication->runController('site/login')
+#12 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#13 /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php(13): CApplication->run()
+#14 {main}
+REQUEST_URI=/index.php/site/login
+HTTP_REFERER=http://loserpool2.localhost:8888/
+---
+2014/01/18 22:41:19 [error] [exception.CException] exception 'CException' with message 'Property "SiteController.breadcrumbs" is not defined.' in /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CComponent.php:173
+Stack trace:
+#0 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/views/site/login.php(7): CComponent->__set('breadcrumbs', Array)
+#1 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(126): require('/Users/kirkhemm...')
+#2 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/kirkhemm...', Array, true)
+#3 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(869): CBaseController->renderFile('/Users/kirkhemm...', Array, true)
+#4 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(782): CController->renderPartial('login', Array, true)
+#5 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php(72): CController->render('login', Array)
+#6 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/actions/CInlineAction.php(49): SiteController->actionLogin()
+#7 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#9 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#10 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(282): CController->run('login')
+#11 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(141): CWebApplication->runController('site/login')
+#12 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#13 /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php(13): CApplication->run()
+#14 {main}
+REQUEST_URI=/site/login
+---
+2014/01/18 22:46:15 [error] [exception.CException] exception 'CException' with message 'Property "CWebUser.username" is not defined.' in /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CComponent.php:130
+Stack trace:
+#0 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/auth/CWebUser.php(146): CComponent->__get('username')
+#1 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/views/site/index.php(18): CWebUser->__get('username')
+#2 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(126): require('/Users/kirkhemm...')
+#3 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/kirkhemm...', NULL, true)
+#4 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(869): CBaseController->renderFile('/Users/kirkhemm...', NULL, true)
+#5 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(782): CController->renderPartial('index', NULL, true)
+#6 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php(32): CController->render('index')
+#7 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/actions/CInlineAction.php(49): SiteController->actionIndex()
+#8 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#9 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#10 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#11 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(282): CController->run('')
+#12 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(141): CWebApplication->runController('')
+#13 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#14 /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php(13): CApplication->run()
+#15 {main}
+REQUEST_URI=/index.php
+HTTP_REFERER=http://loserpool2.localhost:8888/site/login
+---
+2014/01/18 23:11:25 [error] [php] Undefined variable: form (/Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/views/site/login.php:20)
+Stack trace:
+#0 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(869): SiteController->renderFile()
+#1 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(782): SiteController->renderPartial()
+#2 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php(72): SiteController->render()
+#3 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/actions/CInlineAction.php(49): SiteController->actionLogin()
+#4 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(308): CInlineAction->runWithParams()
+#5 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(286): SiteController->runAction()
+#6 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(265): SiteController->runActionWithFilters()
+#7 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(282): SiteController->run()
+#8 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#9 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#10 /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php(13): CWebApplication->run()
+REQUEST_URI=/index.php/site/login
+in /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/views/site/login.php (20)
+in /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php (72)
+in /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php (13)
+2014/01/18 23:20:07 [error] [php] Undefined variable: inputID (/Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/widgets/CActiveForm.php:531)
+Stack trace:
+#0 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(95): SiteController->renderInternal()
+#1 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(869): SiteController->renderFile()
+#2 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(782): SiteController->renderPartial()
+#3 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php(72): SiteController->render()
+#4 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/actions/CInlineAction.php(49): SiteController->actionLogin()
+#5 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(308): CInlineAction->runWithParams()
+#6 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(286): SiteController->runAction()
+#7 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(265): SiteController->runActionWithFilters()
+#8 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(282): SiteController->run()
+#9 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#10 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#11 /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php(13): CWebApplication->run()
+REQUEST_URI=/index.php/site/login
+in /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/views/site/login.php (28)
+in /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php (72)
+in /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php (13)
+2014/01/18 23:28:23 [error] [exception.CException] exception 'CException' with message 'Property "CWebUser.username" is not defined.' in /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CComponent.php:130
+Stack trace:
+#0 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/auth/CWebUser.php(146): CComponent->__get('username')
+#1 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/views/site/index.php(20): CWebUser->__get('username')
+#2 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(126): require('/Users/kirkhemm...')
+#3 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/kirkhemm...', NULL, true)
+#4 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(869): CBaseController->renderFile('/Users/kirkhemm...', NULL, true)
+#5 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(782): CController->renderPartial('index', NULL, true)
+#6 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php(32): CController->render('index')
+#7 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/actions/CInlineAction.php(49): SiteController->actionIndex()
+#8 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#9 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#10 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#11 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(282): CController->run('')
+#12 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(141): CWebApplication->runController('')
+#13 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#14 /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php(13): CApplication->run()
+#15 {main}
+REQUEST_URI=/index.php
+HTTP_REFERER=http://loserpool2.localhost:8888/index.php/site/login
+---
+2014/01/18 23:28:35 [error] [exception.CException] exception 'CException' with message 'Property "CWebUser.username" is not defined.' in /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CComponent.php:130
+Stack trace:
+#0 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/auth/CWebUser.php(146): CComponent->__get('username')
+#1 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/views/site/index.php(20): CWebUser->__get('username')
+#2 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(126): require('/Users/kirkhemm...')
+#3 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/kirkhemm...', NULL, true)
+#4 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(869): CBaseController->renderFile('/Users/kirkhemm...', NULL, true)
+#5 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(782): CController->renderPartial('index', NULL, true)
+#6 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php(32): CController->render('index')
+#7 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/actions/CInlineAction.php(49): SiteController->actionIndex()
+#8 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#9 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#10 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#11 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(282): CController->run('')
+#12 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(141): CWebApplication->runController('')
+#13 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#14 /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php(13): CApplication->run()
+#15 {main}
+REQUEST_URI=/index.php
+HTTP_REFERER=http://loserpool2.localhost:8888/index.php/site/login
+---
+2014/01/18 23:29:27 [error] [exception.CException] exception 'CException' with message 'Property "CWebUser.username" is not defined.' in /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CComponent.php:130
+Stack trace:
+#0 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/auth/CWebUser.php(146): CComponent->__get('username')
+#1 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/views/site/index.php(20): CWebUser->__get('username')
+#2 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(126): require('/Users/kirkhemm...')
+#3 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/kirkhemm...', NULL, true)
+#4 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(869): CBaseController->renderFile('/Users/kirkhemm...', NULL, true)
+#5 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(782): CController->renderPartial('index', NULL, true)
+#6 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php(32): CController->render('index')
+#7 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/actions/CInlineAction.php(49): SiteController->actionIndex()
+#8 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#9 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#10 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#11 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(282): CController->run('')
+#12 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(141): CWebApplication->runController('')
+#13 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#14 /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php(13): CApplication->run()
+#15 {main}
+REQUEST_URI=/index.php
+---
+2014/01/18 23:29:42 [error] [exception.CException] exception 'CException' with message 'Property "CWebUser.username" is not defined.' in /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CComponent.php:130
+Stack trace:
+#0 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/auth/CWebUser.php(146): CComponent->__get('username')
+#1 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/views/site/index.php(20): CWebUser->__get('username')
+#2 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(126): require('/Users/kirkhemm...')
+#3 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/kirkhemm...', NULL, true)
+#4 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(869): CBaseController->renderFile('/Users/kirkhemm...', NULL, true)
+#5 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(782): CController->renderPartial('index', NULL, true)
+#6 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php(32): CController->render('index')
+#7 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/actions/CInlineAction.php(49): SiteController->actionIndex()
+#8 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#9 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#10 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#11 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(282): CController->run('')
+#12 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(141): CWebApplication->runController('')
+#13 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#14 /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php(13): CApplication->run()
+#15 {main}
+REQUEST_URI=/index.php
+HTTP_REFERER=http://loserpool2.localhost:8888/index.php/site/login
+---
+2014/01/18 23:29:57 [error] [exception.CException] exception 'CException' with message 'Property "CWebUser.username" is not defined.' in /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CComponent.php:130
+Stack trace:
+#0 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/auth/CWebUser.php(146): CComponent->__get('username')
+#1 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/views/site/index.php(20): CWebUser->__get('username')
+#2 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(126): require('/Users/kirkhemm...')
+#3 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/kirkhemm...', NULL, true)
+#4 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(869): CBaseController->renderFile('/Users/kirkhemm...', NULL, true)
+#5 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(782): CController->renderPartial('index', NULL, true)
+#6 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php(32): CController->render('index')
+#7 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/actions/CInlineAction.php(49): SiteController->actionIndex()
+#8 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#9 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#10 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#11 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(282): CController->run('')
+#12 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(141): CWebApplication->runController('')
+#13 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#14 /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php(13): CApplication->run()
+#15 {main}
+REQUEST_URI=/index.php
+HTTP_REFERER=http://loserpool2.localhost:8888/index.php/site/login
+---
+2014/01/18 23:33:56 [error] [exception.CException] exception 'CException' with message 'Property "CWebUser.record" is not defined.' in /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CComponent.php:130
+Stack trace:
+#0 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/auth/CWebUser.php(146): CComponent->__get('record')
+#1 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/views/site/index.php(20): CWebUser->__get('record')
+#2 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(126): require('/Users/kirkhemm...')
+#3 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/kirkhemm...', NULL, true)
+#4 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(869): CBaseController->renderFile('/Users/kirkhemm...', NULL, true)
+#5 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(782): CController->renderPartial('index', NULL, true)
+#6 /Users/kirkhemmen/dev/loserpool-2.0/src/root/protected/controllers/SiteController.php(32): CController->render('index')
+#7 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/actions/CInlineAction.php(49): SiteController->actionIndex()
+#8 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#9 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(286): CController->runAction(Object(CInlineAction))
+#10 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#11 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(282): CController->run('')
+#12 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/web/CWebApplication.php(141): CWebApplication->runController('')
+#13 /Users/kirkhemmen/dev/loserpool-2.0/src/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#14 /Users/kirkhemmen/dev/loserpool-2.0/src/root/index.php(13): CApplication->run()
+#15 {main}
+REQUEST_URI=/index.php
+HTTP_REFERER=http://loserpool2.localhost:8888/index.php/site/login
+---

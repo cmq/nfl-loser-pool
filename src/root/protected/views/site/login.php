@@ -4,9 +4,9 @@
 /* @var $form CActiveForm  */
 
 $this->pageTitle=Yii::app()->name . ' - Login';
-$this->breadcrumbs=array(
-	'Login',
-);
+
+// KDHTODO I deleted the CSS files, so login errors aren't really handled appropriately.  Adjust with bootstrap
+// KDHTODO why is this automatically including jquery?  It's included as soon as the call to $form->error() is made
 ?>
 
 <h1>Login</h1>

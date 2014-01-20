@@ -17,8 +17,7 @@ class UserIdentity extends CUserIdentity
      * @param String $userSalt the individual user's personalized salt
      * @static
      */
-    static function saltPassword($rawPassword='', $userSalt='')
-    {
+    static function saltPassword($rawPassword='', $userSalt='') {
 	    return sha1($userSalt . md5($rawPassword) . self::$_salt);
     }
     
@@ -26,8 +25,7 @@ class UserIdentity extends CUserIdentity
 	 * Authenticates a user.
 	 * @return boolean whether authentication succeeds.
 	 */
-	public function authenticate()
-	{
+	public function authenticate() {
         $record = User::model()->findByAttributes(array('username'=>$this->username, 'active'=>1));
         if ($record === null) {
             $this->errorCode = self::ERROR_USERNAME_INVALID;
@@ -38,26 +36,11 @@ class UserIdentity extends CUserIdentity
         } else {
             $this->errorCode = self::ERROR_NONE;
             $this->_id = $record->id;
+            // KDHTODO set state information here, via:
+            // $this->setState('field', $record->field);
+            $this->setState('record', $record);
         }
         return !$this->errorCode;
-	}
-	
-	/**
-	 * Refresh the current user's flags from the database
-	 * @return boolean whether the refresh succeeds.
-	 */
-	public function refreshUser($username = '', $saltedPassword = '')
-	{
-        $record = User::model()->findByAttributes(array(
-        	'username' => $username ? $username : user()->name,
-            'password' => $saltedPassword ? $saltedPassword : user()->getSaltedPassword(),
-            'active'   => 1
-        ));
-        if ($record) {
-            $this->_id = $record->id;
-            return true;
-        }
-        return false;
 	}
 	
 	/**

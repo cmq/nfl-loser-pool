@@ -17,7 +17,6 @@ class User extends DeepActiveRecord
      */
     public function tableName()
     {
-        // KDHTODO get real user table
         return 'user';
     }
     
@@ -45,8 +44,8 @@ class User extends DeepActiveRecord
         return array(
             array('username', 'required', 'except'=>'delete'),
             array('username', 'unique'),
-            array('username, firstname, lastname', 'length', 'max'=>50),
-            array('password', 'length', 'min'=>5, 'on'=>'insert, changepw'),
+            array('username, firstname, lastname', 'length', 'max'=>32),
+            array('password', 'length', 'on'=>'insert, changepw', 'max'=>40, 'min'=>40),
             // KDHTODO add other rules
             //array('portfolio_owner, can_budget, can_transfer_categories, can_transact, can_reconcile_budget, can_clear_spending', 'in', 'range'=>array(0,1)),
         );
@@ -71,7 +70,6 @@ class User extends DeepActiveRecord
      * Change the user's password
      */
     public function changepw() {
-        // KDHTODO make sure $this->salt is available in the user class
         $this->password = UserIdentity::saltPassword($this->password, $this->salt);
         $this->scenario = 'changepw';
         return $this->save();

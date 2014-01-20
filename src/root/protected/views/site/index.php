@@ -8,7 +8,49 @@ $data = Yii::app()->db->createCommand($sql)->query();
 foreach ($data as $row) {
     echo $row['username'] . '<br />';
 }
+*/
 
+// testing relational active record.... WORKS, but have to limit it or exceeds memory and craps out
+/*
+$records = User::model()->with(array(
+        'picks' => array(
+            'select' => 'teamid',
+            'condition' => 'yr=2013',
+        )
+    ))->findAll(array(
+        'select'    => 't.username',
+        'condition' => '1 = 1',
+        'order'     => '',
+    ));
+var_dump($records);
+*/
+
+
+// testing m:m relation... kind of a mess, but it works.  This is how you have to get at badges
+// instead of using a normal MANY_MANY relationship, because we need to get data out of the join table (userbadge)
+/*
+$records = User::model()->with(array(
+        'userBadges' => array(
+            'select' => 'display',
+            'with' => array(
+                'badge' => array(
+                    'select' => array('name', 'img', 'display'),
+                ),
+            ),
+        ),
+    ))->findAll(array(
+        'condition' => 't.id = 1',
+    ));
+echo $records[0]->userBadges[0]->display;
+echo $records[0]->userBadges[0]->badge->name;
+echo '<pre>';
+var_dump($records[0]);
+echo '</pre>';
+*/
+
+
+///////////////////////////////////////////////////////////////////
+/*
 // KDHTODO handle AJAX errors where user is logged out
 
 // KDHTODO find a better way to get at all user record data instead of Yii::app()->user->record['fieldname'];

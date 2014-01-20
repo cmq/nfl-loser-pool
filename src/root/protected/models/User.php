@@ -29,7 +29,9 @@ class User extends DeepActiveRecord
     {
         return array(
             // KDHTODO add other relations
-            'picks' => array(self::HAS_MANY, 'Pick', 'userid'),
+            'picks'      => array(self::HAS_MANY, 'Pick', 'userid'),
+            'userBadges' => array(self::HAS_MANY, 'UserBadge', 'userid'),
+            'badges'     => array(self::HAS_MANY, 'Badge', array('badgeid'=>'id'), 'through'=>'userBadges'),
         );
     }
     

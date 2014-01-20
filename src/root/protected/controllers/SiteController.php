@@ -7,6 +7,7 @@ class SiteController extends Controller
      */
     public function actions()
     {
+        // KDHTODO can we make use of these?
         return array(
             // captcha action renders the CAPTCHA image displayed on the contact page
             'captcha'=>array(

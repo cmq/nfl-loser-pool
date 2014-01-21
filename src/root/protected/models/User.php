@@ -32,11 +32,9 @@ class User extends DeepActiveRecord
             'picks'      => array(self::HAS_MANY, 'Pick', 'userid'),
             'userBadges' => array(self::HAS_MANY, 'UserBadge', 'userid'),
             'badges'     => array(self::HAS_MANY, 'Badge', array('badgeid'=>'id'), 'through'=>'userBadges'),
+            'userYears'  => array(self::HAS_MANY, 'UserYear', 'userid'),
         );
     }
-    
-    
-    
     
     /**
      * Define validation rules
@@ -54,6 +52,57 @@ class User extends DeepActiveRecord
         );
     }
     
+    /**
+     * Define scopes
+     * @see CActiveRecord::scopes()
+     */
+    public function scopes()
+    {
+        return array(
+            'active' => array(
+                'condition' => 't.active=1',
+                'with'      => array(
+                    'userYears' => array(
+                        'condition' => 'userYears.yr = ' . param('currentYear'),
+                    ),
+                ),
+            ),
+            'withBadges' => array(
+                'with' => array(
+                    'userBadges' => array(
+                        'select' => 'display',
+                        'with' => array(
+                            'badge' => array(
+                                'select' => array('name', 'img', 'display'),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+    
+    public function withPicks($currentYearOnly = true, $future = false)
+    {
+        $condition = '';
+        if ($currentYearOnly) {
+            $condition .= ($condition ? ' AND ' : '') . 'picks.yr = ' . param('currentYear');
+        }
+        if (!$future) {
+            $condition .= ($condition ? ' AND ' : '') . 'picks.week < 20';    // KDHTODO use setting for current week
+        }
+        
+        $this->getDbCriteria()->mergeWith(array(
+            'with' => array(
+                'picks' => array(
+                    'condition' => $condition,
+                    'with'      => array('team'),
+                ),
+            ),
+        ));
+        return $this;
+    }    
+    
     
     /**
      * Deactivate the record
@@ -62,6 +111,7 @@ class User extends DeepActiveRecord
      * @override
      * @see CActiveRecord::delete()
      */
+    // KDHTODO implement delete user method?
     public function delete() {
         $this->active = 0;
         $this->scenario = 'delete';
@@ -72,6 +122,7 @@ class User extends DeepActiveRecord
     /**
      * Change the user's password
      */
+    // KDHTODO implement change password method
     public function changepw() {
         $this->password = UserIdentity::saltPassword($this->password, $this->salt);
         $this->scenario = 'changepw';

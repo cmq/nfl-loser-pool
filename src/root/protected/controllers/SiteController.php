@@ -28,9 +28,13 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        // renders the view file 'protected/views/site/index.php'
-        // using the default layout 'protected/views/layouts/main.php'
-        $this->render('index');
+        // KDHTODO restrict the fields that are selected (shouldn't select firstname/lastname, etc)
+        // KDHTODO set parameters for the withPicks() call based on whether the current user is kirk or not
+        $boardData = User::model()->active()->withBadges()->withPicks()->findAll(array(
+            'order' => 't.id, picks.yr, picks.week',
+            'condition' => 't.id = 1'    // KDHTODO remove this after JS objects are set up
+        ));
+        $this->render('index', array('boardData'=>$boardData));
     }
 
     /**

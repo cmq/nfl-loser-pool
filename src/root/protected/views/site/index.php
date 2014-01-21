@@ -1,6 +1,8 @@
 <?php
 /* @var $this SiteController */
 
+// KDHTODO remove all these test
+
 // testing database connection.... WORKS!
 /*
 $sql = 'select username from user where active = 1 order by username';
@@ -57,20 +59,32 @@ echo '</pre>';
 // KDHTODO since Yii::app()->user is only updated on login, need to update relevant session information when the user changes their login name or password without having them have to log out and back in again
 */
 
-$this->pageTitle=Yii::app()->name;
+$this->pageTitle = Yii::app()->name;
 $user = Yii::app()->user;
 ?>
 
 <h1>Welcome to <i><?php echo CHtml::encode(Yii::app()->name); ?></i></h1>
 
 <h2>You are logged in as <?php echo ($user->isGuest ? 'guest' : 'registered user ' . $user->id . ' (' . $user->record['username'] . ' - ' . $user->record['firstname'] . ' ' . $user->record['lastname'] . ')')?></h2>
-
-<pre>
 <?php
 if (Yii::app()->user->isGuest) {
     ?>You are a guest.  What does that mean you can access?  Past seasons, perhaps?  But you may want to <a href="<?php echo $this->createUrl('site/login')?>">log in</a><br /><?php
 } else {
     ?><a href="<?php echo $this->createUrl('site/logout')?>">Logout</a><br /><?php
 }
+
+echo 'Total of ' . count($boardData) . ' board data records';
+// KDHTODO put this information into javascript for use with Angular
+// KDHTODO output angular template
+//echo $boardData[0]->username;
+//echo $boardData[0]->userYears[0]->paid;
+//echo $boardData[0]->userBadges[0]->display;
+
 ?>
-</pre>
+
+<script>
+var boardData = <?php echo CJSON::encode($boardData);?>;
+var kirktest = new User(boardData[0]);
+</script>
+
+

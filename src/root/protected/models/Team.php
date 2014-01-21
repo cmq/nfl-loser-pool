@@ -1,5 +1,5 @@
 <?php
-class Pick extends DeepActiveRecord
+class Team extends DeepActiveRecord
 {
     
     /**
@@ -17,14 +17,9 @@ class Pick extends DeepActiveRecord
      */
     public function tableName()
     {
-        return 'loserpick';
+        return 'loserteam';
     }
     
-    public function primaryKey()
-    {
-        return array('userid', 'week', 'yr');
-    }
-        
     /**
      * Define table relationships
      * @see http://www.yiiframework.com/doc/guide/1.1/en/database.arr
@@ -33,23 +28,7 @@ class Pick extends DeepActiveRecord
     public function relations()
     {
         return array(
-            'user' => array(self::BELONGS_TO, 'User', 'userid'),
-            'team' => array(self::HAS_ONE, 'Team', 'id'),
-        );
-    }
-    
-    
-    
-    
-    /**
-     * Define validation rules
-     * @see CModel::rules()
-     */
-    public function rules() {
-        return array(
-            array('year, week, teamid', 'required'),
-            array('year, week, teamid', 'type', 'type'=>'integer'),
-            array('week', 'in', 'range'=>array(1,21)),
+            'picks' => array(self::HAS_MANY, 'Pick', 'teamid'),
         );
     }
     

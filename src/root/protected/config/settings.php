@@ -6,5 +6,6 @@
  */
 
 return array(
+    'currentYear'                 => 2013,
     'adminEmail'                  => 'kirk.hemmen@gmail.com',
 );

@@ -1,3 +1,8 @@
+<script src="<?php echo baseUrl('/js/model/Badge.js'); ?>"></script>
+<script src="<?php echo baseUrl('/js/model/Pick.js'); ?>"></script>
+<script src="<?php echo baseUrl('/js/model/Team.js'); ?>"></script>
+<script src="<?php echo baseUrl('/js/model/User.js'); ?>"></script>
+<script src="<?php echo baseUrl('/js/model/UserYear.js'); ?>"></script>
 <?php
 /* @var $this SiteController */
 
@@ -82,9 +87,34 @@ echo 'Total of ' . count($boardData) . ' board data records';
 
 ?>
 
+
+
+
 <script>
+// load data from server into JS
 var boardData = <?php echo CJSON::encode($boardData);?>;
+// test load the first user into our sample User JS Model
 var kirktest = new User(boardData[0]);
+
+
+
+
+
+/****************************************************************/
+//Things below here are testing AngularJS
+/****************************************************************/
+function TestCtrl($scope) {
+    $scope.user = kirktest;
+
+    $scope.testOutput = function() {
+        console.log($scope.user.username);
+    };
+}
 </script>
 
+<div ng-controller="TestCtrl">
+    <h3>{{user.username}}</h3>
+    <input type="text" ng-model="user.username" /><br />
+    <button ng-click="testOutput();">Test Output</button>
+</div>
 

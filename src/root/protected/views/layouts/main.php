@@ -6,7 +6,7 @@
  *  @see http://getbootstrap.com/getting-started/#template
  */
 ?><!DOCTYPE html>
-<html>
+<html ng-app>
     <head>
         <title><?php echo CHtml::encode($this->pageTitle); ?></title>
         <meta charset="utf-8" />
@@ -30,15 +30,11 @@
         
         <script src="<?php echo baseUrl('/js/conf.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/jquery.ba-getobject.min.js'); ?>"></script>
+        <script src="<?php echo baseUrl('/js/lib/angular.min.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/moment.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/oo.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/types.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/globals.js'); ?>"></script>
-        <script src="<?php echo baseUrl('/js/model/Badge.js'); ?>"></script>
-        <script src="<?php echo baseUrl('/js/model/Pick.js'); ?>"></script>
-        <script src="<?php echo baseUrl('/js/model/Team.js'); ?>"></script>
-        <script src="<?php echo baseUrl('/js/model/User.js'); ?>"></script>
-        <script src="<?php echo baseUrl('/js/model/UserYear.js'); ?>"></script>
     </head>
     <body>
         <?php echo $content; ?>

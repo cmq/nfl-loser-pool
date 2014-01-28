@@ -34,7 +34,7 @@ class Pick extends DeepActiveRecord
     {
         return array(
             'user' => array(self::BELONGS_TO, 'User', 'userid'),
-            'team' => array(self::HAS_ONE, 'Team', 'id'),
+            'team' => array(self::BELONGS_TO, 'Team', 'teamid'),
         );
     }
     

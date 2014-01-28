@@ -29,10 +29,10 @@ class SiteController extends Controller
     public function actionIndex()
     {
         // KDHTODO restrict the fields that are selected (shouldn't select firstname/lastname, etc)
-        // KDHTODO set parameters for the withPicks() call based on whether the current user is kirk or not
+        // KDHTODO set parameters for the withPicks() call based on whether the current user is kirk or not (for future picks)
         $boardData = User::model()->active()->withBadges()->withPicks()->findAll(array(
             'order' => 't.id, picks.yr, picks.week',
-            'condition' => 't.id = 1'    // KDHTODO remove this after JS objects are set up
+            'condition' => 't.id <= 20'    // KDHTODO remove this after JS objects are set up
         ));
         $this->render('index', array('boardData'=>$boardData));
     }

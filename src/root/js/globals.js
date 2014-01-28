@@ -37,3 +37,24 @@ globals.getFromObj = function(obj, names, def) {
     }
     return ret;
 };
+
+globals.getWeekName = function(i) {
+    i = types.integer(i, 0);
+    switch (i) {
+        case 21:
+            return 'Superbowl';
+            break;
+        case 20:
+            return 'Conf Champ';
+            break;
+        case 19:
+            return 'Divisional';
+            break;
+        case 18:
+            return 'Wild Card';
+            break;
+        default:
+            return '' + i;
+            break;
+    }
+};

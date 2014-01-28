@@ -6,7 +6,7 @@
  *  @see http://getbootstrap.com/getting-started/#template
  */
 ?><!DOCTYPE html>
-<html ng-app>
+<html ng-app="loserpool">
     <head>
         <title><?php echo CHtml::encode($this->pageTitle); ?></title>
         <meta charset="utf-8" />
@@ -35,6 +35,7 @@
         <script src="<?php echo baseUrl('/js/lib/oo.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/types.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/globals.js'); ?>"></script>
+        <script src="<?php echo baseUrl('/js/module/main.js'); ?>"></script>
     </head>
     <body>
         <?php echo $content; ?>

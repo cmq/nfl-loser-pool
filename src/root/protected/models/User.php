@@ -95,8 +95,8 @@ class User extends DeepActiveRecord
         $this->getDbCriteria()->mergeWith(array(
             'with' => array(
                 'picks' => array(
-                    'condition' => $condition,
-                    'with'      => array('team'),
+                    'on'   => $condition,
+                    'with' => array('team'),
                 ),
             ),
         ));

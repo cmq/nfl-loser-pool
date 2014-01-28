@@ -91,30 +91,74 @@ echo 'Total of ' . count($boardData) . ' board data records';
 
 
 <script>
-// load data from server into JS
+/****************************************************************/
+//Things below here are testing AngularJS
+/****************************************************************/
+//load data from server into JS
 var boardData = <?php echo CJSON::encode($boardData);?>;
 // test load the first user into our sample User JS Model
 var kirktest = new User(boardData[0]);
 
-
-
-
-
-/****************************************************************/
-//Things below here are testing AngularJS
-/****************************************************************/
-function TestCtrl($scope) {
+loserpool.controller('TestCtrl', ['$scope', function($scope) {
     $scope.user = kirktest;
 
     $scope.testOutput = function() {
         console.log($scope.user.username);
     };
-}
+}]);
 </script>
-
 <div ng-controller="TestCtrl">
     <h3>{{user.username}}</h3>
     <input type="text" ng-model="user.username" /><br />
     <button ng-click="testOutput();">Test Output</button>
 </div>
 
+
+
+
+<script>
+/****************************************************************/
+//Things below here are the real app
+/****************************************************************/
+loserpool.controller('BoardCtrl', ['$scope', function($scope) {
+    var i;
+    $scope.range = [];
+    $scope.order = 'username';
+    $scope.board = <?php echo CJSON::encode($boardData);?>;
+
+    for (i=1; i<=21; i++) {
+        $scope.range.push(i);
+    }
+
+    // KDHTODO extract this into a more general place?
+    $scope.weekname = function(i) {
+        return globals.getWeekName(i);
+    }
+    $scope.setOrder = function(order) {
+        $scope.order = 'picks[' + order + '].team.shortname';
+    }
+}]);
+</script>
+
+<div ng-controller="BoardCtrl">
+Debug Order: {{order}}<br />
+    <table border="1">
+        <thead>
+            <tr>
+                <th>&nbsp;</th>
+                <!-- KDHTODO add support for reversing the sort order (should work by simply prefixing the sort properties with a minus sign) -->
+                <!-- KDHTODO make sorting case-insensitive -->
+                <th ng-click="order = 'username'">User</th>
+                <th ng-repeat="i in range" ng-click="setOrder(i-1)">{{weekname(i)}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="user in board | orderBy:[order,'username']">   <!-- KDHTODO have sort order secondary sort be record before username -->
+                <td>{{$index+1}}</td>
+                <td>{{user.username}}</td>
+                <td ng-repeat="pick in user.picks">{{pick.team.shortname}} {{$index}}</td>
+                <td ng-repeat="i in range" ng-if="i > user.picks.length">*</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -127,7 +127,12 @@ Debug Order: {{order}}<br />
         <tbody>
             <tr ng-repeat="user in board | orderBy:[order,'username']">   <!-- KDHTODO have sort order secondary sort be record before username -->
                 <td>{{$index+1}}</td>
-                <td>{{user.username}}</td>
+                <td>
+                    {{user.username}}
+                    <!-- KDHTODO format this similar to the old site (extract into directive or something?) -->
+                    <!-- KDHTODO add "alt" tags and title attributes -->
+                    <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
+                </td>
                 <td ng-repeat="pick in user.picks">{{pick.team.shortname}} {{$index}}</td>
                 <td ng-repeat="i in range" ng-if="i > user.picks.length">*</td>
             </tr>

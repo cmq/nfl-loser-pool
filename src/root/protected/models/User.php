@@ -75,7 +75,7 @@ class User extends DeepActiveRecord
                         'select' => 'display',
                         'with' => array(
                             'badge' => array(
-                                'select' => array('name', 'img', 'display'),
+                                'select' => array('name', 'img', 'display', 'zindex'),
                             ),
                         ),
                     ),

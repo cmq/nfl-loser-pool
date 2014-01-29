@@ -4,6 +4,39 @@
  *  
  *  This template is based off the twitter bootstrap suggested template:
  *  @see http://getbootstrap.com/getting-started/#template
+ *  
+ *  
+ *  KDHTODO larger items
+ *  
+ *  - On the index page, add an interval that will poll for new board data and automatically update the model with changes
+ *  - Graph of referrers for how people know each other
+ *  - Allow likes/dislikes for trash talk -- include these in power ranking
+ *  - Keep track of WHEN picks are made so we know how early people picked
+ *  - Is there a way to not have to keep deactivating users every year?  Maybe allow logins forever, but they can only see the current board if they're playing this year?
+ *  - Bandwagon
+ *  	- Each week, the bandwagon is the team who has been chosen by the most people.  The tiebreaker is the highest power-ranked player
+ *  	- Icon:  https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTmdunKxVARBylJY360KjkyC90ZMn0JnwuKPZCtcO2ABU_7PtXzFg
+ *  	- Badges
+ *  		- hopping off at right time
+ *  		- chief = longest time on bandwagon (ties by power ranking)
+ *  		- longest time off bandwagon
+ *  		- % pick stats on/off bandwagon
+ *  	- Bandwagon Column:
+ *  		- If user is currently ON the bandwagon:  covered wagon icon & number of weeks on (+xxx)
+ *  		- If user is currently OFF the bandwagon:  no covered wagon & number of weeks off (-xxx)
+ *  - New badges
+ *  	- Skating by (ice skate) - lowest margin of defeat for those tied for first place in the overall record pool.
+ *  	- Variety - longest to go without picking the same team twice in a season.
+ *  	- Timing badge (stopwatch) - highest avg time choosing picks before the weekly deadline.
+ *  	- Stretch goals
+ *  		- Rivalry - most or least divisional games picked in a season.
+ *  		- Prime time badge (picture of Deion) - most TNF + SNF + MNF games picked.
+ *  - Power ranking formula
+ *  	- less emphasis on longevity
+ *  	- include points for likes/dislikes on trash talk
+ *  	- make the formula public, with a page that shows how each user's score was calculated
+ *  	- create the ability to re-calculate up to a given week (like, figure out what the power rankings would have been after week 5, 2010)
+ *  		- use this ability to create a full history of power rankings by week
  */
 ?><!DOCTYPE html>
 <html ng-app="loserpool">

@@ -48,6 +48,8 @@ class User extends DeepActiveRecord
             array('email', 'length', 'max'=>128),
             array('password', 'length', 'on'=>'insert, changepw', 'max'=>40, 'min'=>40),
             array('active', 'in', 'range'=>array(0,1)),
+            array('admin', 'in', 'range'=>array(0,1)),
+            array('superadmin', 'in', 'range'=>array(0,1)),
             // KDHTODO add other rules?
         );
     }

@@ -28,11 +28,9 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        // KDHTODO restrict the fields that are selected (shouldn't select firstname/lastname, etc)
-        // KDHTODO set parameters for the withPicks() call based on whether the current user is kirk or not (for future picks)
-        $boardData = User::model()->active()->withBadges()->withPicks()->findAll(array(
+        $boardData = User::model()->active()->withBadges()->withPicks(true, isSuperadmin())->findAll(array(
+            'select' => 't.id, t.username, t.avatar_ext, t.power_points, t.power_ranking, t.previous_power_ranking, t.previous_power_points, t.best_power_ranking',
             'order' => 't.id, picks.yr, picks.week',
-            'condition' => 't.id <= 20'    // KDHTODO remove this after JS objects are set up
         ));
         $this->render('index', array('boardData'=>$boardData));
     }

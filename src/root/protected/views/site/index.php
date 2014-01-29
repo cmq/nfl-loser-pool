@@ -60,7 +60,6 @@ echo '</pre>';
 /*
 // KDHTODO handle AJAX errors where user is logged out
 
-// KDHTODO find a better way to get at all user record data instead of Yii::app()->user->record['fieldname'];
 // KDHTODO since Yii::app()->user is only updated on login, need to update relevant session information when the user changes their login name or password without having them have to log out and back in again
 */
 
@@ -70,7 +69,7 @@ $user = Yii::app()->user;
 
 <h1>Welcome to <i><?php echo CHtml::encode(Yii::app()->name); ?></i></h1>
 
-<h2>You are logged in as <?php echo ($user->isGuest ? 'guest' : 'registered user ' . $user->id . ' (' . $user->record['username'] . ' - ' . $user->record['firstname'] . ' ' . $user->record['lastname'] . ')')?></h2>
+<h2>You are logged in as <?php echo ($user->isGuest ? 'guest' : 'registered user ' . $user->id . ' (' . userField('username') . ' - ' . userField('firstname') . ' ' . userField('lastname') . ')')?></h2>
 <?php
 if (Yii::app()->user->isGuest) {
     ?>You are a guest.  What does that mean you can access?  Past seasons, perhaps?  But you may want to <a href="<?php echo $this->createUrl('site/login')?>">log in</a><br /><?php
@@ -86,32 +85,6 @@ echo 'Total of ' . count($boardData) . ' board data records';
 //echo $boardData[0]->userBadges[0]->display;
 
 ?>
-
-
-
-
-<script>
-/****************************************************************/
-//Things below here are testing AngularJS
-/****************************************************************/
-//load data from server into JS
-var boardData = <?php echo CJSON::encode($boardData);?>;
-// test load the first user into our sample User JS Model
-var kirktest = new User(boardData[0]);
-
-loserpool.controller('TestCtrl', ['$scope', function($scope) {
-    $scope.user = kirktest;
-
-    $scope.testOutput = function() {
-        console.log($scope.user.username);
-    };
-}]);
-</script>
-<div ng-controller="TestCtrl">
-    <h3>{{user.username}}</h3>
-    <input type="text" ng-model="user.username" /><br />
-    <button ng-click="testOutput();">Test Output</button>
-</div>
 
 
 
@@ -147,7 +120,6 @@ Debug Order: {{order}}<br />
             <tr>
                 <th>&nbsp;</th>
                 <!-- KDHTODO add support for reversing the sort order (should work by simply prefixing the sort properties with a minus sign) -->
-                <!-- KDHTODO make sorting case-insensitive -->
                 <th ng-click="order = 'username'">User</th>
                 <th ng-repeat="i in range" ng-click="setOrder(i-1)">{{weekname(i)}}</th>
             </tr>

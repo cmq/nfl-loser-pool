@@ -4,13 +4,20 @@
  */
 
 function user() {
-    return Yii::app()->getUser();
+    return Yii::app()->user;
+}
+function userField($field) {
+    $user = user();
+    if (isset($user->record) && isset($user->record[$field])) {
+        return $user->record[$field];
+    }
+    return false;
 }
 function isAdmin() {
-    // KDHTODO implement
+    return (bool) userField('admin');
 }
-function isKirk() {
-    // KDHTODO implement
+function isSuperadmin() {
+    return (bool) userField('superadmin');
 }
 
 /**

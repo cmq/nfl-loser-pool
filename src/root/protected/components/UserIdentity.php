@@ -36,8 +36,6 @@ class UserIdentity extends CUserIdentity
         } else {
             $this->errorCode = self::ERROR_NONE;
             $this->_id = $record->id;
-            // KDHTODO set state information here, via:
-            // $this->setState('field', $record->field);
             $this->setState('record', $record);
         }
         return !$this->errorCode;

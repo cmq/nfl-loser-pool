@@ -56,7 +56,7 @@ loserpool.controller('BoardCtrl', ['$scope', function($scope) {
     }
 }]);
 
-// KDHTODO move this filter (and maybe the controller?) to a different JS file
+// KDHTODO move these filters (and maybe the controller?) to a different JS file
 loserpool.filter('shortenYear', function() {
     return function (input) {
         var yr = '' + input;
@@ -64,6 +64,15 @@ loserpool.filter('shortenYear', function() {
             return yr.substr(2, 2);
         }
         return yr;
+    };
+});
+loserpool.filter('teamLogoOffset', function() {
+    return function (team, size) {
+        var multiplier = 50;
+        if (size.toLowerCase == 'large') {
+            multiplier = 80;
+        }
+        return '0 -' + (multiplier * team.image_offset) + 'px';
     };
 });
 </script>
@@ -95,7 +104,17 @@ Debug Order: {{order}}<br />
                     <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
                 </td>
                 <!-- KDHTODO add margin of victory hovers -->
-                <td ng-repeat="pick in user.picks">{{pick.team.shortname}} {{$index}}</td>
+                <td ng-repeat="pick in user.picks" align="center">
+                    <div style="position:relative;">    <!-- KDHTODO add a mov-wrapper class instead of an inline style -->
+                        <!-- KDHTODO only add the "old" class if we're on a week prior to the current week (or a year prior to the current year) -->
+                        <!-- KDHTODO get the REAL MOV and filter it to add a + or - (or nothing) -- this needs to come from the mov table, which will need a Yii Active Record that is joined to...? team I guess?  But when we join to it, we need to join on yr and week too. -->
+                        <div class="pickMov old">+18</div>
+                        <!-- KDHTODO add "set by system" to the title when appropriate -->
+                        <!-- KDHTODO determine when to use logo-small, logo-medium, or logo-large -->
+                        <!-- KDHTODO determine when to use logo-small-inactive, logo-medium-inactive, etc -->
+                        <div class="logo logo-small" style="background-position:{{pick.team | teamLogoOffset:'small'}}" title="{{pick.team.longname}}" />
+                    </div>
+                </td>
                 <td ng-repeat="i in range" ng-if="i > user.picks.length">*</td>
             </tr>
         </tbody>

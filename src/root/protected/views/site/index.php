@@ -4,64 +4,8 @@
 <script src="<?php echo baseUrl('/js/model/User.js'); ?>"></script>
 <script src="<?php echo baseUrl('/js/model/UserYear.js'); ?>"></script>
 <?php
-/* @var $this SiteController */
-
-// KDHTODO remove all these test
-
-// testing database connection.... WORKS!
-/*
-$sql = 'select username from user where active = 1 order by username';
-$data = Yii::app()->db->createCommand($sql)->query();
-foreach ($data as $row) {
-    echo $row['username'] . '<br />';
-}
-*/
-
-// testing relational active record.... WORKS, but have to limit it or exceeds memory and craps out
-/*
-$records = User::model()->with(array(
-        'picks' => array(
-            'select' => 'teamid',
-            'condition' => 'yr=2013',
-        )
-    ))->findAll(array(
-        'select'    => 't.username',
-        'condition' => '1 = 1',
-        'order'     => '',
-    ));
-var_dump($records);
-*/
-
-
-// testing m:m relation... kind of a mess, but it works.  This is how you have to get at badges
-// instead of using a normal MANY_MANY relationship, because we need to get data out of the join table (userbadge)
-/*
-$records = User::model()->with(array(
-        'userBadges' => array(
-            'select' => 'display',
-            'with' => array(
-                'badge' => array(
-                    'select' => array('name', 'img', 'display'),
-                ),
-            ),
-        ),
-    ))->findAll(array(
-        'condition' => 't.id = 1',
-    ));
-echo $records[0]->userBadges[0]->display;
-echo $records[0]->userBadges[0]->badge->name;
-echo '<pre>';
-var_dump($records[0]);
-echo '</pre>';
-*/
-
-
-///////////////////////////////////////////////////////////////////
-/*
 // KDHTODO handle AJAX errors where user is logged out
-
 // KDHTODO since Yii::app()->user is only updated on login, need to update relevant session information when the user changes their login name or password without having them have to log out and back in again
-*/
 
 $this->pageTitle = Yii::app()->name;
 $user = Yii::app()->user;
@@ -111,6 +55,17 @@ loserpool.controller('BoardCtrl', ['$scope', function($scope) {
         $scope.order = 'picks[' + order + '].team.shortname';
     }
 }]);
+
+// KDHTODO move this filter (and maybe the controller?) to a different JS file
+loserpool.filter('shortenYear', function() {
+    return function (input) {
+        var yr = '' + input;
+        if (yr.length === 4) {
+            return yr.substr(2, 2);
+        }
+        return yr;
+    };
+});
 </script>
 
 <div ng-controller="BoardCtrl">
@@ -131,8 +86,15 @@ Debug Order: {{order}}<br />
                     {{user.username}}
                     <!-- KDHTODO format this similar to the old site (extract into directive or something?) -->
                     <!-- KDHTODO add "alt" tags and title attributes -->
+                    <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnerbadge-wrapper">
+                        <!-- KDHTODO make badges clickable to show modal or go to a link? -->
+                        <!-- KDHTODO after bootstrap is all up and running, adjust style so year overlays are more readable -->
+                        <img src="/images/badges/winnerbadge-{{win.pot}}{{win.place}}.png" />
+                        <div class="year pot{{win.pot}}">{{win.yr | shortenYear}}</div>
+                    </div>
                     <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
                 </td>
+                <!-- KDHTODO add margin of victory hovers -->
                 <td ng-repeat="pick in user.picks">{{pick.team.shortname}} {{$index}}</td>
                 <td ng-repeat="i in range" ng-if="i > user.picks.length">*</td>
             </tr>

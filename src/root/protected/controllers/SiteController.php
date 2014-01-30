@@ -28,7 +28,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $boardData = User::model()->active()->withBadges()->withPicks(true, isSuperadmin())->findAll(array(
+        $boardData = User::model()->active()->withBadges()->withWins()->withPicks(true, isSuperadmin())->findAll(array(
             'select' => 't.id, t.username, t.avatar_ext, t.power_points, t.power_ranking, t.previous_power_ranking, t.previous_power_points, t.best_power_ranking',
             'order' => 't.id, picks.yr, picks.week',
         ));

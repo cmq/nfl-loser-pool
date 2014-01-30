@@ -1,5 +1,5 @@
 <?php
-class Badge extends DeepActiveRecord
+class Win extends DeepActiveRecord
 {
     
     /**
@@ -17,7 +17,7 @@ class Badge extends DeepActiveRecord
      */
     public function tableName()
     {
-        return 'badge';
+        return 'winners';
     }
     
     /**
@@ -28,7 +28,7 @@ class Badge extends DeepActiveRecord
     public function relations()
     {
         return array(
-            'unlockedBy' => array(self::BELONGS_TO, 'User', 'unlocked_userid'),
+            'unlockedBy' => array(self::BELONGS_TO, 'User', 'userid'),
         );
     }
     
@@ -38,6 +38,7 @@ class Badge extends DeepActiveRecord
      */
     protected function afterFind() {
         parent::afterFind();
-        $this->zindex = (int) $this->zindex;
+        $this->place =    (int)   $this->place;
+        $this->winnings = (float) $this->winnings;
     }    
 }

@@ -61,6 +61,7 @@
             <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
         
+        <link href="<?php echo baseUrl('/css/main.css'); ?>" rel="stylesheet" />
         <script src="<?php echo baseUrl('/js/conf.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/jquery.ba-getobject.min.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/angular.min.js'); ?>"></script>

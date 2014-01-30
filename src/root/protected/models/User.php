@@ -28,11 +28,11 @@ class User extends DeepActiveRecord
     public function relations()
     {
         return array(
-            // KDHTODO add other relations
             'picks'      => array(self::HAS_MANY, 'Pick', 'userid'),
             'userBadges' => array(self::HAS_MANY, 'UserBadge', 'userid'),
             'badges'     => array(self::HAS_MANY, 'Badge', array('badgeid'=>'id'), 'through'=>'userBadges'),
             'userYears'  => array(self::HAS_MANY, 'UserYear', 'userid'),
+            'wins'       => array(self::HAS_MANY, 'Win', 'userid'),
         );
     }
     
@@ -78,6 +78,13 @@ class User extends DeepActiveRecord
                                 'select' => array('name', 'img', 'display', 'zindex'),
                             ),
                         ),
+                    ),
+                ),
+            ),
+            'withWins' => array(
+                'with' => array(
+                    'wins' => array(
+            			'select' => array('yr', 'pot', 'place', 'winnings'),
                     ),
                 ),
             ),

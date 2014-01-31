@@ -77,6 +77,7 @@ loserpool.filter('teamLogoOffset', function() {
 });
 </script>
 
+<h5>Debug Current Week / Header Week: <?php echo getCurrentWeek();?> / <?php echo getHeaderWeek();?></h5>
 <div ng-controller="BoardCtrl">
 Debug Order: {{order}}<br />
     <table border="1">

@@ -12,7 +12,19 @@
  *  - Graph of referrers for how people know each other
  *  - Allow likes/dislikes for trash talk -- include these in power ranking
  *  - Keep track of WHEN picks are made so we know how early people picked
+ *  - For trash talk by me, have a flag I can set so it shows up as just a regular talk versus the yellow highlighted "admin" talk
  *  - Is there a way to not have to keep deactivating users every year?  Maybe allow logins forever, but they can only see the current board if they're playing this year?
+ *  - Customized View options on the main page:
+ *  	- Allow these to be changed from a settings page, or toggled directly on the home page
+ *  		- Have "presets" that set each of them, like the "no frills" preset, with everything off, or the "full experience" preset, with everything on, etc
+ *  	- Ability to hide old week columns (i.e. on week 13 there is a single column for weeks 1-12 for each user.  The column contains simply the user's record over that time)
+ *  	- Ability to show/hide badges
+ *  	- Ability to show/hide the bandwagon section
+ *  	- Ability to show/hide trash talk
+ *  	- Ability to show/hide the season outlook (pots)
+ *  	- Ability to show/hide power rank columns
+ *  	- Ability to show team short names instead of team icons?
+ *  	- Anything else?
  *  - Bandwagon
  *  	- Each week, the bandwagon is the team who has been chosen by the most people.  The tiebreaker is the highest power-ranked player
  *  	- Icon:  https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTmdunKxVARBylJY360KjkyC90ZMn0JnwuKPZCtcO2ABU_7PtXzFg

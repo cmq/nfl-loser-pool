@@ -98,7 +98,7 @@ class User extends DeepActiveRecord
             $condition .= ($condition ? ' AND ' : '') . 'picks.yr = ' . param('currentYear');
         }
         if (!$future) {
-            $condition .= ($condition ? ' AND ' : '') . 'picks.week < 20';    // KDHTODO use setting for current week
+            $condition .= ($condition ? ' AND ' : '') . 'picks.week < ' . getCurrentWeek();
         }
         
         $this->getDbCriteria()->mergeWith(array(

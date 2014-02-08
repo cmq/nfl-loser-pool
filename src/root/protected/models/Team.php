@@ -38,6 +38,7 @@ class Team extends DeepActiveRecord
      */
     protected function afterFind() {
         parent::afterFind();
+        $this->id           = (int) $this->id;
         $this->image_offset = (int) $this->image_offset;
     }    
     

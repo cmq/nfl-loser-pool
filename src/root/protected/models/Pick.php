@@ -53,4 +53,17 @@ class Pick extends DeepActiveRecord
         );
     }
     
+    /**
+     * Convert some fields to their proper datatype so JS will deal with it properly
+     */
+    protected function afterFind() {
+        parent::afterFind();
+        $this->teamid      = (int)  $this->teamid;
+        $this->userid      = (int)  $this->userid;
+        $this->week        = (int)  $this->week;
+        $this->yr          = (int)  $this->yr;
+        $this->incorrect   = (bool) $this->incorrect;
+        $this->setbysystem = (bool) $this->setbysystem;
+    }    
+    
 }

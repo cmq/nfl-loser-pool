@@ -39,9 +39,10 @@ echo 'Total of ' . count($boardData) . ' board data records';
 /****************************************************************/
 loserpool.controller('BoardCtrl', ['$scope', function($scope) {
     var i;
-    $scope.range = [];
-    $scope.order = 'username';
-    $scope.board = <?php echo CJSON::encode($boardData);?>;
+    $scope.range        = [];
+    $scope.order        = 'username';
+    $scope.board        = <?php echo CJSON::encode($boardData);?>;
+    $scope.currentWeek  = <?php echo getCurrentWeek(); ?>;
 
     for (i=1; i<=21; i++) {
         $scope.range.push(i);
@@ -73,6 +74,12 @@ loserpool.filter('teamLogoOffset', function() {
             multiplier = 80;
         }
         return '0 -' + (multiplier * team.image_offset) + 'px';
+    };
+});
+loserpool.filter('teamLogoSize', function() {
+    return function(input, week) {
+        week++; // the passed-parameter is 0-based, week is 1-based
+        return week == <?php echo getCurrentWeek();?> ? 'medium' : 'small';
     };
 });
 </script>
@@ -113,7 +120,10 @@ Debug Order: {{order}}<br />
                         <!-- KDHTODO add "set by system" to the title when appropriate -->
                         <!-- KDHTODO determine when to use logo-small, logo-medium, or logo-large -->
                         <!-- KDHTODO determine when to use logo-small-inactive, logo-medium-inactive, etc -->
-                        <div class="logo logo-small" style="background-position:{{pick.team | teamLogoOffset:'small'}}" title="{{pick.team.longname}}" />
+                        
+                        <!-- KDHTODO the filter for image offset is a fixed 50ximage_offset, but we can't supply a filter for a parameter of another filter (that I've seen).  However, since we know the constant is there an easier way to do this? -->
+                        
+                        <div class="logo logo-{{pick.team | teamLogoSize:$index}}" style="background-position:{{pick.team | teamLogoOffset:'small'}}" title="{{pick.team.longname}}" />
                     </div>
                 </td>
                 <td ng-repeat="i in range" ng-if="i > user.picks.length">*</td>

@@ -1,3 +1,5 @@
+update badge set img = replace(img, '/img', '/images/badges');
+
 alter table user add admin tinyint(1) default 0 not null;
 alter table user add superadmin tinyint(1) default 0 not null;
 update user set superadmin=1 where id = 1;

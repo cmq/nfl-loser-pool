@@ -45,7 +45,7 @@ loserpool.controller('BoardCtrl', ['$scope', function($scope) {
     $scope.currentWeek  = <?php echo getCurrentWeek(); ?>;
     $scope.viewOptions  = {
         // KDHTODO get these from server
-        hideOld: false
+        hideOld: true  // KDHTODO only allow this to be true if the current week is at least 3 (otherwise it makes no sense)
     };
 
     for (i=1; i<=21; i++) {
@@ -55,10 +55,20 @@ loserpool.controller('BoardCtrl', ['$scope', function($scope) {
     // KDHTODO extract this into a more general place?
     $scope.weekname = function(i) {
         return globals.getWeekName(i);
-    }
+    };
     $scope.setOrder = function(order) {
         $scope.order = 'picks[' + order + '].team.shortname';
-    }
+    };
+    $scope.getOldRecord = function(user) {
+        var i, wins = losses = 0;
+        for (i=0; i<user.picks.length; i++) {
+            if (user.picks[i].week < $scope.currentWeek) {
+                wins   += user.picks[i].incorrect ? 0 : 1;
+                losses += user.picks[i].incorrect ? 1 : 0;
+            }
+        }
+        return wins + '-' + losses;
+    };
 }]);
 
 // KDHTODO move these filters (and maybe the controller?) to a different JS file
@@ -74,10 +84,11 @@ loserpool.filter('shortenYear', function() {
 loserpool.filter('teamLogoOffset', function() {
     return function (team, size) {
         var multiplier = 50;
+        var offset     = (team && team.hasOwnProperty('image_offset') ? parseInt(team.image_offset, 10) : 0);
         if (size.toLowerCase == 'large') {
             multiplier = 80;
         }
-        return '0 -' + (multiplier * team.image_offset) + 'px';
+        return '0 -' + (multiplier * offset) + 'px';
     };
 });
 loserpool.filter('teamLogoSize', function() {
@@ -98,8 +109,9 @@ Debug Order: {{order}}<br />
                 <th>&nbsp;</th>
                 <!-- KDHTODO add support for reversing the sort order (should work by simply prefixing the sort properties with a minus sign) -->
                 <th ng-click="order = 'username'">User</th>
-                <th ng-if="viewOptions.hideOld">Previously</th>
-                <th ng-repeat="i in range" ng-if="i >= week || !viewOptions.hideOld" ng-click="setOrder(i-1)">{{weekname(i)}}</th>
+                <th ng-if="viewOptions.hideOld">Weeks 1 - {{currentWeek-1}}</th>
+                <th ng-repeat="i in range" ng-if="i >= currentWeek || !viewOptions.hideOld" ng-click="setOrder(i-1)">{{weekname(i)}}</th>
+                <!-- KDHTODO instead of old way, where there tries to be 1 column for who's ahead, let there be a column for every pot, and a final column for total money -->
             </tr>
         </thead>
         <tbody>
@@ -112,14 +124,15 @@ Debug Order: {{order}}<br />
                     <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnerbadge-wrapper">
                         <!-- KDHTODO make badges clickable to show modal or go to a link? -->
                         <!-- KDHTODO after bootstrap is all up and running, adjust style so year overlays are more readable -->
-                        <img src="/images/badges/winnerbadge-{{win.pot}}{{win.place}}.png" />
+                        <img ng-src="/images/badges/winnerbadge-{{win.pot}}{{win.place}}.png" />
                         <div class="year pot{{win.pot}}">{{win.yr | shortenYear}}</div>
                     </div>
-                    <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
+                    <!-- KDHTODO change alt text to something real (not the zindex) -->
+                    <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
                 </td>
-                <td ng-if="viewOptions.hideOld" align="center">0-0</td>    <!-- KDHTODO get the REAL "old" record -->
+                <td ng-if="viewOptions.hideOld" align="center">{{getOldRecord(user)}}</td>    <!-- KDHTODO get the REAL "old" record -->
                 <!-- KDHTODO add margin of victory hovers -->
-                <td ng-repeat="pick in user.picks" ng-if="pick.week >= week || !viewOptions.hideOld" align="center">
+                <td ng-repeat="pick in user.picks" ng-if="pick.week >= currentWeek || !viewOptions.hideOld" align="center">
                     <div style="position:relative;">    <!-- KDHTODO add a mov-wrapper class instead of an inline style -->
                         <!-- KDHTODO only add the "old" class if we're on a week prior to the current week (or a year prior to the current year) -->
                         <!-- KDHTODO get the REAL MOV and filter it to add a + or - (or nothing) -- this needs to come from the mov table, which will need a Yii Active Record that is joined to...? team I guess?  But when we join to it, we need to join on yr and week too. -->

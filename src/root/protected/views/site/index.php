@@ -136,25 +136,26 @@ Debug Order: {{order}}<br />
                     {{user.username}}
                     <!-- KDHTODO format this similar to the old site (extract into directive or something?) -->
                     <!-- KDHTODO add "alt" tags and title attributes -->
-                    <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" ng-if="!viewOptions.hideBadges" class="winnerbadge-wrapper">
+                    <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnerbadge-wrapper" ng-class="{hidden: !viewOptions.hideBadges}">
                         <!-- KDHTODO make badges clickable to show modal or go to a link? -->
                         <!-- KDHTODO after bootstrap is all up and running, adjust style so year overlays are more readable -->
                         <img ng-src="/images/badges/winnerbadge-{{win.pot}}{{win.place}}.png" />
                         <div class="year pot{{win.pot}}">{{win.yr | shortenYear}}</div>
                     </div>
                     <!-- KDHTODO change alt text to something real (not the zindex) -->
-                    <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-if="!viewOptions.hideBadges" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
+                    <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-class="{hidden: !viewOptions.hideBadges}" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
                 </td>
                 <td ng-if="viewOptions.hideOld" align="center">{{getOldRecord(user)}}</td>
                 <td ng-repeat="pick in user.picks" ng-if="pick.week >= currentWeek || !viewOptions.hideOld" ng-class="{incorrect: pick.incorrect}" align="center">
                     <div style="position:relative;">    <!-- KDHTODO add a mov-wrapper class instead of an inline style -->
-                        <div ng-if="!viewOptions.hideMov" class="pickMov" ng-class="{old: pick.week < currentWeek || pick.year < currentYear, incorrect: pick.incorrect}">{{pick.mov.mov | stylizeMov}}</div>
+                        <!-- note:  This operates faster by adding a class of hidden bound to viewOptions.hideMov than it does using ng-if bound to the same thing -->
+                        <div class="pickMov" ng-class="{hidden: viewOptions.hideMov, old: pick.week < currentWeek || pick.year < currentYear, incorrect: pick.incorrect}">{{pick.mov.mov | stylizeMov}}</div>
                         <!-- KDHTODO add "set by system" to the title when appropriate -->
                         <!-- KDHTODO determine when to use logo-small-inactive, logo-medium-inactive, etc -->
                         
                         <!-- KDHTODO the filter for image offset is a fixed 50ximage_offset, but we can't supply a filter for a parameter of another filter (that I've seen).  However, since we know the constant is there an easier way to do this? -->
-                        <div ng-if="!viewOptions.hideLogos" class="logo logo-{{pick | teamLogo}}" style="background-position:{{pick.team | teamLogoOffset:'small'}}" title="{{pick.team.longname}}"></div>
-                        <span ng-if="viewOptions.hideLogos">{{pick.team.shortname}}</span>
+                        <div class="logo logo-{{pick | teamLogo}}" ng-class="{hidden: viewOptions.hideLogos}" style="background-position:{{pick.team | teamLogoOffset:'small'}}" title="{{pick.team.longname}}"></div>
+                        <span ng-class="{hidden: !viewOptions.hideLogos}">{{pick.team.shortname}}</span>
                     </div>
                 </td>
                 <td ng-repeat="i in range" ng-if="i > user.picks.length">&nbsp;</td>

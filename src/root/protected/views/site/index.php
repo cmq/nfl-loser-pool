@@ -89,10 +89,12 @@ loserpool.filter('teamLogoOffset', function() {
         return '0 -' + (multiplier * offset) + 'px';
     };
 });
-loserpool.filter('teamLogoSize', function() {
-    return function(input, week) {
-        week++; // the passed-parameter is 0-based, week is 1-based
-        return week == <?php echo getCurrentWeek();?> ? 'medium' : 'small';
+loserpool.filter('teamLogo', function() {
+    return function(pick) {
+        var suffix = '';
+        suffix += pick.week == <?php echo getCurrentWeek();?> ? 'medium' : 'small';
+        suffix += pick.setbysystem ? '-inactive' : '';
+        return suffix;
     };
 });
 loserpool.filter('stylizeMov', function() {
@@ -146,12 +148,12 @@ Debug Order: {{order}}<br />
                 <td ng-if="viewOptions.hideOld" align="center">{{getOldRecord(user)}}</td>
                 <td ng-repeat="pick in user.picks" ng-if="pick.week >= currentWeek || !viewOptions.hideOld" ng-class="{incorrect: pick.incorrect}" align="center">
                     <div style="position:relative;">    <!-- KDHTODO add a mov-wrapper class instead of an inline style -->
-                        <div ng-if="!viewOptions.hideMov" ng-class="{pickMov: true, old: pick.week < currentWeek || pick.year < currentYear, incorrect: pick.incorrect}">{{pick.mov.mov | stylizeMov}}</div>
+                        <div ng-if="!viewOptions.hideMov" class="pickMov" ng-class="{old: pick.week < currentWeek || pick.year < currentYear, incorrect: pick.incorrect}">{{pick.mov.mov | stylizeMov}}</div>
                         <!-- KDHTODO add "set by system" to the title when appropriate -->
                         <!-- KDHTODO determine when to use logo-small-inactive, logo-medium-inactive, etc -->
                         
                         <!-- KDHTODO the filter for image offset is a fixed 50ximage_offset, but we can't supply a filter for a parameter of another filter (that I've seen).  However, since we know the constant is there an easier way to do this? -->
-                        <div ng-if="!viewOptions.hideLogos" class="logo logo-{{pick.team | teamLogoSize:$index}}" style="background-position:{{pick.team | teamLogoOffset:'small'}}" title="{{pick.team.longname}}"></div>
+                        <div ng-if="!viewOptions.hideLogos" class="logo logo-{{pick | teamLogo}}" style="background-position:{{pick.team | teamLogoOffset:'small'}}" title="{{pick.team.longname}}"></div>
                         <span ng-if="viewOptions.hideLogos">{{pick.team.shortname}}</span>
                     </div>
                 </td>

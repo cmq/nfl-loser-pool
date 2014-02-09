@@ -1,5 +1,12 @@
 @CHARSET "UTF-8";
 
+td.incorrect {
+    background-color: #f99;
+}
+.hidden {
+    display: none;
+}
+
 /*
  * Logos
  */

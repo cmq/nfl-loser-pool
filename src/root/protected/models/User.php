@@ -105,7 +105,7 @@ class User extends DeepActiveRecord
             'with' => array(
                 'picks' => array(
                     'on'   => $condition,
-                    'with' => array('team'),
+                    'with' => array('team', 'mov'),
                 ),
             ),
         ));

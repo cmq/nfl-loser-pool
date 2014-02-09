@@ -19,6 +19,7 @@
  *  		- Have "presets" that set each of them, like the "no frills" preset, with everything off, or the "full experience" preset, with everything on, etc
  *  	- Ability to hide old week columns (i.e. on week 13 there is a single column for weeks 1-12 for each user.  The column contains simply the user's record over that time)
  *  	- Ability to show/hide badges
+ *  	- Ability to show/hide user avatars
  *  	- Ability to show/hide the bandwagon section
  *  	- Ability to show/hide trash talk
  *  	- Ability to show/hide the season outlook (pots)

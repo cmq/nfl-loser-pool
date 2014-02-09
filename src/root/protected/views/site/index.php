@@ -21,13 +21,6 @@ if (Yii::app()->user->isGuest) {
     ?><a href="<?php echo $this->createUrl('site/logout')?>">Logout</a><br /><?php
 }
 
-echo 'Total of ' . count($boardData) . ' board data records';
-// KDHTODO put this information into javascript for use with Angular
-// KDHTODO output angular template
-//echo $boardData[0]->username;
-//echo $boardData[0]->userYears[0]->paid;
-//echo $boardData[0]->userBadges[0]->display;
-
 ?>
 
 
@@ -43,10 +36,15 @@ loserpool.controller('BoardCtrl', ['$scope', function($scope) {
     $scope.order        = 'username';
     $scope.board        = <?php echo CJSON::encode($boardData);?>;
     $scope.currentWeek  = <?php echo getCurrentWeek(); ?>;
+    $scope.currentYear  = <?php echo param('currentYear'); ?>;
     $scope.viewOptions  = {
         // KDHTODO get these from server
-        hideOld: true  // KDHTODO only allow this to be true if the current week is at least 3 (otherwise it makes no sense)
+        hideOld:    false, // KDHTODO only allow this to be true if the current week is at least 3 (otherwise it makes no sense)
+        hideBadges: false,
+        hideLogos:  false,
+        hideMov:    false
     };
+    console.dir($scope.board);  // KDHTODO remove
 
     for (i=1; i<=21; i++) {
         $scope.range.push(i);
@@ -97,12 +95,27 @@ loserpool.filter('teamLogoSize', function() {
         return week == <?php echo getCurrentWeek();?> ? 'medium' : 'small';
     };
 });
+loserpool.filter('stylizeMov', function() {
+    return function (mov) {
+        mov = parseInt(mov, 10) * -1;
+        if (isNaN(mov)) {
+            return '';
+        }
+        if (mov > 0) {
+            return '+' + mov;
+        }
+        return mov;
+    };
+});
 </script>
 
 <h5>Debug Current Week / Header Week: <?php echo getCurrentWeek();?> / <?php echo getHeaderWeek();?></h5>
 <div ng-controller="BoardCtrl">
 Debug Order: {{order}}<br />
     <button ng-click="viewOptions.hideOld = !viewOptions.hideOld">Toggle Collapsed History</button>
+    <button ng-click="viewOptions.hideBadges = !viewOptions.hideBadges">Toggle Badges</button>
+    <button ng-click="viewOptions.hideLogos = !viewOptions.hideLogos">Toggle Logos</button>
+    <button ng-click="viewOptions.hideMov = !viewOptions.hideMov">Toggle MOV</button>
     <table border="1">
         <thead>
             <tr>
@@ -121,29 +134,25 @@ Debug Order: {{order}}<br />
                     {{user.username}}
                     <!-- KDHTODO format this similar to the old site (extract into directive or something?) -->
                     <!-- KDHTODO add "alt" tags and title attributes -->
-                    <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnerbadge-wrapper">
+                    <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" ng-if="!viewOptions.hideBadges" class="winnerbadge-wrapper">
                         <!-- KDHTODO make badges clickable to show modal or go to a link? -->
                         <!-- KDHTODO after bootstrap is all up and running, adjust style so year overlays are more readable -->
                         <img ng-src="/images/badges/winnerbadge-{{win.pot}}{{win.place}}.png" />
                         <div class="year pot{{win.pot}}">{{win.yr | shortenYear}}</div>
                     </div>
                     <!-- KDHTODO change alt text to something real (not the zindex) -->
-                    <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
+                    <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-if="!viewOptions.hideBadges" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
                 </td>
-                <td ng-if="viewOptions.hideOld" align="center">{{getOldRecord(user)}}</td>    <!-- KDHTODO get the REAL "old" record -->
-                <!-- KDHTODO add margin of victory hovers -->
-                <td ng-repeat="pick in user.picks" ng-if="pick.week >= currentWeek || !viewOptions.hideOld" align="center">
+                <td ng-if="viewOptions.hideOld" align="center">{{getOldRecord(user)}}</td>
+                <td ng-repeat="pick in user.picks" ng-if="pick.week >= currentWeek || !viewOptions.hideOld" ng-class="{incorrect: pick.incorrect}" align="center">
                     <div style="position:relative;">    <!-- KDHTODO add a mov-wrapper class instead of an inline style -->
-                        <!-- KDHTODO only add the "old" class if we're on a week prior to the current week (or a year prior to the current year) -->
-                        <!-- KDHTODO get the REAL MOV and filter it to add a + or - (or nothing) -- this needs to come from the mov table, which will need a Yii Active Record that is joined to...? team I guess?  But when we join to it, we need to join on yr and week too. -->
-                        <div class="pickMov old">+18</div>
+                        <div ng-if="!viewOptions.hideMov" ng-class="{pickMov: true, old: pick.week < currentWeek || pick.year < currentYear, incorrect: pick.incorrect}">{{pick.mov.mov | stylizeMov}}</div>
                         <!-- KDHTODO add "set by system" to the title when appropriate -->
-                        <!-- KDHTODO determine when to use logo-small, logo-medium, or logo-large -->
                         <!-- KDHTODO determine when to use logo-small-inactive, logo-medium-inactive, etc -->
                         
                         <!-- KDHTODO the filter for image offset is a fixed 50ximage_offset, but we can't supply a filter for a parameter of another filter (that I've seen).  However, since we know the constant is there an easier way to do this? -->
-                        
-                        <div class="logo logo-{{pick.team | teamLogoSize:$index}}" style="background-position:{{pick.team | teamLogoOffset:'small'}}" title="{{pick.team.longname}}" />
+                        <div ng-if="!viewOptions.hideLogos" class="logo logo-{{pick.team | teamLogoSize:$index}}" style="background-position:{{pick.team | teamLogoOffset:'small'}}" title="{{pick.team.longname}}"></div>
+                        <span ng-if="viewOptions.hideLogos">{{pick.team.shortname}}</span>
                     </div>
                 </td>
                 <td ng-repeat="i in range" ng-if="i > user.picks.length">&nbsp;</td>

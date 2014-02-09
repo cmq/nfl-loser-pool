@@ -1,5 +1,5 @@
 <?php
-class Pick extends DeepActiveRecord
+class Mov extends DeepActiveRecord
 {
     
     /**
@@ -17,14 +17,9 @@ class Pick extends DeepActiveRecord
      */
     public function tableName()
     {
-        return 'loserpick';
+        return 'mov';
     }
     
-    public function primaryKey()
-    {
-        return array('userid', 'week', 'yr');
-    }
-        
     /**
      * Define table relationships
      * @see http://www.yiiframework.com/doc/guide/1.1/en/database.arr
@@ -33,24 +28,7 @@ class Pick extends DeepActiveRecord
     public function relations()
     {
         return array(
-            'user' => array(self::BELONGS_TO, 'User', 'userid'),
-            'team' => array(self::BELONGS_TO, 'Team', 'teamid'),
-            'mov'  => array(self::BELONGS_TO, 'Mov',  array('teamid', 'yr', 'week')),
-        );
-    }
-    
-    
-    
-    
-    /**
-     * Define validation rules
-     * @see CModel::rules()
-     */
-    public function rules() {
-        return array(
-            array('year, week, teamid', 'required'),
-            array('year, week, teamid', 'type', 'type'=>'integer'),
-            array('week', 'in', 'range'=>array(1,21)),
+            'picks' => array(self::HAS_MANY, 'Pick', array('teamid', 'yr', 'week')),
         );
     }
     
@@ -60,11 +38,9 @@ class Pick extends DeepActiveRecord
     protected function afterFind() {
         parent::afterFind();
         $this->teamid      = (int)  $this->teamid;
-        $this->userid      = (int)  $this->userid;
         $this->week        = (int)  $this->week;
         $this->yr          = (int)  $this->yr;
-        $this->incorrect   = (bool) $this->incorrect;
-        $this->setbysystem = (bool) $this->setbysystem;
+        $this->mov         = (int)  $this->mov;
     }    
     
 }

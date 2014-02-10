@@ -86,6 +86,13 @@
         <script src="<?php echo baseUrl('/js/module/main.js'); ?>"></script>
     </head>
     <body>
+        <!-- KDHTODO what does navigation look like for a guest? -->
+        Navigation:<br />
+        <?php
+        echo CHtml::link('Home', $this->createAbsoluteUrl('site/index')) . '<br />';
+        echo CHtml::link('Enter Picks', $this->createAbsoluteUrl('site/pick')) . '<br />';
+        ?>
+        <hr />
         <?php echo $content; ?>
     </body>
 </html>

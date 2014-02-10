@@ -65,7 +65,7 @@ class User extends DeepActiveRecord
                 'condition' => 't.active=1',
                 'with'      => array(
                     'userYears' => array(
-                        'condition' => 'userYears.yr = ' . param('currentYear'),
+                        'condition' => 'userYears.yr = ' . getCurrentYear(),
                     ),
                 ),
             ),
@@ -95,10 +95,10 @@ class User extends DeepActiveRecord
     {
         $condition = '';
         if ($currentYearOnly) {
-            $condition .= ($condition ? ' AND ' : '') . 'picks.yr = ' . param('currentYear');
+            $condition .= ($condition ? ' AND ' : '') . 'picks.yr = ' . getCurrentYear();
         }
         if (!$future) {
-            $condition .= ($condition ? ' AND ' : '') . 'picks.week < ' . getCurrentWeek();
+            $condition .= ($condition ? ' AND ' : '') . '(picks.week < ' . getCurrentWeek() . ' or picks.userid = ' . userId() . ')';
         }
         
         $this->getDbCriteria()->mergeWith(array(

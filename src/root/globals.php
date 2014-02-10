@@ -7,6 +7,14 @@ function user() {
     return Yii::app()->user;
 }
 
+function userId() {
+    $user = user();
+    if (isset($user->id)) {
+        return (int) $user->id;
+    }
+    return 0;
+}
+
 function userField($field) {
     $user = user();
     if (isset($user->record) && isset($user->record[$field])) {
@@ -21,6 +29,10 @@ function isAdmin() {
 
 function isSuperadmin() {
     return (bool) userField('superadmin');
+}
+
+function getCurrentYear() {
+    return param('currentYear');
 }
 
 function getCurrentWeek() {

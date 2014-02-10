@@ -39,6 +39,20 @@ class Pick extends DeepActiveRecord
         );
     }
     
+    /**
+     * Define scopes
+     * @see CActiveRecord::scopes()
+     */
+    public function scopes()
+    {
+        return array(
+            'current' => array(
+                'condition' => 't.yr = ' . getCurrentYear() . ' and t.userid = ' . userId(),
+                'with'      => array('team', 'mov'),
+            ),
+        );
+    }
+    
     
     
     

@@ -14,6 +14,7 @@
  *  - Keep track of WHEN picks are made so we know how early people picked
  *  - For trash talk by me, have a flag I can set so it shows up as just a regular talk versus the yellow highlighted "admin" talk
  *  - Is there a way to not have to keep deactivating users every year?  Maybe allow logins forever, but they can only see the current board if they're playing this year?
+ *  - Make badges clickable to show the hover text in a tiny modal (since on tablets/phones, there's no such thing as hovering)
  *  - Customized View options on the main page:
  *  	- Allow these to be changed from a settings page, or toggled directly on the home page
  *  		- Have "presets" that set each of them, like the "no frills" preset, with everything off, or the "full experience" preset, with everything on, etc

@@ -34,6 +34,16 @@ class SiteController extends Controller
         ));
         $this->render('index', array('boardData'=>$boardData));
     }
+    
+    /**
+     * A separate page for the user to make their picks
+     */
+    public function actionPick()
+    {
+        // KDHTODO prevent this action if the user is a guest
+        $userPicks = Pick::model()->current()->findAll();;
+        die(CJSON::encode($userPicks));
+    }
 
     /**
      * This is the action to handle external exceptions.

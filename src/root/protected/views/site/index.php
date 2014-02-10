@@ -13,9 +13,10 @@ $user = Yii::app()->user;
 
 <h1>Welcome to <i><?php echo CHtml::encode(Yii::app()->name); ?></i></h1>
 
-<h2>You are logged in as <?php echo ($user->isGuest ? 'guest' : 'registered user ' . $user->id . ' (' . userField('username') . ' - ' . userField('firstname') . ' ' . userField('lastname') . ')')?></h2>
+<h2>You are logged in as <?php echo ($user->isGuest ? 'guest' : 'registered user ' . userId() . ' (' . userField('username') . ' - ' . userField('firstname') . ' ' . userField('lastname') . ')')?></h2>
 <?php
 if (Yii::app()->user->isGuest) {
+    // KDHTODO how to handle what guests can see?
     ?>You are a guest.  What does that mean you can access?  Past seasons, perhaps?  But you may want to <a href="<?php echo $this->createUrl('site/login')?>">log in</a><br /><?php
 } else {
     ?><a href="<?php echo $this->createUrl('site/logout')?>">Logout</a><br /><?php
@@ -36,7 +37,7 @@ loserpool.controller('BoardCtrl', ['$scope', function($scope) {
     $scope.order        = 'username';
     $scope.board        = <?php echo CJSON::encode($boardData);?>;
     $scope.currentWeek  = <?php echo getCurrentWeek(); ?>;
-    $scope.currentYear  = <?php echo param('currentYear'); ?>;
+    $scope.currentYear  = <?php echo getCurrentYear(); ?>;
     $scope.viewOptions  = {
         // KDHTODO get these from server
         hideOld:    false, // KDHTODO only allow this to be true if the current week is at least 3 (otherwise it makes no sense)
@@ -130,6 +131,7 @@ Debug Order: {{order}}<br />
             </tr>
         </thead>
         <tbody>
+            <!-- KDHTODO highlight the current user's row -->
             <tr ng-repeat="user in board | orderBy:[order,'username']">   <!-- KDHTODO have sort order secondary sort be record before username -->
                 <td>{{$index+1}}</td>
                 <td>

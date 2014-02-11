@@ -42,7 +42,8 @@ class SiteController extends Controller
     {
         // KDHTODO prevent this action if the user is a guest
         $userPicks = Pick::model()->current()->findAll();
-        $this->render('pick', array('picks'=>$userPicks));
+        $teams = Team::model()->findAll(array('order'=>'longname'));
+        $this->render('pick', array('picks'=>$userPicks, 'teams'=>$teams));
     }
 
     /**

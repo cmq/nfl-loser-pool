@@ -127,7 +127,8 @@ Debug Order: {{order}}<br />
         </thead>
         <tbody>
             <!-- KDHTODO highlight the current user's row -->
-            <!-- KDHTODO all of these ng-repeats may be extraneous... ng-repeat is only useful for data binding, but for static data that won't change, we're just slowing things down on the client side -->
+            <!-- all of these ng-repeats may be extraneous... ng-repeat is only useful for data binding, but for static data that won't change, we're just slowing things down on the client side -->
+            <!-- on second thought, without the ng-repeat data binding, we couldn't dynamically sort on the client-side (without a plugin or something) -->
             <tr ng-repeat="user in board | orderBy:[order,'username']">   <!-- KDHTODO have sort order secondary sort be record before username -->
                 <td>{{$index+1}}</td>
                 <td>

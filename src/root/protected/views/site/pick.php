@@ -48,7 +48,7 @@ loserpool.controller('PickPageCtrl', ['$scope', function($scope) {
                     <!-- KDHTODO populate -->
                     <td>Result</td>
                     <!-- KDHTODO populate -->
-                    <td>Lock Time</td>
+                    <td><?=getLockTime($week, true)?></td>
                 </tr>
                 <?
             }

@@ -11,6 +11,7 @@ defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
 
 try{
     require_once(dirname(__FILE__).'/globals.php');
+    require_once(dirname(__FILE__).'/globals-domain.php');
     require_once($yii);
     Yii::createWebApplication($config)->run();
 } catch (Exception $e) {

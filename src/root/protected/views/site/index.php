@@ -1,3 +1,4 @@
+<!-- KDHTODO are any of these JS objects even necessary now that we're using angular? -->
 <script src="<?php echo baseUrl('/js/model/Badge.js'); ?>"></script>
 <script src="<?php echo baseUrl('/js/model/Pick.js'); ?>"></script>
 <script src="<?php echo baseUrl('/js/model/Team.js'); ?>"></script>
@@ -32,8 +33,6 @@ if (Yii::app()->user->isGuest) {
 //Things below here are the real app
 /****************************************************************/
 loserpool.controller('BoardCtrl', ['$scope', function($scope) {
-    var i;
-    $scope.range        = [];
     $scope.order        = 'username';
     $scope.board        = <?php echo CJSON::encode($boardData);?>;
     $scope.currentWeek  = <?php echo getCurrentWeek(); ?>;
@@ -47,14 +46,6 @@ loserpool.controller('BoardCtrl', ['$scope', function($scope) {
     };
     console.dir($scope.board);  // KDHTODO remove
 
-    for (i=1; i<=21; i++) {
-        $scope.range.push(i);
-    }
-
-    // KDHTODO extract this into a more general place?
-    $scope.weekname = function(i) {
-        return globals.getWeekName(i);
-    };
     $scope.setOrder = function(order) {
         $scope.order = 'picks[' + order + '].team.shortname';
     };
@@ -126,26 +117,31 @@ Debug Order: {{order}}<br />
                 <!-- KDHTODO add support for reversing the sort order (should work by simply prefixing the sort properties with a minus sign) -->
                 <th ng-click="order = 'username'">User</th>
                 <th ng-if="viewOptions.hideOld">Weeks 1 - {{currentWeek-1}}</th>
-                <th ng-repeat="i in range" ng-if="i >= currentWeek || !viewOptions.hideOld" ng-click="setOrder(i-1)">{{weekname(i)}}</th>
+                <?php
+                for ($week=1; $week<=21; $week++) {
+                    ?><th ng-if="currentWeek <= <?=$week?> || !viewOptions.hideOld" ng-click="setOrder(<?=$week?>-1)"><?=getWeekName($week)?></th><?php
+                }
+                ?>
                 <!-- KDHTODO instead of old way, where there tries to be 1 column for who's ahead, let there be a column for every pot, and a final column for total money -->
             </tr>
         </thead>
         <tbody>
             <!-- KDHTODO highlight the current user's row -->
+            <!-- KDHTODO all of these ng-repeats may be extraneous... ng-repeat is only useful for data binding, but for static data that won't change, we're just slowing things down on the client side -->
             <tr ng-repeat="user in board | orderBy:[order,'username']">   <!-- KDHTODO have sort order secondary sort be record before username -->
                 <td>{{$index+1}}</td>
                 <td>
                     {{user.username}}
                     <!-- KDHTODO format this similar to the old site (extract into directive or something?) -->
                     <!-- KDHTODO add "alt" tags and title attributes -->
-                    <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnerbadge-wrapper" ng-class="{hidden: !viewOptions.hideBadges}">
+                    <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnerbadge-wrapper" ng-class="{hidden: viewOptions.hideBadges}">
                         <!-- KDHTODO make badges clickable to show modal or go to a link? -->
                         <!-- KDHTODO after bootstrap is all up and running, adjust style so year overlays are more readable -->
                         <img ng-src="/images/badges/winnerbadge-{{win.pot}}{{win.place}}.png" />
                         <div class="year pot{{win.pot}}">{{win.yr | shortenYear}}</div>
                     </div>
                     <!-- KDHTODO change alt text to something real (not the zindex) -->
-                    <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-class="{hidden: !viewOptions.hideBadges}" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
+                    <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-class="{hidden: viewOptions.hideBadges}" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
                 </td>
                 <td ng-if="viewOptions.hideOld" align="center">{{getOldRecord(user)}}</td>
                 <td ng-repeat="pick in user.picks" ng-if="pick.week >= currentWeek || !viewOptions.hideOld" ng-class="{incorrect: pick.incorrect}" align="center">
@@ -160,7 +156,11 @@ Debug Order: {{order}}<br />
                         <span ng-class="{hidden: !viewOptions.hideLogos}">{{pick.team.shortname}}</span>
                     </div>
                 </td>
-                <td ng-repeat="i in range" ng-if="i > user.picks.length">&nbsp;</td>
+                <?php
+                for ($week=1; $week<=21; $week++) {
+                    ?><td ng-if="user.picks.length < <?=$week?>">&nbsp;</td><?php
+                }
+                ?>
             </tr>
         </tbody>
     </table>

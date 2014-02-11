@@ -85,6 +85,26 @@ function getHeaderWeek() {
     }
     return $headerWeek;
 }
+
+function getWeekName($week) {
+    switch ($week) {
+        case 21:
+            return 'Superbowl';
+            break;
+        case 20:
+            return 'Conf Champ';
+            break;
+        case 19:
+            return 'Divisional';
+            break;
+        case 18:
+            return 'Wild Card';
+            break;
+        default:
+            return $week;
+            break;
+    }
+}
     
 
 /**

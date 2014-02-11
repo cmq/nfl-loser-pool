@@ -41,8 +41,8 @@ class SiteController extends Controller
     public function actionPick()
     {
         // KDHTODO prevent this action if the user is a guest
-        $userPicks = Pick::model()->current()->findAll();;
-        die(CJSON::encode($userPicks));
+        $userPicks = Pick::model()->current()->findAll();
+        $this->render('pick', array('picks'=>$userPicks));
     }
 
     /**

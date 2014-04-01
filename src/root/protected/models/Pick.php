@@ -62,8 +62,8 @@ class Pick extends DeepActiveRecord
      */
     public function rules() {
         return array(
-            array('year, week, teamid', 'required'),
-            array('year, week, teamid', 'type', 'type'=>'integer'),
+            array('yr, week, teamid', 'required'),
+            array('yr, week, teamid', 'type', 'type'=>'integer'),
             array('week', 'in', 'range'=>array(1,21)),
         );
     }

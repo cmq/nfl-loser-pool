@@ -8,7 +8,7 @@ foreach ($picks as $pick) {
 }
 ?>
 <script>
-loserpool.controller('PickPageCtrl', ['$scope', function($scope) {
+loserpool.controller('PickPageCtrl', ['$scope', '$http', function($scope, $http) {
     var pick, team;
     $scope.picks = <?php echo CJSON::encode($picks);?>;
     $scope.teams = <?php echo CJSON::encode($teams);?>;
@@ -20,7 +20,30 @@ loserpool.controller('PickPageCtrl', ['$scope', function($scope) {
             }
         }
     }
-    console.dir($scope.picks);  // KDHTODO remove
+
+    $scope.$watch('picks', function(newValue, oldValue) {
+        var week;
+        if (newValue !== oldValue) {
+            for (week=0; week<newValue.length; week++) {
+                if (newValue[week].team.id != oldValue[week].team.id) {
+                    // KDHTODO remove next line
+                    console.log('week ' + week + ' changed from ' + oldValue[week].team.longname + ' to ' + newValue[week].team.longname);
+                    // KDHTODO have some kind of tracker to prevent multiple requests from going to the server while one is still pending (or better yet, just disable the field)
+                    $http.post('<?php echo $this->createAbsoluteUrl('pick/save')?>', {
+                        user: <?php echo userId(); ?>,   // KDHTODO update this to the user being edited so that superadmins can change other users' picks
+                        week: week+1,
+                        team: newValue[week].team.id
+                    }).success(function(data, status, headers, config) {
+                        console.dir(arguments);
+                    }).error(function(data, status, headers, config) {
+                        console.dir(arguments);
+                    });
+                }
+            }
+        }
+    }, true);   // this 3rd parameter being true is what makes $watch work with an array ("picks")
+
+    //console.dir($scope.picks);  // KDHTODO remove
 }]);
 </script>
 

@@ -85,8 +85,31 @@ function getWeekName($week) {
 function getLockTime($week, $format=false) {
     // KDHTODO get real lock time
     $locktime = new DateTime();
+    modifyTimeForUser($locktime);
     // KDHTODO adjust format
     return $format ? $locktime->format('m/d/y h:i a') : $locktime;
+}
+
+function modifyTimeForUser(&$datetime) {
+    // figure out how the user's timezone applies
+    $hours = 0;
+    if (userField('timezone')) {
+        $hours = (int) userField('timezone');
+    }
+    // figure out how the user's dst settings apply
+    if (date('I')) {
+        // it is currently daylight savings time
+        if (!userField('use_dst')) {
+            // but the user doesn't want to use daylight savings time
+            $hours -= 1;
+        }
+    }
+    if ($hours > 0) {
+        $datetime->add(new DateInterval("PT{$hours}H"));
+    } else if ($hours < 0) {
+        $hours *= -1;
+        $datetime->sub(new DateInterval("PT{$hours}H"));
+    }
 }
 
 function createThumbnail($source, $destination, $maxWidth, $maxHeight) {

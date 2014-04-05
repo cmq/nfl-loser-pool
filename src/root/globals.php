@@ -1,6 +1,13 @@
 <?php
+$__refreshedUser = null;    // allow us to refresh the user once per page load instead of only when the user logs in
+
 function user() {
-    return Yii::app()->user;
+    global $__refreshedUser;
+    if (is_null($__refreshedUser)) {
+        $__refreshedUser = User::model()->findByPk(Yii::app()->user->id);
+        $__refreshedUser->refresh();
+    }
+    return $__refreshedUser;
 }
 
 function userId() {
@@ -13,6 +20,9 @@ function userId() {
 
 function userField($field) {
     $user = user();
+    if (isset($user->$field)) {
+        return $user->$field;
+    }
     if (isset($user->record) && isset($user->record[$field])) {
         return $user->record[$field];
     }

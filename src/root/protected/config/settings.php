@@ -34,4 +34,10 @@ return array(
         20 => mktime(14, 0, 0, 1, 19, 2014),	// Conference Championship
         21 => mktime(17, 30, 0, 2, 2, 2014),	// Superbowl
     ),
+    'avatarExtensions'      => array('jpg', 'jpeg', 'gif', 'png'),
+    'avatarSizeLimit'       => 1024 * 1024,    // 1MB limit
+    'avatarMaxWidth'        => 40,
+    'avatarMaxHeight'       => 40,
+    'avatarDirectory'       => getcwd() . DIRECTORY_SEPARATOR  . 'images' . DIRECTORY_SEPARATOR  . 'avatar',
+    'avatarWebDirectory'    => '/images/avatar',
 );

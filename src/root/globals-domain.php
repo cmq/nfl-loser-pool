@@ -88,3 +88,130 @@ function getLockTime($week, $format=false) {
     // KDHTODO adjust format
     return $format ? $locktime->format('m/d/y h:i a') : $locktime;
 }
+
+function createThumbnail($source, $destination, $maxWidth, $maxHeight) {
+    // tried to copy this from http://mediumexposure.com/smart-image-resizing-while-preserving-transparency-php-and-gd-library/ but
+    // kept having problems with .gif transparencies.... copied their function instead and it seems to work, too tired to figure
+    // out what the difference is
+    try {
+        $imageinfo = getimagesize($source);
+        $ext = $imageinfo[2];
+
+        // create a new source image resource
+        $sourceImage = null;
+        switch ($ext) {
+            case IMAGETYPE_JPEG:
+                $sourceImage = imagecreatefromjpeg($source);
+                break;
+            case IMAGETYPE_GIF:
+                $sourceImage = imagecreatefromgif($source);
+                imagealphablending($sourceImage, true);
+                break;
+            case IMAGETYPE_PNG:
+                $sourceImage = imagecreatefrompng($source);
+                imagealphablending($sourceImage, true);
+                break;
+        }
+
+        if ($sourceImage) {
+            $sourceWidth = imagesx($sourceImage);
+            $sourceHeight = imagesy($sourceImage);
+            $sourceRatio = $sourceWidth/$sourceHeight;
+
+            // determine the dimensions of the target image
+            if ($maxWidth >= $sourceWidth && $maxHeight >= $sourceHeight) {
+                // no need to resize
+                $targetWidth = $sourceWidth;
+                $targetHeight = $sourceHeight;
+            } else {
+                $targetRatio = $maxWidth/$maxHeight;
+                if ($sourceRatio > $targetRatio) {
+                    // source is too wide, maximize width and scale height to match
+                    $targetWidth = $maxWidth;
+                    $targetHeight = (int) $targetWidth/$sourceRatio;
+                } else {
+                    // source is too tall (or just right), maximize height and scale width to match
+                    $targetHeight = $maxHeight;
+                    $targetWidth = (int) $targetHeight*$sourceRatio;
+                }
+            }
+
+            // create the target image
+            $targetImage = imagecreatetruecolor($targetWidth, $targetHeight);
+
+            // handle transparency
+            if ($ext == IMAGETYPE_GIF || $ext == IMAGETYPE_PNG) {
+                $transparentIndex = imagecolortransparent($sourceImage);
+                if (false) {    /* This method was copied from several places on the internet, but doesn't work for all gif files
+                    if ($transparentIndex >= 0) {*/
+                    // we have a specific transparent color
+                    $palletsize = imagecolorstotal($sourceImage);
+                    if ($palletsize > $transparentIndex) {
+                        // get the original image's transparent color's RGB values
+                        $transparentColor = imagecolorsforindex($sourceImage, $transparentIndex);
+                        // allocate the same color in the new image resource
+                        $transparentIndex = imagecolorallocatealpha($targetImage, $transparentColor['red'], $transparentColor['green'], $transparentColor['blue'], 127);
+                    } else {
+                        // got an "index out of range" error on a file I tested... try this instead
+                        $transparentIndex = imagecolorallocatealpha($targetImage, 255, 255, 255, 127);
+                    }
+                    // completely fill the background of the new image with the allocated color
+                    imagefill($targetImage, 0, 0, $transparentIndex);
+                    // set the background color for the new image to transparent
+                    imagecolortransparent($targetImage, $transparentIndex);
+                    // try again to set the background to transparent, pixel by pixel
+                    for ($x=0; $x<$targetWidth; $x++) {
+                        for ($y=0; $y<$targetHeight; $y++) {
+                            imagesetpixel($targetImage, $x, $y, $transparentIndex);
+                        }
+                    }
+                } else {    /* The above method was copied from several places on the internet, but doesn't work for all gif files, so we'll use the below in all cases instead
+                    } elseif ($ext == IMAGETYPE_PNG) {*/
+                    // for PNGs without a default transparency, make one
+                    // temporarily turn off transparency blending
+                    imagealphablending($targetImage, false);
+                    // create a new transparent color for the image
+                    $transparent = imagecolorallocatealpha($targetImage, 255, 255, 255, 127);
+                    // completely fill the background of the new image with the allocated color
+                    imagefill($targetImage, 0, 0, $transparent);
+                    // restore transparency blending
+                    imagesavealpha($targetImage, true);
+                }
+            }
+
+            // create the target image
+            imagecopyresampled($targetImage, $sourceImage, 0, 0, 0, 0, $targetWidth, $targetHeight, $sourceWidth, $sourceHeight);
+            switch ($ext) {
+                case IMAGETYPE_JPEG:
+                    imagejpeg($targetImage, $destination);
+                    break;
+                case IMAGETYPE_GIF:
+                    imagegif($targetImage, $destination);
+                    break;
+                case IMAGETYPE_PNG:
+                    imagepng($targetImage, $destination);
+                    break;
+            }
+
+        }
+    } catch (Exception $e) {
+        return false;
+    }
+    return true;
+}
+
+
+function getUserAvatar($userid, $ext) {
+    $url  = getUserAvatarUrl($userid, $ext);
+    $turl = getUserAvatarUrl($userid, $ext, true);
+    return "<a href=\"$url?x=" . time() . "\" class=\"avatar\" id=\"avatar$userid\"><img src=\"$turl\" /></a>";
+}
+
+
+function getUserAvatarUrl($userid, $ext, $thumb=false) {
+    if (!$ext) {
+        $userid = 0;
+        $ext = 'png';
+    }
+    return param('avatarWebDirectory') . '/' . ($thumb ? 't' : '') . "$userid.$ext";
+}

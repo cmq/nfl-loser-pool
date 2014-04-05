@@ -58,3 +58,8 @@ globals.getWeekName = function(i) {
             break;
     }
 };
+
+globals.htmlDecode = function(input) {
+    return $('<div/>').html(input).text();
+};
+

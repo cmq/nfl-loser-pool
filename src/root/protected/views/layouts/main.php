@@ -15,6 +15,9 @@
  *  - For trash talk by me, have a flag I can set so it shows up as just a regular talk versus the yellow highlighted "admin" talk
  *  - Is there a way to not have to keep deactivating users every year?  Maybe allow logins forever, but they can only see the current board if they're playing this year?
  *  - Make badges clickable to show the hover text in a tiny modal (since on tablets/phones, there's no such thing as hovering)
+ *  - Allow the user to set their own timezone and whether or not they use DST
+ *  - Allow the user to set their address for payments (they can fill out paypal or mailing address)
+ *  - Re-add lightbox (I removed it so I could work on testing the profile page)
  *  - Customized View options on the main page:
  *  	- Allow these to be changed from a settings page, or toggled directly on the home page
  *  		- Have "presets" that set each of them, like the "no frills" preset, with everything off, or the "full experience" preset, with everything on, etc
@@ -77,6 +80,7 @@
         
         <link href="<?php echo baseUrl('/css/main.css'); ?>" rel="stylesheet" />
         <script src="<?php echo baseUrl('/js/conf.js'); ?>"></script>
+        <script src="<?php echo baseUrl('/js/lib/jquery-1.11.0.min.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/jquery.ba-getobject.min.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/angular.min.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/moment.js'); ?>"></script>
@@ -84,6 +88,14 @@
         <script src="<?php echo baseUrl('/js/lib/types.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/globals.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/module/main.js'); ?>"></script>
+        <?php
+        if (Yii::app()->controller->id == 'site' && Yii::app()->controller->action->id == 'profile'):
+            ?>
+            <link href="<?php echo baseUrl('/css/fileuploader.css'); ?>" rel="stylesheet" />
+            <script src="<?php echo baseUrl('/js/lib/fileuploader.js'); ?>"></script>
+            <?php
+        endif;
+        ?>
     </head>
     <body>
         <!-- KDHTODO what does navigation look like for a guest? -->
@@ -91,6 +103,7 @@
         <?php
         echo CHtml::link('Home', $this->createAbsoluteUrl('site/index')) . '<br />';
         echo CHtml::link('Enter Picks', $this->createAbsoluteUrl('site/pick')) . '<br />';
+        echo CHtml::link('Profile', $this->createAbsoluteUrl('site/profile')) . '<br />';
         ?>
         <hr />
         <?php echo $content; ?>

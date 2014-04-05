@@ -47,6 +47,18 @@ class SiteController extends Controller
     }
 
     /**
+     * A separate page for the user to adjust their profile
+     */
+    public function actionProfile()
+    {
+        // KDHTODO prevent this action if the user is a guest
+        // KDHTODO prevent this action if the user hasn't paid
+        $userId = (isset($_GET['uid']) && isSuperadmin() ? (int) $_GET['uid'] : userId());
+        $user = User::model()->findByPk($userId); 
+        $this->render('profile', array('user'=>$user));
+    }
+
+    /**
      * This is the action to handle external exceptions.
      */
     public function actionError()

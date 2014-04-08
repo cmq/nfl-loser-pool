@@ -66,6 +66,28 @@ function param($name, $default=null, $paramSet=null) {
 }
 
 /**
+ * Gets a given variable from POST or GET if found, otherwise returns the
+ * provided default value
+ * 
+ * @param String $name    the name of the variable to retrieve
+ * @param mixed  $default the default value to return if not found
+ * @return unknown
+ */
+function getRequestParameter($name, $default) {
+    $v = $default;
+    if (isset($_REQUEST[$name])) {
+        if (is_array($_REQUEST[$name])) {
+            if (sizeof($_REQUEST[$name])) {
+                $v = $_REQUEST[$name][sizeof($_POST[$name])-1];
+            }
+        } else {
+            $v = $_REQUEST[$name];
+        }
+    }
+    return $v;
+}
+
+/**
  * Allow access to deep array properties through dot notation
  * @param String $key        The key to lookup ('key.otherkey.id')
  * @param Array  $collection The array to deep-examine
@@ -178,3 +200,24 @@ function combineErrors($model, $delimiter = "\n") {
     return implode($e, $delimiter);
 }
 
+
+/**
+ * Create an <option> tag as a string
+ * @param mixed $id      the <option>'s value parameter
+ * @param mixed $name    the <option>'s displayed label
+ * @param mixed $compare the id of the currently-selected value
+ * @return string
+ */
+function createOption($id, $name, $compare='') {
+    // returns the string to create a select box's <option> and selects it if the id matches the compare value
+    return "<option value=\"$id\"" . ($compare == $id ? ' selected="selected"' : '') . ">$name</option>";
+}
+
+/**
+ * Return whether a given string matches an Email regex
+ * @param String $email the email address string to check
+ * @return number (interpreted as a Boolean)
+ */
+function isEmail($email) {
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
+}

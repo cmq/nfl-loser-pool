@@ -12,4 +12,3 @@ update badge set zindex=73 where id = 17;
 
 update user add timezone int not null default 0;
 update user add use_dst tinyint(1) not null default 1;
-update user add address text null;

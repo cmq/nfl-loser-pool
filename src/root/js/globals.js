@@ -63,3 +63,9 @@ globals.htmlDecode = function(input) {
     return $('<div/>').html(input).text();
 };
 
+globals.isEmail = function(e) {
+    var regEmail = /^([a-zA-Z0-9])+([\.a-zA-Z0-9_-])*@([a-zA-Z0-9])+(\.[a-zA-Z0-9_-]+)+$/;
+    return (regEmail.test(e));
+};
+
+

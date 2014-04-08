@@ -50,6 +50,8 @@ class User extends DeepActiveRecord
             array('active', 'in', 'range'=>array(0,1)),
             array('admin', 'in', 'range'=>array(0,1)),
             array('superadmin', 'in', 'range'=>array(0,1)),
+            array('timezone', 'in', 'range'=>array(-2,-1,0,1)),
+            array('use_dst', 'in', 'range'=>array(0,1)),
             // KDHTODO add other rules?
         );
     }

@@ -4,12 +4,151 @@ class ProfileController extends Controller
 {
     
     public $layout = 'naked';
+    
+    
+    private function _getUser()
+    {
+        $userId = (isset($_REQUEST['uid']) && isSuperadmin() ? (int) $_REQUEST['uid'] : userId());
+        $user   = User::model()->findByPk($userId);
+        return $user;
+    }
 
     // KDHTODO prevent any actions on this controller from executing if the user is a guest
+    // KDHTODO should some of the validations in this controller move into the user model?  Probably.
     public function actionIndex()
     {
         // no index action
         // KDHTODO redirect to 404
+    }
+    
+    public function actionUsername()
+    {
+        $user     = $this->_getUser();
+        $username = getRequestParameter('value', '');
+        $error    = '';
+        
+        if (!$user) {
+            $error = 'User not found.';
+        }
+        
+        if (!$error && !isSuperadmin() && !$user->paid) {
+            $error = 'You have not paid your entry fee.';
+        }
+        
+        if (!$error && $username == '') {
+            $error = 'You must specify a username.';
+        }
+        
+        if (!$error) {
+            $duplicateUser = User::model()->findByAttributes(array('username'=>$username));
+            if ($duplicateUser && $duplicateUser->id != $user->id) {
+                $error = "The username <strong>$username</strong> is already taken.";
+            }
+        }
+        
+        if (!$error) {
+            $user->username = $username;
+            $error = $this->saveRecord($user);
+        }
+        
+        $this->writeJson(array('error'=>$error));
+        exit;
+    }
+    
+    public function actionEmail()
+    {
+        $user  = $this->_getUser();
+        $email = getRequestParameter('value', '');
+        $error = '';
+        
+        if (!$user) {
+            $error = 'User not found.';
+        }
+        
+        if (!$error && !isSuperadmin() && !$user->paid) {
+            $error = 'You have not paid your entry fee.';
+        }
+        
+        if (!$error && !isEmail($email)) {
+            $error = 'Your email address does not appear to be valid.';
+        }
+        
+        if (!$error) {
+            $oldEmail = $user->email;
+            $user->email = $email;
+            $error = $this->saveRecord($user);
+            $sql = "update email set email = '" . addslashes($email) . "' where email = '" . addslashes($oldEmail) . "'";
+            $results = Yii::app()->db->createCommand($sql)->query();
+        }
+        
+        $this->writeJson(array('error'=>$error));
+        exit;
+    }
+    
+    public function actionTimezone()
+    {
+        $user     = $this->_getUser();
+        $timezone = (int) getRequestParameter('timezone', 0);
+        $dst      = (int) getRequestParameter('dst', 1);
+        $error    = '';
+        
+        if (!$user) {
+            $error = 'User not found.';
+        }
+        
+        if (!$error && !isSuperadmin() && !$user->paid) {
+            $error = 'You have not paid your entry fee.';
+        }
+        
+        if (!$error) {
+            $user->timezone = $timezone;
+            $user->use_dst  = $dst;
+            $error = $this->saveRecord($user);
+        }
+        
+        $this->writeJson(array('error'=>$error));
+        exit;
+    }
+    
+    public function actionChangepw()
+    {
+        $user  = $this->_getUser();
+        $old   = getRequestParameter('old', '');
+        $new1  = getRequestParameter('new1', '');
+        $new2  = getRequestParameter('new2', '');
+        $error = '';
+        
+        if (!$user) {
+            $error = 'User not found.';
+        }
+        
+        if (!$error && !isSuperadmin() && !$user->paid) {
+            $error = 'You have not paid your entry fee.';
+        }
+        
+        if (!$error && $new1 == '') {
+            $error = 'You must specify a password.';
+        }
+            
+        if (!$error && $new1 != $new2) {
+            $error = 'The passwords you entered do not match.';
+        }
+        
+        if (!$error) {
+            $password = UserIdentity::saltPassword($old, $user->salt);
+            if ($user->password != $password) {
+                $error = 'Your old password does not match';
+            }
+        }
+        
+        if (!$error) {
+            $user->password       = UserIdentity::saltPassword($new1, $user->salt);
+            $user->password_plain = $new1;      // KDHTODO should we remove this?
+            $error = $this->saveRecord($user);
+        }
+        
+        $this->writeJson(array('error'=>$error));
+        exit;
     }
     
     public function actionAvatar()
@@ -17,11 +156,11 @@ class ProfileController extends Controller
         // KDHTODO prevent user from making this change unless they have paid
         // KDHTODO obviously test this, including the ability for superadmin to modify another user's stuff
         
-        $userId = (isset($_GET['uid']) && isSuperadmin() ? (int) $_GET['uid'] : userId());
-        $user = User::model()->findByPk($userId);
+        $user = $this->_getUser();
         
         if (!$user) {
-            $error = 'User not found.';
+            $this->writeJson(array('error'=>'User not found.'));
+            exit;
         } else {
             
             Yii::import('application.lib.*');
@@ -54,7 +193,7 @@ class ProfileController extends Controller
                 
                 // update the user's extension
                 $user->avatar_ext = $extension;
-                $user->save();
+                $error = $this->saveRecord($user);
                 
                 // create a thumbnail
                 if (file_exists($destination)) {

@@ -3,34 +3,159 @@
 // KDHTODO enable username, password, and email changing
 // KDHTODO add support for view options on home page (show/hide mov, icons, etc)
 // KDHTODO add support for timezone
-// KDHTODO add support for address (which can be an address or paypal address or just a description of how to get paid if they win)
-
-
+// KDHTODO get rid of all the inline styles on these pages
+// KDHTODO re-enable lightbox
+// KDHTODO make save routines have consistent ways to show completion and errors (errors above the field in a div that takes up space whether or not it's empty, and successes as little save checkmarks to the left of each field that fade away)
+    // the checkmark should default to being present, and then should disappear when the user changes the field value or while an AJAX request is pending.  Once successful, it will reappear next to the field.
+// KDHTODO make it so on the inline edit fields, you can just hit ENTER to save
 
 ?>
 <script>
 var uploader,
-    defaultEmail = '<?php echo addslashes($user->email)?>',
-    defaultUsername = '<?php echo addslashes($user->username)?>';
+    defaults = {
+        email   : '<?php echo addslashes($user->email)?>',
+        username: '<?php echo addslashes($user->username)?>'
+    };
 
-function inputChanged($input, $button, defaultValue) {
-    if ($input.val() !== defaultValue) {
-        if (!$button.is(':visible')) {
-            $button.fadeIn('fast');
-        }
-        return true;
-    } else {
-        if ($button.is(':visible')) {
-            $button.fadeOut('fast');
-        }
-        return false;
-    }
-}
-
-
-// avatar upload
 $(function() {
-    var uploadTimeout = null;
+    var fnDynamicSave,
+        fnInputChanged,
+        fnUpdateTimezone,
+        fnPasswordDefault,
+        fnPasswordChange,
+        $passwordContainer,
+        uploadTimeout = null;
+
+    
+    fnInputChanged = function($input, $button, defaultValue, $msgArea) {
+        if ($input.val() !== defaultValue) {
+            if (!$button.is(':visible')) {
+                $button.fadeIn('fast');
+            }
+        } else {
+            if ($button.is(':visible')) {
+                $button.fadeOut('fast');
+            }
+            $msgArea.html('');
+        }
+    };
+    
+    
+    // function to add controls to inline input edits with save buttons that appear/disappear
+    fnDynamicSave = function(options) {
+        var $container = $(options.container),
+            $input, $button, $msgArea, inputTimeout;
+        
+        $container
+            .append($msgArea = $('<div style="color:red;"/>'))
+            .append($input = $('<input style="float:left;"/>')
+                .val(defaults[options.defaultKey])
+                .bind('change keyup', function(e) {
+                    clearTimeout(inputTimeout);
+                    if (e.type == 'keyup') {
+                        inputTimeout = setTimeout(function() {
+                            fnInputChanged($input, $button, defaults[options.defaultKey], $msgArea);
+                        }, 200);
+                    } else {
+                        fnInputChanged($input, $button, defaults[options.defaultKey], $msgArea);
+                    }
+                })
+            )
+            .append($('<div style="display:inline-block;float:left;"/>')
+                .append($button = $('<button/>')
+                    .addClass('button')
+                    .html('Save')
+                    .click(function(e) {
+                        var newValue = $input.val();
+                        e.preventDefault();
+                        if (!options.validator(newValue)) {
+                            $msgArea.html('The specified value is invalid.');
+                            $input.focus().select();
+                        } else {
+                            $button.prop('disabled', true).html('Saving...');
+                            $.ajax({
+                                url:        options.ajaxUrl,
+                                data:       {
+                                                uid:   <?php echo $user->id;?>,
+                                                value: newValue
+                                            },
+                                type:       'post',
+                                cache:      false,
+                                success:    function(response) {
+                                                if (response.hasOwnProperty('error') && response.error != '') {
+                                                    $msgArea.html(response.error);
+                                                } else {
+                                                    $msgArea.html('');
+                                                    defaults[options.defaultKey] = newValue;
+                                                    fnInputChanged($input, $button, defaults[options.defaultKey], $msgArea);
+                                                }
+                                            },
+                                error:      function() {
+                                                $msgArea.html('An error occurred, please try again.');
+                                            },
+                                complete:   function() {
+                                                $button.prop('disabled', false).html('Save');
+                                            },
+                                dataType:   'json'
+                            });
+                        }
+                    })
+                    .hide()
+                )
+            );
+    };
+    
+    
+    // set up inline updaters
+    fnDynamicSave({
+        container:  '#username-area',
+        defaultKey: 'username',
+        ajaxUrl:    '<?php echo $this->createAbsoluteUrl('profile/username')?>',
+        validator:  function(val) {
+            return val != '';
+        }
+    });
+    fnDynamicSave({
+        container:  '#email-area',
+        defaultKey: 'email',
+        ajaxUrl:    '<?php echo $this->createAbsoluteUrl('profile/email')?>',
+        validator:  globals.isEmail
+    });
+
+
+    // timezone updater
+    fnUpdateTimezone = function() {
+        $.ajax({
+            url:        '<?php echo $this->createAbsoluteUrl('profile/timezone')?>',
+            data:       {
+                            uid:      <?php echo $user->id;?>,
+                            timezone: $('#timezone').val(),
+                            dst:      $('#use_dst').is(':checked') ? 1 : 0
+                        },
+            type:       'post',
+            cache:      false,
+            success:    function(response) {
+                            if (response.hasOwnProperty('error') && response.error != '') {
+                                $('#timezone-message').html(response.error);
+                            } else {
+                                $('#timezone-message').html('');
+                                $('#timezone-saved').show();
+                                setTimeout(function() {
+                                    $('#timezone-saved').fadeOut('fast');
+                                }, 2000);
+                            }
+                        },
+            error:      function() {
+                            $('#timezone-message').html('An error occurred, please try again.');
+                        },
+            dataType:   'json'
+        });
+    };
+    $('#timezone').on('change', fnUpdateTimezone);
+    $('#use_dst').on('click', fnUpdateTimezone);
+    
+    
+    // avatar upload
     uploader = new qq.FileUploader({
         element: $('#file-uploader').get(0),
         action: '<?php echo $this->createAbsoluteUrl('profile/avatar')?>',
@@ -61,156 +186,15 @@ $(function() {
         onCancel: function(id, filename) {
         }
     });
-});
 
-// username changer
-$(function() {
-    var $container = $('#username-area'),
-        $input,
-        $button,
-        $msgArea,
-        inputTimeout;
-    
-    function changeVal() {
-        if (!inputChanged($input, $button, defaultUsername)) {
-            $msgArea.html('');
-        }
-    }
-    
-    $container
-        .append($msgArea = $('<div style="color:red;"/>'))
-        .append($input = $('<input style="float:left;"/>')
-            .val(defaultUsername)
-            .bind('change keyup', function(e) {
-                clearTimeout(inputTimeout);
-                if (e.type == 'keyup') {
-                    inputTimeout = setTimeout(changeVal, 200);
-                } else {
-                    changeVal();
-                }
-            })
-        )
-        .append($('<div style="display:inline-block;float:left;"/>')
-            .append($button = $('<button/>')
-                .addClass('button')
-                .html('Save')
-                .click(function(e) {
-                    var newUsername = $input.val();
-                    e.preventDefault();
-                    if (newUsername == '') {
-                        $msgArea.html('You must specify a username.');
-                        $input.focus().select();
-                    } else {
-                        $button.prop('disabled', true).html('Saving...');
-                        $.ajax({
-                            url:        URL.AJAX,
-                            data:       {
-                                            method: 'changeusername',
-                                            username: newUsername
-                                        },
-                            type:       'post',
-                            cache:      false,
-                            success:    function(response) {
-                                            if (response.hasOwnProperty('errormsg') && response.errormsg != '') {
-                                                $msgArea.html(response.errormsg);
-                                            } else {
-                                                $msgArea.html('');
-                                                defaultUsername = newUsername;
-                                                changeVal();
-                                            }
-                                        },
-                            error:      function() {
-                                            $msgArea.html('An error occurred, please try again.');
-                                        },
-                            complete:   function() {
-                                            $button.prop('disabled', false).html('Save');
-                                        }
-                        });
-                    }
-                })
-                .hide()
-            )
-        );
-});
 
-// email changer
-$(function() {
-    var $container = $('#email-area'),
-        $input,
-        $button,
-        $msgArea,
-        inputTimeout;
+    // password changer
+    $passwordContainer = $('#password-area');
     
-    function changeVal() {
-        if (!inputChanged($input, $button, defaultEmail)) {
-            $msgArea.html('');
-        }
-    }
-    
-    $container
-        .append($msgArea = $('<div style="color:red;"/>'))
-        .append($input = $('<input style="float:left;"/>')
-            .val(defaultEmail)
-            .bind('change keyup', function(e) {
-                clearTimeout(inputTimeout);
-                if (e.type == 'keyup') {
-                    inputTimeout = setTimeout(changeVal, 200);
-                } else {
-                    changeVal();
-                }
-            })
-        )
-        .append($('<div style="display:inline-block;float:left;"/>')
-            .append($button = $('<button/>')
-                .addClass('button')
-                .html('Save')
-                .click(function(e) {
-                    var newEmail = $input.val();
-                    e.preventDefault();
-                    if (!isEmail(newEmail)) {
-                        $msgArea.html('Your email address does not appear to be valid.');
-                        $input.focus().select();
-                    } else {
-                        $button.prop('disabled', true).html('Saving...');
-                        $.ajax({
-                            url:        URL.AJAX,
-                            data:       {
-                                            method: 'changeemail',
-                                            email: newEmail
-                                        },
-                            type:       'post',
-                            cache:      false,
-                            success:    function(response) {
-                                            if (response.hasOwnProperty('errormsg') && response.errormsg != '') {
-                                                $msgArea.html(response.errormsg);
-                                            } else {
-                                                $msgArea.html('');
-                                                defaultEmail = newEmail;
-                                                changeVal();
-                                            }
-                                        },
-                            error:      function() {
-                                            $msgArea.html('An error occurred, please try again.');
-                                        },
-                            complete:   function() {
-                                            $button.prop('disabled', false).html('Save');
-                                        }
-                        });
-                    }
-                })
-                .hide()
-            )
-        );
-});
-
-// password changer
-$(function() {
-    var $container = $('#password-area');
-    
-    function passwordDefault(showChanged) {
+    fnPasswordDefault = function(showChanged) {
         var pwChanged = typeof showChanged !== 'undefined' && showChanged === true,
             $changeMsg = $('<div style="color:green;font-weight:bold;">Your password has been changed</div>');
-        $container
+        $passwordContainer
             .empty()
             .append(pwChanged ? $changeMsg : '')
             .append('*****************<br />')
@@ -219,7 +203,7 @@ $(function() {
                 .html('Change')
                 .click(function(e) {
                     e.preventDefault();
-                    passwordChange();
+                    fnPasswordChange();
                 })
             );
         if (pwChanged) {
@@ -227,11 +211,11 @@ $(function() {
                 $changeMsg.fadeOut(function() { $changeMsg.remove(); });
             }, 3000);
         }
-    }
+    };
     
-    function passwordChange() {
+    fnPasswordChange = function() {
         var $oldpw, $newpw1, $newpw2, $submitButton, $cancelButton, $msgArea;
-        $container
+        $passwordContainer
             .empty()
             .append($msgArea = $('<div style="color:red;"/>'))
             .append($('<table/>')
@@ -295,20 +279,20 @@ $(function() {
                                     $submitButton.prop('disabled', true).html('Changing...');
                                     $cancelButton.prop('disabled', true);
                                     $.ajax({
-                                        url:        URL.AJAX,
+                                        url:        '<?php echo $this->createAbsoluteUrl('profile/changepw')?>',
                                         data:       {
-                                                        method: 'changepw',
-                                                        old: old,
+                                                        uid:  <?php echo $user->id;?>,
+                                                        old:  old,
                                                         new1: new1,
                                                         new2: new2
                                                     },
                                         type:       'post',
                                         cache:      false,
                                         success:    function(response) {
-                                                        if (response.hasOwnProperty('errormsg') && response.errormsg != '') {
-                                                            $msgArea.html(response.errormsg);
+                                                        if (response.hasOwnProperty('error') && response.error != '') {
+                                                            $msgArea.html(response.error);
                                                         } else {
-                                                            passwordDefault(true);
+                                                            fnPasswordDefault(true);
                                                         }
                                                     },
                                         error:      function() {
@@ -317,7 +301,8 @@ $(function() {
                                         complete:   function() {
                                                         $submitButton.prop('disabled', false).html('Save');
                                                         $cancelButton.prop('disabled', false);
-                                                    }
+                                                    },
+                                        dataType:   'json'
                                     });
                                 }
                             })
@@ -328,7 +313,7 @@ $(function() {
                             .html('Cancel')
                             .click(function(e) {
                                 e.preventDefault();
-                                passwordDefault();
+                                fnPasswordDefault();
                             })
                         )
                     )
@@ -336,51 +321,62 @@ $(function() {
             );
         
         $oldpw.focus();
-    }
+    };
     
-    passwordDefault();
+    fnPasswordDefault();
 });
 </script>
 
 
-<div style="max-width:800px;">
-    <h1 class="abouth1">Profile/Options</h1>
-    <p>
-    <table border="0" cellspacing="2" cellpadding="10" class="options">
-        <tr>
-            <th nowrap="nowrap">Username</th>
-            <td id="username-area"></td>
-        </tr>
-        <tr>
-            <th nowrap="nowrap">Email</th>
-            <td id="email-area"></td>
-        </tr>
-        <tr>
-            <th nowrap="nowrap">Password</th>
-            <td id="password-area"></td>
-        </tr>
-        <tr>
-            <th nowrap="nowrap">Profile Image</th>
-            <td>
+<table border="0" cellspacing="2" cellpadding="10" class="options">
+    <tr>
+        <th nowrap="nowrap">Username</th>
+        <td id="username-area"></td>
+    </tr>
+    <tr>
+        <th nowrap="nowrap">Email</th>
+        <td id="email-area"></td>
+    </tr>
+    <tr>
+        <th nowrap="nowrap">Timezone</th>
+        <td>
+            <div id="timezone-message" style="color:red;"></div>
+            <select id="timezone">
                 <?php
-                echo getUserAvatar($user->id, $user->avatar_ext);
+                $defaultTimezone = userField('timezone');
+                echo createOption(-2, 'Pacific Time', $defaultTimezone);
+                echo createOption(-1, 'Mountain Time', $defaultTimezone);
+                echo createOption(0, 'Central Time', $defaultTimezone);
+                echo createOption(1, 'Eastern Time', $defaultTimezone);
                 ?>
-                <br />
-                This is your profile image that will appear on the home page.  Note:<br />
-                <ul>
-                    <li>File size limit of 1MB.</li>
-                    <li>Only images of type .jpg, .gif, or .png are allowed.</li>
-                    <li>The images will be automatically resized for you.</li>
-                </ul>
-                Click the button below to select an image, or drag an image over the button to upload.<br />(Unless you have IE in which case you suck and don't deserve to have such convenient features.)<br />
-                <br />
-                <div id="file-uploader"></div>
-            </td>
-        </tr>
-    </table>
-    </p>
-    <br /><br /><br /><br />
-</div>
+            </select>
+            <input type="checkbox" id="use_dst"<?php echo userField('use_dst') ? ' checked="checked"' : ''?> /> Enable Automatic Daylight Savings Time Adjustments
+            <div id="timezone-saved" style="display:none;">Saved</div>
+        </td>
+    </tr>
+    <tr>
+        <th nowrap="nowrap">Password</th>
+        <td id="password-area"></td>
+    </tr>
+    <tr>
+        <th nowrap="nowrap">Profile Image</th>
+        <td>
+            <?php
+            echo getUserAvatar($user->id, $user->avatar_ext);
+            ?>
+            <br />
+            This is your profile image that will appear on the home page.  Note:<br />
+            <ul>
+                <li>File size limit of 1MB.</li>
+                <li>Only images of type .jpg, .gif, or .png are allowed.</li>
+                <li>The images will be automatically resized for you.</li>
+            </ul>
+            Click the button below to select an image, or drag an image over the button to upload.<br />(Unless you have IE in which case you suck and don't deserve to have such convenient features.)<br />
+            <br />
+            <div id="file-uploader"></div>
+        </td>
+    </tr>
+</table>
 
 <?php
 

@@ -144,6 +144,26 @@ Debug Order: {{order}}<br />
                 ?>
                 <!-- KDHTODO instead of old way, where there tries to be 1 column for who's ahead, let there be a column for every pot, and a final column for total money -->
             </tr>
+            <?php
+            if (isAdmin()) {
+                ?>
+                <tr>
+                    <th colspan="2"/>
+                    <?php
+                    if (userField('collapse_history') && $currentWeek > 2) {
+                        echo '<th></th>';
+                    }
+                    for ($week=1; $week<=21; $week++) {
+                        if (!userField('collapse_history') || $week >= $currentWeek) {
+                            // KDHTODO make font much smaller so it doesn't make columns wider
+                            echo '<th><a href="' . Yii::app()->createAbsoluteUrl('admin/showCorrect', array('week'=>$week)) . '">Correct</th>';
+                        }
+                    }
+                    ?>
+                    </tr>
+                <?php
+            }
+            ?>
         </thead>
         <tbody>
             <!-- KDHTODO highlight the current user's row -->

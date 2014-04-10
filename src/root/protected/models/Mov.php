@@ -29,6 +29,7 @@ class Mov extends DeepActiveRecord
     {
         return array(
             'picks' => array(self::HAS_MANY, 'Pick', array('teamid', 'yr', 'week')),
+            'team'  => array(self::BELONGS_TO, 'Team', 'teamid'),
         );
     }
     

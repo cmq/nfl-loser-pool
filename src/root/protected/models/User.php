@@ -33,6 +33,8 @@ class User extends DeepActiveRecord
             'badges'     => array(self::HAS_MANY, 'Badge', array('badgeid'=>'id'), 'through'=>'userBadges'),
             'userYears'  => array(self::HAS_MANY, 'UserYear', 'userid'),
             'wins'       => array(self::HAS_MANY, 'Win', 'userid'),
+            'talks'      => array(self::HAS_MANY, 'Talk', 'postedby'),
+            'talkats'    => array(self::HAS_MANY, 'Talk', 'postedat'),
         );
     }
     
@@ -117,7 +119,7 @@ class User extends DeepActiveRecord
             ),
         ));
         return $this;
-    }    
+    }
     
     
     /**

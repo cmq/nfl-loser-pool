@@ -34,7 +34,12 @@ class SiteController extends Controller
             'select' => 't.id, t.username, t.avatar_ext, t.power_points, t.power_ranking, t.previous_power_ranking, t.previous_power_points, t.best_power_ranking',
             'order' => 't.id, picks.yr, picks.week',
         ));
-        $this->render('index', array('boardData'=>$boardData));
+        $talk = Talk::model()->findAll(array(
+            'condition' => 't.yr = ' . getCurrentYear(),
+            'limit'     => 5,
+            'order'     => 't.postedon desc'
+        ));
+        $this->render('index', array('boardData'=>$boardData, 'talk'=>$talk));
     }
     
     /**

@@ -18,6 +18,7 @@
  *  - Allow the user to set their own timezone and whether or not they use DST
  *  - Allow the user to set their address for payments (they can fill out paypal or mailing address)
  *  - Re-add lightbox (I removed it so I could work on testing the profile page)
+ *  - On past-year pages, show all talk messages from that year
  *  - Customized View options on the main page:
  *  	- Allow these to be changed from a settings page, or toggled directly on the home page
  *  		- Have "presets" that set each of them, like the "no frills" preset, with everything off, or the "full experience" preset, with everything on, etc
@@ -80,7 +81,6 @@
         
         <link href="<?php echo baseUrl('/css/main.css'); ?>" rel="stylesheet" />
         <script src="<?php echo baseUrl('/js/conf.js'); ?>"></script>
-        <script src="<?php echo baseUrl('/js/lib/jquery-1.11.0.min.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/jquery.ba-getobject.min.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/angular.min.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/moment.js'); ?>"></script>

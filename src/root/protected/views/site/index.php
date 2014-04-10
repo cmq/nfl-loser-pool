@@ -102,6 +102,26 @@ loserpool.filter('stylizeMov', function() {
 });
 </script>
 
+
+<h4>Most Recent Talk</h4>
+<?php
+foreach ($talk as $t) {
+    // KDHTODO uses class instead of inline styles
+    ?>
+    <div style="border: black 1px solid; width: 500px;">
+        <?php
+        if ($t->at) {
+            echo '<strong>@' . $t->at->username . '</strong><br />';
+        }
+        // KDHTODO need to change \n to <br>
+        // KDHTODO format posted date
+        echo $t->postedon . '<br />' . $t->post;
+        ?>
+    </div>
+    <?php
+}
+?>
+
 <h5>Debug Current Week / Header Week: <?php echo $currentWeek;?> / <?php echo getHeaderWeek();?></h5>
 <div ng-controller="BoardCtrl">
 Debug Order: {{order}}<br />
@@ -135,7 +155,7 @@ Debug Order: {{order}}<br />
                     <!-- KDHTODO format this similar to the old site (extract into directive or something?) -->
                     <!-- KDHTODO add "alt" tags and title attributes -->
                     <?php
-                    if (userField('show_badges')):
+                    if (userField('show_badges')) {
                         ?>
                         <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnerbadge-wrapper">
                             <!-- KDHTODO make badges clickable to show modal or go to a link? -->
@@ -146,27 +166,27 @@ Debug Order: {{order}}<br />
                         <!-- KDHTODO change alt text to something real (not the zindex) -->
                         <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
                         <?php
-                    endif;
+                    }
                     ?>
                 </td>
                 <td ng-if="viewOptions.collapseHistory" align="center">{{getOldRecord(user)}}</td>
                 <td ng-repeat="pick in user.picks" ng-if="pick.week >= currentWeek || !viewOptions.collapseHistory" ng-class="{incorrect: pick.incorrect}" align="center">
                     <div style="position:relative;">    <!-- KDHTODO add a mov-wrapper class instead of an inline style -->
                         <?php
-                        if (userField('show_mov')):
+                        if (userField('show_mov')) {
                             ?><div class="pickMov" ng-class="{old: pick.week < currentWeek || pick.year < currentYear, incorrect: pick.incorrect}">{{pick.mov.mov | stylizeMov}}</div><?php
-                        endif;
+                        }
                         ?>
                         <!-- KDHTODO add "set by system" to the title when appropriate -->
                         <!-- KDHTODO determine when to use logo-small-inactive, logo-medium-inactive, etc -->
                         
                         <!-- KDHTODO the filter for image offset is a fixed 50ximage_offset, but we can't supply a filter for a parameter of another filter (that I've seen).  However, since we know the constant is there an easier way to do this? -->
                         <?php
-                        if (userField('show_logos')):
+                        if (userField('show_logos')) {
                             ?><div class="logo logo-{{pick | teamLogo}}" style="background-position:{{pick.team | teamLogoOffset:'small'}}" title="{{pick.team.longname}}"></div><?php
-                        else:
+                        } else {
                             ?><span>{{pick.team.shortname}}</span><?php
-                        endif;
+                        }
                         ?>
                     </div>
                 </td>

@@ -106,15 +106,16 @@ loserpool.filter('stylizeMov', function() {
 <h4>Most Recent Talk</h4>
 <?php
 foreach ($talk as $t) {
-    // KDHTODO uses class instead of inline styles
+    // KDHTODO format and use classes instead of inline styles
     ?>
     <div style="border: black 1px solid; width: 500px;">
         <?php
+        echo 'By: ' . $t->user->username . '<br />';
         if ($t->at) {
             echo '<strong>@' . $t->at->username . '</strong><br />';
         }
         // KDHTODO need to change \n to <br>
-        // KDHTODO format posted date
+        // KDHTODO format posted date 
         echo $t->postedon . '<br />' . $t->post;
         ?>
     </div>

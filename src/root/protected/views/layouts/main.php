@@ -19,6 +19,7 @@
  *  - Allow the user to set their address for payments (they can fill out paypal or mailing address)
  *  - Re-add lightbox (I removed it so I could work on testing the profile page)
  *  - On past-year pages, show all talk messages from that year
+ *  - Create a profile page for others to view, so I can click on a user's name and see their page which shows their history (seasons played, badges, wins, stats, rankings, etc)
  *  - Customized View options on the main page:
  *  	- Allow these to be changed from a settings page, or toggled directly on the home page
  *  		- Have "presets" that set each of them, like the "no frills" preset, with everything off, or the "full experience" preset, with everything on, etc

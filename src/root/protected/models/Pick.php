@@ -64,7 +64,7 @@ class Pick extends DeepActiveRecord
         return array(
             array('yr, week, teamid', 'required'),
             array('yr, week, teamid', 'type', 'type'=>'integer'),
-            array('week', 'in', 'range'=>array(1,21)),
+            array('week', 'numerical', 'integerOnly'=>true, 'min'=>1, 'max'=>21),
         );
     }
     
@@ -79,6 +79,24 @@ class Pick extends DeepActiveRecord
         $this->yr          = (int)  $this->yr;
         $this->incorrect   = (bool) $this->incorrect;
         $this->setbysystem = (bool) $this->setbysystem;
-    }    
+    }
+    
+    
+    /**
+     * Save the record
+     * This overrides the default CActiveRecord::save in order to set up some
+     * defaults
+     * @see CActiveRecord::save()
+     */
+    public function save($runValidation = true, $attributes = NULL)
+    {
+        if ($this->getIsNewRecord()) {
+            $this->created = new CDbExpression('NOW()');
+        }
+        $this->updated = new CDbExpression('NOW()');
+        return parent::save($runValidation, $attributes);
+    }
+    
+    
     
 }

@@ -12,6 +12,18 @@ class ProfileController extends Controller
         $user   = User::model()->findByPk($userId);
         return $user;
     }
+    
+    private function _checkUser($user, $forcePaid = true)
+    {
+        $error = '';
+        if (!$user) {
+            $error = 'User not found.';
+        }
+        if (!$error && $forcePaid && !isSuperadmin() && !$user->paid) {
+            $error = 'You have not paid your entry fee.';
+        }
+        return $error;
+    }
 
     // KDHTODO prevent any actions on this controller from executing if the user is a guest
     // KDHTODO should some of the validations in this controller move into the user model?  Probably.
@@ -25,27 +37,17 @@ class ProfileController extends Controller
     {
         $user     = $this->_getUser();
         $username = getRequestParameter('value', '');
-        $error    = '';
-        
-        if (!$user) {
-            $error = 'User not found.';
-        }
-        
-        if (!$error && !isSuperadmin() && !$user->paid) {
-            $error = 'You have not paid your entry fee.';
-        }
+        $error    = $this->_checkuser($user);
         
         if (!$error && $username == '') {
             $error = 'You must specify a username.';
         }
-        
         if (!$error) {
             $duplicateUser = User::model()->findByAttributes(array('username'=>$username));
             if ($duplicateUser && $duplicateUser->id != $user->id) {
                 $error = "The username <strong>$username</strong> is already taken.";
             }
         }
-        
         if (!$error) {
             $user->username = $username;
             $error = $this->saveRecord($user);
@@ -59,20 +61,11 @@ class ProfileController extends Controller
     {
         $user  = $this->_getUser();
         $email = getRequestParameter('value', '');
-        $error = '';
-        
-        if (!$user) {
-            $error = 'User not found.';
-        }
-        
-        if (!$error && !isSuperadmin() && !$user->paid) {
-            $error = 'You have not paid your entry fee.';
-        }
+        $error = $this->_checkuser($user);
         
         if (!$error && !isEmail($email)) {
             $error = 'Your email address does not appear to be valid.';
         }
-        
         if (!$error) {
             $oldEmail = $user->email;
             $user->email = $email;
@@ -90,15 +83,7 @@ class ProfileController extends Controller
         $user     = $this->_getUser();
         $timezone = (int) getRequestParameter('timezone', 0);
         $dst      = (int) getRequestParameter('dst', 1);
-        $error    = '';
-        
-        if (!$user) {
-            $error = 'User not found.';
-        }
-        
-        if (!$error && !isSuperadmin() && !$user->paid) {
-            $error = 'You have not paid your entry fee.';
-        }
+        $error    = $this->_checkuser($user);
         
         if (!$error) {
             $user->timezone = $timezone;
@@ -116,34 +101,50 @@ class ProfileController extends Controller
         $old   = getRequestParameter('old', '');
         $new1  = getRequestParameter('new1', '');
         $new2  = getRequestParameter('new2', '');
-        $error = '';
-        
-        if (!$user) {
-            $error = 'User not found.';
-        }
-        
-        if (!$error && !isSuperadmin() && !$user->paid) {
-            $error = 'You have not paid your entry fee.';
-        }
+        $error = $this->_checkuser($user);
         
         if (!$error && $new1 == '') {
             $error = 'You must specify a password.';
         }
-            
         if (!$error && $new1 != $new2) {
             $error = 'The passwords you entered do not match.';
         }
-        
         if (!$error) {
             $password = UserIdentity::saltPassword($old, $user->salt);
             if ($user->password != $password) {
                 $error = 'Your old password does not match';
             }
         }
+        if (!$error) {
+            $user->password = UserIdentity::saltPassword($new1, $user->salt);
+            $error = $this->saveRecord($user);
+        }
+        
+        $this->writeJson(array('error'=>$error));
+        exit;
+    }
+    
+    public function actionChangeViewSetting()
+    {
+        $user    = $this->_getUser();
+        $setting = (string) getRequestParameter('setting', 0);
+        $value   = (int) getRequestParameter('value', 0);
+        $error   = $this->_checkuser($user);
         
         if (!$error) {
-            $user->password       = UserIdentity::saltPassword($new1, $user->salt);
-            $user->password_plain = $new1;      // KDHTODO should we remove this?
+            switch ($setting) {
+                case 'collapse_history':
+                case 'show_badges':
+                case 'show_logos':
+                case 'show_mov':
+                    $user->$setting = $value;
+                    break;
+                default:
+                    $error = "Unrecognized setting: $setting";
+                    break;
+            }
+        }
+        if (!$error) {
             $error = $this->saveRecord($user);
         }
         
@@ -153,12 +154,12 @@ class ProfileController extends Controller
     
     public function actionAvatar()
     {
-        // KDHTODO prevent user from making this change unless they have paid
         // KDHTODO obviously test this, including the ability for superadmin to modify another user's stuff
         
-        $user = $this->_getUser();
+        $user  = $this->_getUser();
+        $error = $this->_checkuser($user);
         
-        if (!$user) {
+        if ($error) {
             $this->writeJson(array('error'=>'User not found.'));
             exit;
         } else {

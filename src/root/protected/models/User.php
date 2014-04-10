@@ -52,6 +52,10 @@ class User extends DeepActiveRecord
             array('superadmin', 'in', 'range'=>array(0,1)),
             array('timezone', 'in', 'range'=>array(-2,-1,0,1)),
             array('use_dst', 'in', 'range'=>array(0,1)),
+            array('collapse_history', 'in', 'range'=>array(0,1)),
+            array('show_badges', 'in', 'range'=>array(0,1)),
+            array('show_logos', 'in', 'range'=>array(0,1)),
+            array('show_mov', 'in', 'range'=>array(0,1)),
             // KDHTODO add other rules?
         );
     }
@@ -67,7 +71,8 @@ class User extends DeepActiveRecord
                 'condition' => 't.active=1',
                 'with'      => array(
                     'userYears' => array(
-                        'condition' => 'userYears.yr = ' . getCurrentYear(),
+                        'joinType' => 'INNER JOIN',
+                        'on'       => 'userYears.yr = ' . getCurrentYear(),
                     ),
                 ),
             ),

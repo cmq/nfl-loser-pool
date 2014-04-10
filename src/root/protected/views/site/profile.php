@@ -153,6 +153,37 @@ $(function() {
     };
     $('#timezone').on('change', fnUpdateTimezone);
     $('#use_dst').on('click', fnUpdateTimezone);
+
+
+    // view settings updater
+    $('#collapse_history').add('#show_badges').add('#show_logos').add('#show_mov').on('click', function() {
+        var $this = $(this);
+        $.ajax({
+            url:        '<?php echo $this->createAbsoluteUrl('profile/changeViewSetting')?>',
+            data:       {
+                            uid:     <?php echo $user->id;?>,
+                            setting: $this.attr('id'),
+                            value:   $this.is(':checked') ? 1 : 0
+                        },
+            type:       'post',
+            cache:      false,
+            success:    function(response) {
+                            if (response.hasOwnProperty('error') && response.error != '') {
+                                $('#viewsetting-message').html(response.error);
+                            } else {
+                                $('#viewsetting-message').html('');
+                                $('#viewsetting-saved').show();
+                                setTimeout(function() {
+                                    $('#viewsetting-saved').fadeOut('fast');
+                                }, 2000);
+                            }
+                        },
+            error:      function() {
+                            $('#viewsetting-message').html('An error occurred, please try again.');
+                        },
+            dataType:   'json'
+        });
+    });
     
     
     // avatar upload
@@ -357,6 +388,17 @@ $(function() {
     <tr>
         <th nowrap="nowrap">Password</th>
         <td id="password-area"></td>
+    </tr>
+    <tr>
+        <th nowrap="nowrap">View Settings</th>
+        <td>
+            <div id="viewsetting-message" style="color:red;"></div>
+            <input type="checkbox" id="collapse_history"<?php echo userField('collapse_history') ? ' checked="checked"' : ''?> /> Collapse History<br />
+            <input type="checkbox" id="show_badges"<?php echo userField('show_badges') ? ' checked="checked"' : ''?> /> Show User Badges<br />
+            <input type="checkbox" id="show_logos"<?php echo userField('show_logos') ? ' checked="checked"' : ''?> /> Show Team Logos<br />
+            <input type="checkbox" id="show_mov"<?php echo userField('show_mov') ? ' checked="checked"' : ''?> /> Show Margin of Defeat<br />
+            <div id="viewsetting-saved" style="display:none;">Saved</div>
+        </td>
     </tr>
     <tr>
         <th nowrap="nowrap">Profile Image</th>

@@ -34,8 +34,16 @@ loserpool.controller('PickPageCtrl', ['$scope', '$http', function($scope, $http)
                         week: week+1,
                         team: newValue[week].team.id
                     }).success(function(data, status, headers, config) {
+                        // KDHTODO do something different
+                        if (data && data.hasOwnProperty('error') && data.error !== '') {
+                            alert(data.error);
+                        }
                         console.dir(arguments);
                     }).error(function(data, status, headers, config) {
+                        // KDHTODO do something different
+                        if (data && data.hasOwnProperty('error') && data.error !== '') {
+                            alert(data.error);
+                        }
                         console.dir(arguments);
                     });
                 }

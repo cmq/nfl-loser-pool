@@ -28,7 +28,9 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $boardData = User::model()->active()->withBadges()->withWins()->withPicks(true, isSuperadmin())->findAll(array(
+        // for some reason if these scopes aren't applied in exactly the right order, something gets missed.
+        // ironically, if you apply them in the same order twice, the second time everything works properly... must be something jacked with Yii
+        $boardData = User::model()->withPicks(true, isSuperadmin())->active()->withBadges()->withWins()->findAll(array(
             'select' => 't.id, t.username, t.avatar_ext, t.power_points, t.power_ranking, t.previous_power_ranking, t.previous_power_points, t.best_power_ranking',
             'order' => 't.id, picks.yr, picks.week',
         ));

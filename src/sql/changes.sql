@@ -12,3 +12,11 @@ update badge set zindex=73 where id = 17;
 
 update user add timezone int not null default 0;
 update user add use_dst tinyint(1) not null default 1;
+
+update pick add created datetime null;
+update pick add updated datetime null;
+
+update user add collapse_history tinyint(1) not null default 0;
+update user add show_badges tinyint(1) not null default 1;
+update user add show_logos tinyint(1) not null default 1;
+update user add show_mov tinyint(1) not null default 1;

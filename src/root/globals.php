@@ -5,7 +5,9 @@ function user() {
     global $__refreshedUser;
     if (is_null($__refreshedUser)) {
         $__refreshedUser = User::model()->findByPk(Yii::app()->user->id);
-        $__refreshedUser->refresh();
+        if ($__refreshedUser) {
+            $__refreshedUser->refresh();
+        }
     }
     return $__refreshedUser;
 }
@@ -27,6 +29,14 @@ function userField($field) {
         return $user->record[$field];
     }
     return false;
+}
+
+function isGuest() {
+    $user = Yii::app()->user;
+    if ($user) {
+        return $user->isGuest;
+    }
+    return true;
 }
 
 

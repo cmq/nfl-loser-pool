@@ -13,20 +13,26 @@ class ProfileController extends Controller
         return $user;
     }
     
-    private function _checkUser($user, $forcePaid = true)
+    private function _checkUser($user)
     {
         $error = '';
         if (!$user) {
             $error = 'User not found.';
         }
-        if (!$error && $forcePaid && !isSuperadmin() && !$user->paid) {
-            $error = 'You have not paid your entry fee.';
-        }
         return $error;
     }
 
-    // KDHTODO prevent any actions on this controller from executing if the user is a guest
-    // KDHTODO should some of the validations in this controller move into the user model?  Probably.
+    /**
+     * declare action filters
+     * @see CController::filters()
+     */
+    public function filters() {
+        return array(
+            array('application.filters.RegisteredFilter'),
+            array('application.filters.PaidFilter'),
+        );
+    }
+    
     public function actionIndex()
     {
         // no index action

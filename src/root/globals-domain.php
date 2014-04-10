@@ -7,6 +7,12 @@ function isSuperadmin() {
     return (bool) userField('superadmin');
 }
 
+function isPaid() {
+    $user = user();
+    $thisYear = $user ? $user->thisYear : null;
+    return $thisYear ? (bool) $thisYear->paid : false;
+}
+
 function getCurrentYear() {
     return param('currentYear');
 }

@@ -34,7 +34,7 @@ class Controller extends CController
     public function error($error) {
 		if (Yii::app()->request->isAjaxRequest) {
             $this->layout = '//layouts/naked';
-            $this->writeJson(array('error'=>$error['message']));
+            $this->writeJson(array('error'=>$error));
 		} else {
 		    echo $error;
             exit;
@@ -49,7 +49,7 @@ class Controller extends CController
 		if ($error) {
 			if (Yii::app()->request->isAjaxRequest) {
                 $this->layout = '//layouts/naked';
-                $this->writeJson(array('error'=>$error['message']));
+                $this->writeJson(array('error'=>$error));
 			} else {
 				$this->render('error', $error);
 			}

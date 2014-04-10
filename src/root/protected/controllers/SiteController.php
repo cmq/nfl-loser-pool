@@ -3,6 +3,17 @@
 class SiteController extends Controller
 {
     /**
+     * declare action filters
+     * @see CController::filters()
+     */
+    public function filters() {
+        return array(
+            array('application.filters.RegisteredFilter + profile, pick'),
+            array('application.filters.PaidFilter + profile'),
+        );
+    }
+    
+    /**
      * Declares class-based actions.
      */
     public function actions()
@@ -73,7 +84,7 @@ class SiteController extends Controller
         if($error=Yii::app()->errorHandler->error)
         {
             if(Yii::app()->request->isAjaxRequest)
-                echo $error['message'];
+                echo $error;
             else
                 $this->render('error', $error);
         }

@@ -103,8 +103,12 @@
         Navigation:<br />
         <?php
         echo CHtml::link('Home', $this->createAbsoluteUrl('site/index')) . '<br />';
-        echo CHtml::link('Enter Picks', $this->createAbsoluteUrl('site/pick')) . '<br />';
-        echo CHtml::link('Profile', $this->createAbsoluteUrl('site/profile')) . '<br />';
+        if (!isGuest()) {
+            echo CHtml::link('Enter Picks', $this->createAbsoluteUrl('site/pick')) . '<br />';
+            if (isPaid()) {
+                echo CHtml::link('Profile', $this->createAbsoluteUrl('site/profile')) . '<br />';
+            }
+        }
         ?>
         <hr />
         <?php echo $content; ?>

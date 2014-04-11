@@ -1,7 +1,6 @@
 <?php
 
 // KDHTODO normally when this page is submitted, we run power.php and _stats.php -- need to replace those
-// KDHTODO handle javascript interactions
 // KDHTODO handle POSTing
 
 $week = isset($_GET['week']) ? (int) $_GET['week'] : getCurrentWeek();
@@ -10,6 +9,57 @@ if ($bShowScores) {
     $scoresFinal = getLiveScoring();
 }
 ?>
+
+
+<script language="javascript">
+$(function() {
+    
+    // set up a function to count the total mov and to bold those mov rows that do not yet have values
+    var fnMov = function() {
+        var netMov = 0;
+        $('input.mov').each(function() {
+            var mov = parseInt($(this).val(), 10);
+            if (isNaN(mov) || mov === 0) {
+                $('#team' + $(this).attr('id')).addClass('bold');       // KDHTODO need to make sure we have the "bold" class
+            } else {
+                $('#team' + $(this).attr('id')).removeClass('bold');    // KDHTODO need to make sure we have the "bold" class
+            }
+            if (!isNaN(mov)) {
+                netMov += mov;
+            }
+        });
+        $('#netmov').html(netMov);
+    };
+
+    // make the "apply mov" buttons set the mov fields
+    $('.applymov').click(function(e) {
+        var $this = $(this);
+        e.preventDefault();
+        $('input.mov[teamid=' + $this.attr('teamid') + ']').val($this.attr('mov')).trigger('change');
+    });
+
+    // make the "apply all" button click the individual "apply mov" buttons
+    $('.applymovall').click(function(e) {
+        e.preventDefault();
+        $('.applymov').trigger('click');
+    });
+
+    // when a mov field is populated, automatically select correct/incorrect for picks for that team
+    $('input.mov').change(function() {
+        var $this = $(this),
+	    	mov = parseInt($this.val(), 10);
+        fnMov();
+        $('select.incorrect[teamid=' + $this.attr('teamid') + ']').val(mov == 0 ? 'null' : (mov < 0 ? 0 : 1));
+    }).keyup(fnMov);
+    
+    // when one "incorrect" dropdown changes, change all for the same team
+    $('select.incorrect').on('change', function() {
+        var $this = $(this);
+        $('select.incorrect[teamid=' + $this.attr('teamid') + ']').val($this.val());
+    });
+
+});
+</script>
 
 <table>
     <tr>

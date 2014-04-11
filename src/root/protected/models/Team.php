@@ -29,6 +29,7 @@ class Team extends DeepActiveRecord
     {
         return array(
             'picks' => array(self::HAS_MANY, 'Pick', 'teamid'),
+            'mov'   => array(self::HAS_MANY, 'Mov', 'teamid'),
         );
     }
     

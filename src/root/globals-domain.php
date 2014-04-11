@@ -244,3 +244,56 @@ function getUserAvatarUrl($userid, $ext, $thumb=false) {
     }
     return param('avatarWebDirectory') . '/' . ($thumb ? 't' : '') . "$userid.$ext";
 }
+
+function getLiveScoring($week=null) {
+    if (!$week) {
+        $week = getCurrentWeek();
+    }
+    $scoresFinal = null;
+    try {
+        if ($week <= 17) {
+            $scoreJson = file_get_contents('http://www.nfl.com/liveupdate/scorestrip/scorestrip.json?random=' . rand(10000000, 99999999));
+            $lastLen = -1;
+            while (strlen($scoreJson) != $lastLen) {
+                $lastLen = strlen($scoreJson);
+                $scoreJson = preg_replace('/,,/', ',null,', $scoreJson);
+            }
+            $scoresRaw = json_decode($scoreJson);
+            $scoresFinal = array();
+            foreach ($scoresRaw->ss as $score) {
+                if (substr(strtolower($score[2]), 0, 7) != 'pregame') {
+                    $scoresFinal[] = array(
+                        'awayteam'  => $score[4],
+                        'awayscore' => (int) $score[5],
+                        'awaymov'   => ((int) $score[5] - (int) $score[7]),
+                        'hometeam'  => $score[6],
+                        'homescore' => (int) $score[7],
+                        'homemov'   => ((int) $score[7] - (int) $score[5]),
+                    	'final'     => (substr(strtolower($score[2]), 0, 5) == 'final')
+                    );
+                }
+            }
+            if (count($scoresFinal) === 0) {
+                $bShowScores = false;
+            }
+        } else {
+            $scoreJson = file_get_contents('http://www.nfl.com/liveupdate/scores/scores.json?random=' . rand(10000000, 99999999));
+            $scoresRaw = json_decode($scoreJson, true);
+            $scoresFinal = array();
+            foreach ($scoresRaw as $score) {
+                $scoresFinal[] = array(
+                    'awayteam'  => $score['away']['abbr'],
+                    'awayscore' => (int) $score['away']['score']['T'],
+                    'awaymov'   => ((int) $score['away']['score']['T'] - (int) $score['home']['score']['T']),
+                    'hometeam'  => $score['home']['abbr'],
+                    'homescore' => (int) $score['home']['score']['T'],
+                    'homemov'   => ((int) $score['home']['score']['T'] - (int) $score['away']['score']['T']),
+                	'final'     => (substr(strtolower($score['qtr']), 0, 5) == 'final')
+                );
+            }
+        }
+    } catch (Exception $e) {
+        $scoresFinal = null;
+    }
+    return $scoresFinal;
+}

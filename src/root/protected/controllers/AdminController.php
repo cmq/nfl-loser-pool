@@ -18,7 +18,7 @@ class AdminController extends Controller
     public function filters() {
         return array(
             array('application.filters.AdminFilter'),
-            array('application.filters.SuperadminFilter + superadmintest'),
+            array('application.filters.SuperadminFilter + superadmintest'),     // KDHTODO are there any superadmin-only functions?
         );
     }
     
@@ -40,28 +40,28 @@ class AdminController extends Controller
         $week = $this->_getWeek();
         $year = $this->_getYear();
         
-        $picks = Pick::model()->with(array(
-            'user' => array(
-                'select' => 'username'
-            ),
-            'team' => array(
-                'select' => 'longname'
-            ),
-        ))->findAll(array(
-            'condition' => "t.week = $week and t.yr = $year",
-            'order'     => 'user.username',
-        ));
-        
-        $movs = Mov::model()->with(array(
-            'team' => array(
-                'select' => 'longname'
+        $users = User::model()->active()->with(array(
+            'picks' => array(
+                'on' => "picks.week = $week and picks.yr = $year",
+                'with' => array(
+                    'team' => array(
+                        'select' => 'longname',
+                    ),
+                ),
             ),
         ))->findAll(array(
-            'condition' => "t.week = $week and t.yr = $year",
-            'order' => 'team.longname',
+            'order' => 't.username',
         ));
         
-        $this->render('correct', array('picks'=>$picks, 'movs'=>$movs));
+        $teams = Team::model()->with(array(
+            'mov' => array(
+                'on' => "mov.week = $week and mov.yr = $year",
+            ),
+        ))->findAll(array(
+            'order' => 't.longname',
+        ));
+        
+        $this->render('correct', array('users'=>$users, 'teams'=>$teams));
     }
     
     /**

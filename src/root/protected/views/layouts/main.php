@@ -15,11 +15,17 @@
  *  - For trash talk by me, have a flag I can set so it shows up as just a regular talk versus the yellow highlighted "admin" talk
  *  - Is there a way to not have to keep deactivating users every year?  Maybe allow logins forever, but they can only see the current board if they're playing this year?
  *  - Make badges clickable to show the hover text in a tiny modal (since on tablets/phones, there's no such thing as hovering)
- *  - Allow the user to set their own timezone and whether or not they use DST
- *  - Allow the user to set their address for payments (they can fill out paypal or mailing address)
  *  - Re-add lightbox (I removed it so I could work on testing the profile page)
  *  - On past-year pages, show all talk messages from that year
  *  - Create a profile page for others to view, so I can click on a user's name and see their page which shows their history (seasons played, badges, wins, stats, rankings, etc)
+ *  - Allow talk messages to be flagged by superadmin as "admin" to show up in a different color
+ *  - For users viewing a talk message directed at them, show them in a different color
+ *  - On the homepage, show a bandwagon section that has the stats:
+ *      - Week xx pick:  {team}
+ *      - Current chief
+ *      - Current members (with how long they've been on it)
+ *      - Record this year
+ *      - Record all time
  *  - Customized View options on the main page:
  *  	- Allow these to be changed from a settings page, or toggled directly on the home page
  *  		- Have "presets" that set each of them, like the "no frills" preset, with everything off, or the "full experience" preset, with everything on, etc

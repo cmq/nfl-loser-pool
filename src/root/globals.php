@@ -185,6 +185,18 @@ function getBoolean($key, $default=null) {
     return ($val ? true : false);
 }
 
+
+/**
+ * Return a comma-delimited string as an array of integers
+ */
+function listToIntegerArray($list, $delimiter=',') {
+    $parts = explode($delimiter, $list);
+    foreach ($parts as &$part) {
+        $part = (int) $part;
+    }
+    return $parts;
+}
+
 	
 /**
  * Combine the errors that come from CModel->getErrors()

@@ -28,7 +28,7 @@ class AdminController extends Controller
      */
     public function actionIndex()
     {
-        // KDHTODO is there anything to do here?
+        // KDHTODO is there anything to do here?  Maybe show a page where we can manually re-run the stats/power calculations?
         die('?');
     }
     
@@ -65,12 +65,43 @@ class AdminController extends Controller
     }
     
     /**
-     * Save corrections in the database
+     * Save corrections and mov values in the database
      */
     public function actionCorrect()
     {
-        // KDHTODO implement
-        
+        $error = '';
+        try {
+            $week = (int) $_REQUEST['week'];
+            $year = getCurrentYear();
+            $data = json_decode($_REQUEST['data'], true);
+            
+            $usersCorrect   = implode(',', listToIntegerArray(implode(',', $data['correct'])));
+            $usersIncorrect = implode(',', listToIntegerArray(implode(',', $data['incorrect'])));
+            $usersNotSet    = implode(',', listToIntegerArray(implode(',', $data['notset'])));
+            
+            if ($usersCorrect) {
+                $sql = "update loserpick set incorrect = 0 where yr = $year and week = $week and userid in ($usersCorrect)";
+                $results = Yii::app()->db->createCommand($sql)->query();
+            }
+            if ($usersIncorrect) {
+                $sql = "update loserpick set incorrect = 1 where yr = $year and week = $week and userid in ($usersIncorrect)";
+                $results = Yii::app()->db->createCommand($sql)->query();
+            }
+            if ($usersNotSet) {
+                $sql = "update loserpick set incorrect = null where yr = $year and week = $week and userid in ($usersNotSet)";
+                $results = Yii::app()->db->createCommand($sql)->query();
+            }
+            
+            foreach ($data['mov'] as $team => $mov) {
+                $mov = (int) $mov;
+                $sql = "replace into mov (teamid, yr, week, mov) values (" . (int) str_replace('team', '', $team) . ", $year, $week, $mov)";
+                $results = Yii::app()->db->createCommand($sql)->query();
+            }
+            
+        } catch (Exception $e) {
+            $error = $e->getMessage();
+        }
+        $this->writeJson(array('error'=>$error));
     }
     
     public function actionSuperadmintest()
@@ -83,12 +114,12 @@ class AdminController extends Controller
      */
     public function actionError()
     {
-        if($error=Yii::app()->errorHandler->error)
-        {
-            if(Yii::app()->request->isAjaxRequest)
+        if ($error=Yii::app()->errorHandler->error) {
+            if (Yii::app()->request->isAjaxRequest) {
                 echo $error;
-            else
+            } else {
                 $this->render('error', $error);
+            }
         }
     }
 

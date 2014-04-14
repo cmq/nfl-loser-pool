@@ -1,10 +1,16 @@
 @CHARSET "UTF-8";
 
-td.incorrect {
+.incorrect {
     background-color: #f99;
+}
+.setbysystem {
+    color: blue;
 }
 .hidden {
     display: none;
+}
+.bold {
+    font-weight: bold;
 }
 
 /*

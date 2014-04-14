@@ -62,6 +62,50 @@
  *  	- make the formula public, with a page that shows how each user's score was calculated
  *  	- create the ability to re-calculate up to a given week (like, figure out what the power rankings would have been after week 5, 2010)
  *  		- use this ability to create a full history of power rankings by week
+ *  
+ *  
+ *  - A sample way of doing an animation (like Xenforo does, post-admin-login):
+<script>
+$(function() {
+    $('#kirktest_wrap').height($(window).height() - $('#kirktest_wrap').position().top);    // KDHTODO do this any time the window size changes too
+    $('#kirktest_reset').on('click', function() {
+        $('#kirktest').css({
+            width:  '1242px',
+            height: '960px',
+            top:    '10px'
+        });
+        $('#kirktest_wrap').css({
+            'padding-top': 0
+        });
+        $('#kirktest_wrap').height($(window).height() - $('#kirktest_wrap').position().top);    // KDHTODO do this any time the window size changes too
+    });
+    $('#kirktest_go').on('click', function() {
+        $('#kirktest').animate({
+            width:  '310px',
+            height: '240px',
+            top:    '-50px'
+        });
+        $('#kirktest_wrap').animate({
+            height: '100px',
+            'padding-top': '-100px'
+        });
+    });
+});
+</script>
+
+<style>
+html, body {
+    margin: 0;
+    height: 100%;
+}
+</style>
+<div id="kirktest_wrap" style="position:relative;overflow:hidden;">
+    <button id="kirktest_reset">Reset</button>
+    <button id="kirktest_go">Go</button><br />
+    <img id="kirktest" src="/images/kirktest.jpg" style="width:1242px;height:960px;position:absolute;right:0;top:10px" />
+</div>
+ 
+ *  
  */
 ?><!DOCTYPE html>
 <html ng-app="loserpool">

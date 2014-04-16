@@ -100,6 +100,16 @@ loserpool.filter('stylizeMov', function() {
         return mov;
     };
 });
+loserpool.filter('userAvatar', function() {
+    return function(user) {
+        var img = 't' + user.id + '.' + user.avatar_ext;
+        if (!user.avatar_ext) {
+            img = 't0.png';
+        }
+        return '<?php echo param('avatarWebDirectory')?>/' + img;
+    };
+});
+
 </script>
 
 
@@ -172,6 +182,8 @@ Debug Order: {{order}}<br />
             <tr ng-repeat="user in board | orderBy:[order,'username']">   <!-- KDHTODO have sort order secondary sort be record before username -->
                 <td>{{$index+1}}</td>
                 <td>
+                    <!-- KDHTODO this is normally a PHP function, but make an analogous JS function to get avatars too -->
+                    <div style="width:44px;float:left;"><img src="{{user | userAvatar}}" /></div>
                     {{user.username}}
                     <!-- KDHTODO format this similar to the old site (extract into directive or something?) -->
                     <!-- KDHTODO add "alt" tags and title attributes -->

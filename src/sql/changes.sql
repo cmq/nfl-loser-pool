@@ -20,3 +20,5 @@ update user add collapse_history tinyint(1) not null default 0;
 update user add show_badges tinyint(1) not null default 1;
 update user add show_logos tinyint(1) not null default 1;
 update user add show_mov tinyint(1) not null default 1;
+
+update losertalk add admin tinyint(1) not null default 0;

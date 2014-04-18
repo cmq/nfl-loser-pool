@@ -41,6 +41,9 @@ class Talk extends DeepActiveRecord
     public function scopes()
     {
         return array(
+            'current' => array(
+                'condition' => 't.yr = ' . getCurrentYear(),
+            ),
             'withUsers' => array(
                 'with' => array(
                     'user' => array(
@@ -65,7 +68,8 @@ class Talk extends DeepActiveRecord
     public function save($runValidation = true, $attributes = NULL)
     {
         if ($this->getIsNewRecord()) {
-            $this->created = new CDbExpression('NOW()');
+            $this->postedon = new CDbExpression('NOW()');
+            $this->yr       = getCurrentYear();
         }
         return parent::save($runValidation, $attributes);
     }

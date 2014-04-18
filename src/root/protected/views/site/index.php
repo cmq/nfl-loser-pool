@@ -116,20 +116,7 @@ loserpool.filter('userAvatar', function() {
 <h4>Most Recent Talk</h4>
 <?php
 foreach ($talk as $t) {
-    // KDHTODO format and use classes instead of inline styles
-    ?>
-    <div style="border: black 1px solid; width: 500px;">
-        <?php
-        echo 'By: ' . $t->user->username . '<br />';
-        if ($t->at) {
-            echo '<strong>@' . $t->at->username . '</strong><br />';
-        }
-        // KDHTODO need to change \n to <br>
-        // KDHTODO format posted date 
-        echo $t->postedon . '<br />' . $t->post;
-        ?>
-    </div>
-    <?php
+    $this->renderPartial('//_partials/talk', array('talk'=>$t));
 }
 ?>
 
@@ -166,7 +153,7 @@ Debug Order: {{order}}<br />
                     for ($week=1; $week<=21; $week++) {
                         if (!userField('collapse_history') || $week >= $currentWeek) {
                             // KDHTODO make font much smaller so it doesn't make columns wider
-                            echo '<th><a href="' . Yii::app()->createAbsoluteUrl('admin/showCorrect', array('week'=>$week)) . '">Correct</th>';
+                            echo '<th><a href="' . Yii::app()->createAbsoluteUrl('admin/showCorrect', array('week'=>$week)) . '">Cor</th>';
                         }
                     }
                     ?>

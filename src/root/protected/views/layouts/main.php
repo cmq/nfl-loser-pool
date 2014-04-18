@@ -110,6 +110,7 @@ html, body {
 ?><!DOCTYPE html>
 <html ng-app="loserpool">
     <head>
+        <!-- KDHTODO change the title -->
         <title><?php echo CHtml::encode($this->pageTitle); ?></title>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -156,6 +157,7 @@ html, body {
         if (!isGuest()) {
             echo CHtml::link('Enter Picks', $this->createAbsoluteUrl('site/pick')) . '<br />';
             if (isPaid()) {
+                echo CHtml::link('Talk', $this->createAbsoluteUrl('site/talk')) . '<br />';
                 echo CHtml::link('Profile', $this->createAbsoluteUrl('site/profile')) . '<br />';
             }
         }

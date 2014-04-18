@@ -9,7 +9,7 @@ class PickController extends Controller
     public function actionIndex()
     {
         // no index action
-        // KDHTODO redirect to 404
+        // KDHTODO redirect to site/pick
     }
     
     public function actionSave()

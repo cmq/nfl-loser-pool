@@ -65,6 +65,17 @@ class SiteController extends Controller
     }
 
     /**
+     * A separate page for the user to talk trash
+     */
+    public function actionTalk()
+    {
+        // KDHTODO prevent this action if the user is a guest
+        $talks = Talk::model()->current()->findAll(array('order'=>'postedon desc'));
+        $users = User::model()->active()->findAll(array('order'=>'username'));
+        $this->render('talk', array('talks'=>$talks, 'users'=>$users));
+    }
+
+    /**
      * A separate page for the user to adjust their profile
      */
     public function actionProfile()

@@ -36,7 +36,7 @@ class ProfileController extends Controller
     public function actionIndex()
     {
         // no index action
-        // KDHTODO redirect to 404
+        // KDHTODO redirect to site/profile
     }
     
     public function actionUsername()

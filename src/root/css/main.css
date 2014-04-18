@@ -14,6 +14,13 @@
 }
 
 /*
+ * Updates to help work with Twitter Bootstrap
+ */
+.table-nonfluid {
+    width: auto;
+}
+
+/*
  * Logos
  */
 div.logo {

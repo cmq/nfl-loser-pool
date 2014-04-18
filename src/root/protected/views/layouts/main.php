@@ -150,19 +150,28 @@ html, body {
         ?>
     </head>
     <body>
-        <!-- KDHTODO what does navigation look like for a guest? -->
-        Navigation:<br />
-        <?php
-        echo CHtml::link('Home', $this->createAbsoluteUrl('site/index')) . '<br />';
-        if (!isGuest()) {
-            echo CHtml::link('Enter Picks', $this->createAbsoluteUrl('site/pick')) . '<br />';
-            if (isPaid()) {
-                echo CHtml::link('Talk', $this->createAbsoluteUrl('site/talk')) . '<br />';
-                echo CHtml::link('Profile', $this->createAbsoluteUrl('site/profile')) . '<br />';
+        <div class="container-fluid">
+            <!-- KDHTODO what does navigation look like for a guest? -->
+            Navigation:<br />
+            <?php
+            echo CHtml::link('Home', $this->createAbsoluteUrl('site/index')) . '<br />';
+            if (!isGuest()) {
+                echo CHtml::link('Enter Picks', $this->createAbsoluteUrl('site/pick')) . '<br />';
+                if (isPaid()) {
+                    echo CHtml::link('Talk', $this->createAbsoluteUrl('site/talk')) . '<br />';
+                    echo CHtml::link('Profile', $this->createAbsoluteUrl('site/profile')) . '<br />';
+                }
             }
-        }
-        ?>
-        <hr />
-        <?php echo $content; ?>
+            // KDHTODO nav links that still need to be added and written:
+            // KDHTODO About page
+            // KDHTODO NFL Schedule
+            // KDHTODO Stat Rankings page
+            // KDHTODO Pick Stats page
+            // KDHTODO Prior Winners page
+            // KDHTODO Season Archive page
+            ?>
+            <hr />
+            <?php echo $content; ?>
+        </div>
     </body>
 </html>

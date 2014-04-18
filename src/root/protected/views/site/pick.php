@@ -55,13 +55,12 @@ loserpool.controller('PickPageCtrl', ['$scope', '$http', function($scope, $http)
 }]);
 </script>
 
-<div ng-controller="PickPageCtrl">
-    <table>
+<div ng-controller="PickPageCtrl" class="table-responsive">
+    <table class="table table-nonfluid">
         <thead>
             <tr>
                 <th>Week</th>
-                <th>Pick</th>
-                <th>Result</th>
+                <th colspan="2">Pick</th>
                 <th>Lock Time</th>
             </tr>
         </thead>
@@ -69,7 +68,7 @@ loserpool.controller('PickPageCtrl', ['$scope', '$http', function($scope, $http)
             <?php
             for ($week=1; $week<=21; $week++) {
                 ?>
-                <tr>
+                <tr ng-class="{danger: picks[<?=$week-1?>].incorrect == 1, success: picks[<?=$week-1?>].incorrect == '0'}">
                     <td><?=$week?></td>
                     <td>
                         <!--
@@ -79,12 +78,12 @@ loserpool.controller('PickPageCtrl', ['$scope', '$http', function($scope, $http)
                         // KDHTODO AJAX call to save when the dropdown changes
                         // KDHTODO disable dropdowns that are locked
                         -->
-                        <select ng-model="picks[<?=$week-1?>].team" ng-options="t.longname for (id, t) in teams">
-                          <option value="">Select Loser...</option>
+                        <select class="form-control" ng-model="picks[<?=$week-1?>].team" ng-options="t.longname for (id, t) in teams">
+                            <option value="">Select Loser...</option>
                         </select>
                     </td>
                     <!-- KDHTODO populate -->
-                    <td>Result</td>
+                    <td>Logo</td>
                     <!-- KDHTODO populate -->
                     <td><?=getLockTime($week, true)?></td>
                 </tr>

@@ -39,21 +39,35 @@ $(function() {
 <?php
 // KDHTODO clean up the display of this
 ?>
-Direct Message At: <select id="talkuser">
-    <option value="0"></option>
+<form role="form">
+    <div class="form-group">
+        <label for="talkuser">Direct Message At</label>
+        <select class="form-control" id="talkuser">
+            <option value="0"></option>
+            <?php
+            foreach ($users as $user) {
+                echo createOption($user->id, $user->username);
+            }
+            ?>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="talkuser">Message</label>
+        <textarea class="form-control" id="talkmessage"></textarea>
+    </div>
     <?php
-    foreach ($users as $user) {
-        echo createOption($user->id, $user->username);
+    if (isSuperadmin()) {
+        ?>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" id="talksuperadmin" /> Post as Administrative Message
+            </label>
+        </div>
+        <?php
     }
     ?>
-</select><br />
-Message: <textarea id="talkmessage"></textarea><br />
-<?php
-if (isSuperadmin()) {
-    ?><input type="checkbox" id="talksuperadmin" /> Post as Administrative Message<br /><?php
-}
-?>
-<button id="talksubmit">Post Message</button><br />
+    <button type="submit" class="btn btn-default" id="talksubmit">Post Message</button><br />
+</form>
 
 <?php
 foreach ($talks as $talk) {

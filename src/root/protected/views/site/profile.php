@@ -27,88 +27,106 @@ $(function() {
         uploadTimeout = null;
 
     
-    fnInputChanged = function($input, $button, defaultValue, $msgArea) {
+    fnInputChanged = function($input, $button, defaultValue) {
         if ($input.val() !== defaultValue) {
             if (!$button.is(':visible')) {
                 $button.fadeIn('fast');
             }
+            return true;
         } else {
             if ($button.is(':visible')) {
                 $button.fadeOut('fast');
             }
-            $msgArea.html('');
         }
+        return false;
     };
     
     
     // function to add controls to inline input edits with save buttons that appear/disappear
     fnDynamicSave = function(options) {
-        var $container = $(options.container),
-            $input, $button, $msgArea, inputTimeout;
+        var $container = $('.fieldwrap-'+options.defaultKey),
+            $input     = $('input', $container),
+            $gutter    = $('.gutter', $container),
+            $msgArea   = $('.help-block', $container),
+            $button, inputTimeout, fnUpdateMessage, fnCheckInput;
+
+        fnUpdateMessage = function(msg) {
+            $msgArea.html(msg || '');
+            if (typeof msg === 'undefined' || msg === '') {
+                $container.removeClass('has-error');
+            } else {
+                $container.addClass('has-error');
+            }
+        };
         
-        $container
-            .append($msgArea = $('<div style="color:red;"/>'))
-            .append($input = $('<input style="float:left;"/>')
-                .val(defaults[options.defaultKey])
-                .bind('change keyup', function(e) {
-                    clearTimeout(inputTimeout);
-                    if (e.type == 'keyup') {
-                        inputTimeout = setTimeout(function() {
-                            fnInputChanged($input, $button, defaults[options.defaultKey], $msgArea);
-                        }, 200);
-                    } else {
-                        fnInputChanged($input, $button, defaults[options.defaultKey], $msgArea);
-                    }
-                })
-            )
-            .append($('<div style="display:inline-block;float:left;"/>')
-                .append($button = $('<button/>')
-                    .addClass('button')
-                    .html('Save')
-                    .click(function(e) {
-                        var newValue = $input.val();
+        fnCheckInput = function() {
+            if (!fnInputChanged($input, $button, defaults[options.defaultKey])) {
+                fnUpdateMessage();
+            }
+        };
+
+        $input
+            .val(defaults[options.defaultKey])
+            .bind('change keyup', function(e) {
+                clearTimeout(inputTimeout);
+                if (e.type == 'keyup') {
+                    if (e.which == 13) {
+                        fnCheckInput();
                         e.preventDefault();
-                        if (!options.validator(newValue)) {
-                            $msgArea.html('The specified value is invalid.');
-                            $input.focus().select();
-                        } else {
-                            $button.prop('disabled', true).html('Saving...');
-                            $.ajax({
-                                url:        options.ajaxUrl,
-                                data:       {
-                                                uid:   <?php echo $user->id;?>,
-                                                value: newValue
-                                            },
-                                type:       'post',
-                                cache:      false,
-                                success:    function(response) {
-                                                if (response.hasOwnProperty('error') && response.error != '') {
-                                                    $msgArea.html(response.error);
-                                                } else {
-                                                    $msgArea.html('');
-                                                    defaults[options.defaultKey] = newValue;
-                                                    fnInputChanged($input, $button, defaults[options.defaultKey], $msgArea);
-                                                }
-                                            },
-                                error:      function() {
-                                                $msgArea.html('An error occurred, please try again.');
-                                            },
-                                complete:   function() {
-                                                $button.prop('disabled', false).html('Save');
-                                            },
-                                dataType:   'json'
-                            });
-                        }
-                    })
-                    .hide()
-                )
-            );
+                        $button.trigger('click');
+                    } else {
+                        inputTimeout = setTimeout(fnCheckInput, 200);
+                    }
+                } else {
+                    fnCheckInput();
+                }
+            });
+
+        $button = $('<button type="button"/>')
+            .addClass('btn btn-primary')
+            .html('Save')
+            .appendTo($gutter)
+            .on('click', function(e) {
+                var newValue = $input.val();
+                e.preventDefault();
+                if (!options.validator(newValue)) {
+                    fnUpdateMessage('The specified value is invalid.');
+                    $input.focus().select();
+                } else {
+                    $button.prop('disabled', true).html('Saving...');
+                    $.ajax({
+                        url:        options.ajaxUrl,
+                        data:       {
+                                        uid:   <?php echo $user->id;?>,
+                                        value: newValue
+                                    },
+                        type:       'post',
+                        cache:      false,
+                        success:    function(response) {
+                                        if (response.hasOwnProperty('error') && response.error != '') {
+                                            fnUpdateMessage(response.error);
+                                        } else {
+                                            fnUpdateMessage();
+                                            defaults[options.defaultKey] = newValue;
+                                            fnCheckInput();
+                                        }
+                                    },
+                        error:      function() {
+                                        fnUpdateMessage('An error occurred, please try again.');
+                                    },
+                        complete:   function() {
+                                        $button.prop('disabled', false).html('Save');
+                                    },
+                        dataType:   'json'
+                    });
+                }
+            })
+            .hide();
     };
     
     
     // set up inline updaters
     fnDynamicSave({
-        container:  '#username-area',
         defaultKey: 'username',
         ajaxUrl:    '<?php echo $this->createAbsoluteUrl('profile/username')?>',
         validator:  function(val) {
@@ -116,7 +134,6 @@ $(function() {
         }
     });
     fnDynamicSave({
-        container:  '#email-area',
         defaultKey: 'email',
         ajaxUrl:    '<?php echo $this->createAbsoluteUrl('profile/email')?>',
         validator:  globals.isEmail
@@ -125,28 +142,60 @@ $(function() {
 
     // timezone updater
     fnUpdateTimezone = function() {
+        var $container = $('.fieldwrap-timezone'),
+            $timezone  = $('#timezone'),
+            $dst       = $('#use_dst'),
+            $gutter    = $('.gutter', $container),
+            $msgArea   = $('.help-block', $container),
+            fnUpdateMessage;
+        
+        fnUpdateMessage = function(msg) {
+            $msgArea.html(msg || '');
+            if (typeof msg === 'undefined' || msg === '') {
+                $container.removeClass('has-error');
+            } else {
+                $container.addClass('has-error');
+            }
+        };
+
+        // disable fields
+        $timezone.prop('disabled', true);
+        $dst.prop('disabled', true);
+
+        // reset state
+        $container.removeClass('has-success has-error');
+        $gutter.html('<p>Saving...</p>');
+        fnUpdateMessage();
+
+        // make AJAX call
         $.ajax({
             url:        '<?php echo $this->createAbsoluteUrl('profile/timezone')?>',
             data:       {
                             uid:      <?php echo $user->id;?>,
-                            timezone: $('#timezone').val(),
-                            dst:      $('#use_dst').is(':checked') ? 1 : 0
+                            timezone: $timezone.val(),
+                            dst:      $dst.is(':checked') ? 1 : 0
                         },
             type:       'post',
             cache:      false,
             success:    function(response) {
                             if (response.hasOwnProperty('error') && response.error != '') {
-                                $('#timezone-message').html(response.error);
+                                fnUpdateMessage(response.error);
                             } else {
-                                $('#timezone-message').html('');
-                                $('#timezone-saved').show();
+                                fnUpdateMessage();
+                                $container.addClass('has-success');
+                                $gutter.html('<p class="text-success">Saved.</p>');
                                 setTimeout(function() {
-                                    $('#timezone-saved').fadeOut('fast');
+                                    $container.removeClass('has-success');
+                                    $gutter.html('');
                                 }, 2000);
                             }
                         },
             error:      function() {
-                            $('#timezone-message').html('An error occurred, please try again.');
+                            fnUpdateMessage('An error occurred, please try again.');
+                        },
+            complete:   function() {
+                            $timezone.prop('disabled', false);
+                            $dst.prop('disabled', false);
                         },
             dataType:   'json'
         });
@@ -229,7 +278,7 @@ $(function() {
             .empty()
             .append(pwChanged ? $changeMsg : '')
             .append('*****************<br />')
-            .append($('<button/>')
+            .append($('<button type="button"/>')
                 .addClass('button')
                 .html('Change')
                 .click(function(e) {
@@ -256,7 +305,7 @@ $(function() {
                         .append($oldpw = $('<input type="password" />')
                             .keypress(function(e) {
                                 if (e.which == 13) {
-                                    $submitButton.trigger('click');
+                                    //$submitButton.trigger('click');
                                 }
                             })
                         )
@@ -268,7 +317,7 @@ $(function() {
                         .append($newpw1 = $('<input type="password" />')
                             .keypress(function(e) {
                                 if (e.which == 13) {
-                                    $submitButton.trigger('click');
+                                    //$submitButton.trigger('click');
                                 }
                             })
                         )
@@ -280,7 +329,7 @@ $(function() {
                         .append($newpw2 = $('<input type="password" />')
                             .keypress(function(e) {
                                 if (e.which == 13) {
-                                    $submitButton.trigger('click');
+                                    //$submitButton.trigger('click');
                                 }
                             })
                         )
@@ -288,7 +337,7 @@ $(function() {
                 )
                 .append($('<tr/>')
                     .append($('<td colspan="2"/>')
-                        .append($submitButton = $('<button/>')
+                        .append($submitButton = $('<button type="button"/>')
                             .addClass('button')
                             .html('Save')
                             .click(function(e) {
@@ -339,7 +388,7 @@ $(function() {
                             })
                         )
                         .append(' ')
-                        .append($cancelButton = $('<button/>')
+                        .append($cancelButton = $('<button type="button"/>')
                             .addClass('button')
                             .html('Cancel')
                             .click(function(e) {
@@ -359,20 +408,27 @@ $(function() {
 </script>
 
 
-<table border="0" cellspacing="2" cellpadding="10" class="options">
-    <tr>
-        <th nowrap="nowrap">Username</th>
-        <td id="username-area"></td>
-    </tr>
-    <tr>
-        <th nowrap="nowrap">Email</th>
-        <td id="email-area"></td>
-    </tr>
-    <tr>
-        <th nowrap="nowrap">Timezone</th>
-        <td>
-            <div id="timezone-message" style="color:red;"></div>
-            <select id="timezone">
+<form class="form-horizontal" role="form">
+    <div class="form-group fieldwrap-username">
+        <label class="control-label col-sm-2" for="username">Username</label>
+        <div class="col-sm-5">
+            <input type="text" id="username" class="form-control" />
+            <span class="help-block"></span>
+        </div>
+        <div class="col-sm-5 gutter"></div>
+    </div>
+    <div class="form-group fieldwrap-email">
+        <label class="control-label col-sm-2" for="email">Email</label>
+        <div class="col-sm-5">
+            <input type="text" id="email" class="form-control" />
+            <span class="help-block"></span>
+        </div>
+        <div class="col-sm-5 gutter"></div>
+    </div>
+    <div class="form-group fieldwrap-timezone">
+        <label class="control-label col-sm-2" for="email">Timezone</label>
+        <div class="col-sm-5">
+            <select id="timezone" class="form-control">
                 <?php
                 $defaultTimezone = userField('timezone');
                 echo createOption(-2, 'Pacific Time', $defaultTimezone);
@@ -381,10 +437,18 @@ $(function() {
                 echo createOption(1, 'Eastern Time', $defaultTimezone);
                 ?>
             </select>
-            <input type="checkbox" id="use_dst"<?php echo userField('use_dst') ? ' checked="checked"' : ''?> /> Enable Automatic Daylight Savings Time Adjustments
-            <div id="timezone-saved" style="display:none;">Saved</div>
-        </td>
-    </tr>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" id="use_dst"<?php echo userField('use_dst') ? ' checked="checked"' : ''?> /> Enable Automatic Daylight Savings Time Adjustments
+                </label>
+            </div>
+            <span class="help-block"></span>
+        </div>
+        <div class="col-sm-5 gutter"></div>
+    </div>
+</form>
+
+<table border="0" cellspacing="2" cellpadding="10" class="options">
     <tr>
         <th nowrap="nowrap">Password</th>
         <td id="password-area"></td>

@@ -205,7 +205,7 @@ $(function() {
                 <tr class="tableHeads">
                     <th>Team</th>
                     <th>MOV</th>
-		            <?php echo ($bShowScores ? '<td>Score</td><td><button class="applymovall">Apply All</button></td>' : ''); ?>
+		            <?php echo ($bShowScores ? '<td>Score</td><td><button type="button" class="applymovall">Apply All</button></td>' : ''); ?>
                 </tr>
                 <?
                 foreach ($teams as $team) {
@@ -241,7 +241,7 @@ $(function() {
                                 echo '<span class="' . (!$awayTeam ? 'bold' : '') . '">' . $thisGame['hometeam'] . ' ' . $thisGame['homescore'] . '</span> ';
                                 echo '</td><td>';
                                 if ($isFinal) {
-                                    echo '<button class="applymov" mov="' . $mov . '" teamid="' . $team->id . '">Apply ' . $mov . '</button>';
+                                    echo '<button type="button" class="applymov" mov="' . $mov . '" teamid="' . $team->id . '">Apply ' . $mov . '</button>';
                                 }
                                 echo '</td>';
                             } else {
@@ -263,7 +263,7 @@ $(function() {
             Net Margin of Victory: <span id="netmov"></span><br />
             <span class="saved-status"></span>
             <br />
-            <button>Save</button>
+            <button type="button">Save</button>
         </td>
     </tr>
 </table>

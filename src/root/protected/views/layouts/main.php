@@ -118,7 +118,7 @@ html, body {
         <meta name="language" content="en" />
         
         <!-- Bootstrap -->
-        <link href="<?php echo baseUrl('/css/bootstrap.min.css'); ?>" rel="stylesheet" />
+        <link href="<?php echo baseUrl('/css/bootstrap-spacelab-theme.min.css'); ?>" rel="stylesheet" />
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="//code.jquery.com/jquery.js"></script>
         <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -150,6 +150,7 @@ html, body {
         ?>
     </head>
     <body>
+        <!-- KDHTODO container-fluid vs container should maybe be on a page-by-page basis? -->
         <div class="container-fluid">
             <!-- KDHTODO what does navigation look like for a guest? -->
             Navigation:<br />

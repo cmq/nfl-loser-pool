@@ -1,6 +1,8 @@
 @CHARSET "UTF-8";
 
-.incorrect {
+.incorrect,
+/* the next line is to counter-act the effects of bootstrap clearing out our table cell coloring */
+table.picks > tbody > tr > td.incorrect {
     background-color: #f99;
 }
 .setbysystem {
@@ -19,6 +21,10 @@
 .table-nonfluid {
     width: auto;
 }
+.picks > thead > tr > th, .picks > tbody > tr > th, .picks > tfoot > tr > th, .picks > thead > tr > td, .picks > tbody > tr > td, .picks > tfoot > tr > td {
+    padding: 1px;
+    vertical-align: middle;
+}
 
 /*
  * Logos
@@ -32,6 +38,7 @@ div.logo-small {
     background-image: url(/images/logo-small.png);
     width: 30px;
     height: 30px;
+    margin-top: 5px;
 }
 div.logo-medium {
     background-image: url(/images/logo-medium.png);
@@ -47,6 +54,7 @@ div.logo-small-inactive {
     background-image: url(/images/logo-small-inactive.png);
     width: 30px;
     height: 30px;
+    margin-top: 5px;
 }
 div.logo-medium-inactive {
     background-image: url(/images/logo-medium-inactive.png);
@@ -72,6 +80,7 @@ div.logo-large-inactive {
 .winnerbadge-wrapper .year {
     position: absolute;
     font-weight: bold;
+    font-size: 80%;
     cursor: pointer;
 }
 .winnerbadge-wrapper .year.pot1 {
@@ -101,13 +110,13 @@ div.logo-large-inactive {
     */
     position: absolute;
     top: -1px;
-    right: -1px;
+    right: 1px;
     font-weight: bold;
     font-size: 8px;
     color: green;
 }
 .pickMov.old {
-    top: -3px;
+    top: -12px;
 }
 .pickMov.incorrect {
     color: black;

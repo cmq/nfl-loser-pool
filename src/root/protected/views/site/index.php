@@ -124,7 +124,7 @@ foreach ($talk as $t) {
 <div ng-controller="BoardCtrl">
 Debug Order: {{order}}<br />
     <div class="table-responsive">
-        <table class="table table-striped table-condensed table-bordered">
+        <table class="picks table table-striped table-bordered">
             <thead>
                 <tr>
                     <th>&nbsp;</th>
@@ -171,24 +171,27 @@ Debug Order: {{order}}<br />
                     <td>{{$index+1}}</td>
                     <td>
                         <!-- KDHTODO this is normally a PHP function, but make an analogous JS function to get avatars too -->
-                        <div style="width:44px;float:left;"><img src="{{user | userAvatar}}" /></div>
-                        {{user.username}}
-                        <!-- KDHTODO format this similar to the old site (extract into directive or something?) -->
-                        <!-- KDHTODO add "alt" tags and title attributes -->
-                        <?php
-                        if (userField('show_badges')) {
-                            ?>
-                            <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnerbadge-wrapper">
-                                <!-- KDHTODO make badges clickable to show modal or go to a link? -->
-                                <!-- KDHTODO after bootstrap is all up and running, adjust style so year overlays are more readable -->
-                                <img ng-src="/images/badges/winnerbadge-{{win.pot}}{{win.place}}.png" />
-                                <div class="year pot{{win.pot}}">{{win.yr | shortenYear}}</div>
-                            </div>
-                            <!-- KDHTODO change alt text to something real (not the zindex) -->
-                            <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
+                        <!-- KDHTODO remove inline styles -->
+                        <div style="width:44px;float:left;"><img ng-src="{{user | userAvatar}}" /></div>
+                        <div>
+                            {{user.username}}<br />
+                            <!-- KDHTODO format this similar to the old site (extract into directive or something?) -->
+                            <!-- KDHTODO add "alt" tags and title attributes -->
                             <?php
-                        }
-                        ?>
+                            if (userField('show_badges')) {
+                                ?>
+                                <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnerbadge-wrapper">
+                                    <!-- KDHTODO make badges clickable to show modal or go to a link? -->
+                                    <!-- KDHTODO after bootstrap is all up and running, adjust style so year overlays are more readable -->
+                                    <img ng-src="/images/badges/winnerbadge-{{win.pot}}{{win.place}}.png" />
+                                    <div class="year pot{{win.pot}}">{{win.yr | shortenYear}}</div>
+                                </div>
+                                <!-- KDHTODO change alt text to something real (not the zindex) -->
+                                <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
+                                <?php
+                            }
+                            ?>
+                        </div>
                     </td>
                     <td ng-if="viewOptions.collapseHistory" align="center">{{getOldRecord(user)}}</td>
                     <td ng-repeat="pick in user.picks" ng-if="pick.week >= currentWeek || !viewOptions.collapseHistory" ng-class="{incorrect: pick.incorrect}" align="center">

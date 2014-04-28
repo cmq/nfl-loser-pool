@@ -20,6 +20,7 @@
  *  - Create a profile page for others to view, so I can click on a user's name and see their page which shows their history (seasons played, badges, wins, stats, rankings, etc)
  *  - Allow talk messages to be flagged by superadmin as "admin" to show up in a different color
  *  - For users viewing a talk message directed at them, show them in a different color
+ *  - Use language to differentiate "winner TROPHIES" from "user BADGES"
  *  - On the homepage, show a bandwagon section that has the stats:
  *      - Week xx pick:  {team}
  *      - Current chief

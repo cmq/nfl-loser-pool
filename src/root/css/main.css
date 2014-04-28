@@ -68,10 +68,13 @@ div.logo-large-inactive {
 }
 
 
-/******* winner badges ********/
+/*
+ * Winner Badges
+ */
 .winnerbadge-wrapper {
     display: inline-block;
     position: relative;
+    margin-right: 2px;
 }
 .winnerbadge-wrapper img {
     border: 0;
@@ -97,6 +100,18 @@ div.logo-large-inactive {
     color: #7b0098;
     top: -6px;
     left: 4px;
+}
+
+
+/*
+ * User Badges
+ */
+.user-badge {
+    margin-right: 2px;
+}
+img.user-badge {
+    border: 0;
+    cursor: pointer;
 }
 
 

@@ -35,6 +35,67 @@ $currentWeek = getCurrentWeek();
 /****************************************************************/
 //Things below here are the real app
 /****************************************************************/
+//KDHTODO move this popover stuff somewhere else
+$(function() {
+    // KDHTODO close other popovers each time one opens
+    $('.winnerbadge-wrapper').on('click', function() {
+        $('.winnerbadge-wrapper').add('.user-badge').not(this).popover('hide');
+    }).popover({
+        html: true,
+        title: 'Winner Trophy',
+        content: function() {
+            var $this = $(this),
+                year  = $this.data('year'),
+                pot   = $this.data('pot'),
+                place = $this.data('place'),
+                money = $this.data('money'),
+                content;
+
+            // KDHTODO format this better
+            // KDHTODO show the actual badge image (possibly in the title)
+            // KDHTODO show the number of power points it's worth
+            content = '';
+            content += '<strong>' + money + '</strong><br />';    // KDHTODO format as money
+            content += year + ' - ';
+            content += (place == 1 ? 'First' : 'Second') + ' Place - ';
+            content += 'Pot ' + pot + ' Pot<br />';   // KDHTODO get the real name of the pot
+            // KDHTODO also get the record (or week of incorrect, or sum of MOV) for additional detail?
+            return content;
+        },
+        placement: 'auto top'
+    });
+    $('.user-badge').on('click', function() {
+        $('.winnerbadge-wrapper').add('.user-badge').not(this).popover('hide');
+    }).popover({
+        html: true,
+        title: 'User Badge',
+        content: function() {
+            var $this        = $(this),
+                name         = $this.data('name'),
+                info         = $this.data('info'),
+                tagline      = $this.data('tagline'),
+                description  = $this.data('description'),
+                unlockedYear = $this.data('unlockedyear'),
+                content;
+
+            // KDHTODO format this better
+            // KDHTODO add unlockedBy username?
+            // KDHTODO add the year it was earned by the user
+            // KDHTODO show the number of power points it's worth
+            // KDHTODO show the actual badge image (possibly in the title)
+            // KDHTODO add the badge TYPE
+            content = '';
+            content += '<strong>' + name + '</strong> (Unlocked: ' + unlockedYear + ')<br />';    // KDHTODO move unlockedYear somewhere else?
+            content += info + '<br />'; // this is the userbadge.display -- specific info for this badge for this user
+            content += (name != tagline ? '<em>' + tagline + '</em><br />' : '');
+            content += description;
+            return content;
+        },
+        placement: 'auto top'
+    });
+});
+
+
 loserpool.controller('BoardCtrl', ['$scope', function($scope) {
     $scope.order        = 'username';
     $scope.board        = <?php echo CJSON::encode($boardData);?>;
@@ -180,14 +241,13 @@ Debug Order: {{order}}<br />
                             <?php
                             if (userField('show_badges')) {
                                 ?>
-                                <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnerbadge-wrapper">
+                                <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnerbadge-wrapper" data-pot="{{win.pot}}" data-place="{{win.place}}" data-year="{{win.yr}}" data-money="{{win.winnings}}">
                                     <!-- KDHTODO make badges clickable to show modal or go to a link? -->
                                     <!-- KDHTODO after bootstrap is all up and running, adjust style so year overlays are more readable -->
                                     <img ng-src="/images/badges/winnerbadge-{{win.pot}}{{win.place}}.png" />
                                     <div class="year pot{{win.pot}}">{{win.yr | shortenYear}}</div>
                                 </div>
-                                <!-- KDHTODO change alt text to something real (not the zindex) -->
-                                <img ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" title="{{userBadge.badge.zindex}}" />
+                                <img class="user-badge" ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" data-info="{{userBadge.display}}" data-name="{{userBadge.badge.name}}" data-tagline="{{userBadge.badge.display}}" data-description="{{userBadge.badge.description}}" data-unlockedYear="{{userBadge.badge.unlocked_year}}" />
                                 <?php
                             }
                             ?>

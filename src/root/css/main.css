@@ -34,6 +34,13 @@ table.picks > tbody > tr > td.incorrect {
 }
 
 /*
+ * Avatars
+ */
+img.avatar {
+    margin: 0 5px;
+}
+
+/*
  * Logos
  */
 div.logo {
@@ -183,6 +190,20 @@ img.user-badge {
 }
 .table.popover-table > tbody > tr.separator > th, .table.popover-table > tbody > tr.separator > td {
     border-top: 1px solid #999;
+}
+
+
+/*
+ * Talk
+ * - Override some panel styles from Bootstrap
+ */
+.talk {
+    width: 500px;
+    margin: 20px 10px;
+}
+.talk .talk-time {
+    position: relative;
+    float: right;
 }
 
 

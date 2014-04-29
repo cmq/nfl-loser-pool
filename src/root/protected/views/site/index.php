@@ -35,7 +35,8 @@ $currentWeek = getCurrentWeek();
 /****************************************************************/
 //Things below here are the real app
 /****************************************************************/
-//KDHTODO move this popover stuff somewhere else
+// KDHTODO move this popover stuff somewhere else
+// KDHTODO draw the popups using Yii partials
 $(function() {
 
     var fnHideAll, fnGetTrophyData, fnGetBadgeData;
@@ -277,7 +278,7 @@ Debug Order: {{order}}<br />
                     <td>
                         <!-- KDHTODO this is normally a PHP function, but make an analogous JS function to get avatars too -->
                         <!-- KDHTODO remove inline styles -->
-                        <div style="width:44px;float:left;"><img ng-src="{{user | userAvatar}}" /></div>
+                        <div style="width:44px;float:left;"><img class="avatar" ng-src="{{user | userAvatar}}" /></div>
                         <div>
                             {{user.username}}<br />
                             <!-- KDHTODO format this similar to the old site (extract into directive or something?) -->

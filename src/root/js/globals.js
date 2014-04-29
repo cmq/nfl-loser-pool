@@ -68,4 +68,22 @@ globals.isEmail = function(e) {
     return (regEmail.test(e));
 };
 
+globals.dollarFormat = function(n) {
+    n = parseFloat(n);
+    if (isNaN(n)) {
+        n = 0;
+    }
+    return '$' + ('' + Math.abs(n).toFixed(2)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+};
 
+globals.getPotName = function(n) {
+    switch (n) {
+        case 1:
+            return 'Stay-Alive';
+        case 2:
+            return 'Best Record';
+        case 3:
+            return 'Biggest Loser';
+    }
+    return '';
+};

@@ -21,6 +21,7 @@
  *  - Allow talk messages to be flagged by superadmin as "admin" to show up in a different color
  *  - For users viewing a talk message directed at them, show them in a different color
  *  - Use language to differentiate "winner TROPHIES" from "user BADGES"
+ *  - Clean up the data fields for the userbadge and badge tables so the popovers look cooler
  *  - On the homepage, show a bandwagon section that has the stats:
  *      - Week xx pick:  {team}
  *      - Current chief

@@ -78,32 +78,35 @@ div.logo-large-inactive {
 /*
  * Winner Badges
  */
-.winnerbadge-wrapper {
+.winnertrophy-wrapper {
     display: inline-block;
     position: relative;
     margin-right: 2px;
 }
-.winnerbadge-wrapper img {
+.winnertrophy-wrapper img {
     border: 0;
     cursor: pointer;
 }
-.winnerbadge-wrapper .year {
+.winnertrophy-wrapper .year {
     position: absolute;
     font-weight: bold;
     font-size: 80%;
     cursor: pointer;
 }
-.winnerbadge-wrapper .year.pot1 {
+.winnertrophy-wrapper .year.pot1 {
     color: black;
     top: 6px;
     left: 3px;
 }
-.winnerbadge-wrapper .year.pot2 {
+.winnertrophy-wrapper .year.pot1.place1 {
+    color: yellow;
+}
+.winnertrophy-wrapper .year.pot2 {
     color: black;
     top: 0px;
     left: 1px;
 }
-.winnerbadge-wrapper .year.pot3 {
+.winnertrophy-wrapper .year.pot3 {
     color: #7b0098;
     top: -6px;
     left: 4px;
@@ -150,6 +153,10 @@ img.user-badge {
  * - Modifications to the Bootstrap popover default css
  * - Additions for our own custom stuff
  */
+.popover {
+    max-width: 400px;
+    min-width: 200px;
+}
 .popover-title {
     font-weight: bold;
     font-size: 120%;
@@ -163,8 +170,19 @@ img.user-badge {
     font-size: 60%;
     font-weight: bold;
     margin-top: -5px;
+    padding-left: 5px;
+    background-color: #fff;
     position: absolute;
-    right: 4px;    
+    right: 10px;
+}
+.popover .popover-table {
+    margin-top: 20px;
+}
+.popover .popover-table > tbody > tr > td:first-child {
+    font-weight: bold;
+}
+.table.popover-table > tbody > tr.separator > th, .table.popover-table > tbody > tr.separator > td {
+    border-top: 1px solid #999;
 }
 
 

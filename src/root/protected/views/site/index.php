@@ -41,7 +41,7 @@ $(function() {
     var fnHideAll, fnGetTrophyData, fnGetBadgeData;
 
     fnHideAll = function() {
-        $('.winnerbadge-wrapper').add('.user-badge').not(this).popover('hide');
+        $('.winnertrophy-wrapper').add('.user-badge').not(this).popover('hide');
     };
 
     fnGetTrophyData = function() {
@@ -73,7 +73,7 @@ $(function() {
     };
     
     // popovers for winner trophies
-    $('.winnerbadge-wrapper').on('click', function() {
+    $('.winnertrophy-wrapper').on('click', function() {
         fnHideAll.call(this);
     }).popover({
         html: true,
@@ -89,15 +89,15 @@ $(function() {
             var data = fnGetTrophyData.call($(this)),
                 content;
 
-            // KDHTODO format this better
-            // KDHTODO show the actual badge image (possibly in the title)
-            // KDHTODO show the number of power points it's worth
             content = '';
-            content += '<div class="type-label">Winner Trophy</div>';  // KDHTODO put this in a smaller font in the top right corner (floating maybe)
-            content += '<strong>' + data.money + '</strong><br />';    // KDHTODO format as money
-            content += data.year + ' - ';
-            content += (data.place == 1 ? 'First' : 'Second') + ' Place - ';
-            content += 'Pot ' + data.pot + ' Pot<br />';   // KDHTODO get the real name of the pot
+            content += '<div class="type-label">Winner Trophy</div>';
+            content += '<table class="table table-condensed small popover-table">';
+            content += '<tr><td>Year</td><td>' + data.year + '</td></tr>';
+            content += '<tr><td>Place</td><td>' + (data.place == 1 ? '1st' : '2nd') + '</td></tr>';
+            content += '<tr><td>Pot</td><td>' + globals.getPotName(data.pot) + '</td></tr>';
+            content += '<tr><td>Won</td><td>' + globals.dollarFormat(data.money) + '</td></tr>';
+            content += '</table>';
+            // KDHTODO show the number of power points it's worth
             // KDHTODO also get the record (or week of incorrect, or sum of MOV) for additional detail?
             return content;
         },
@@ -120,17 +120,18 @@ $(function() {
             var data = fnGetBadgeData.call($(this)),
                 content;
 
-            // KDHTODO format this better
-            // KDHTODO add the year it was earned by the user
-            // KDHTODO move badge image to the title
             content = '';
-            content += '<div class="type-label">User Badge</div>';  // KDHTODO put this in a smaller font in the top right corner (floating maybe)
-            content += '<strong>' + data.name + '</strong> (Unlocked: ' + data.unlockedYear + ' by ' + data.unlockedUser + ')<br />';    // KDHTODO move unlockedYear somewhere else?
-            content += (data.year ? 'Awarded: ' + data.year + '<br />' : '');
-            content += data.info + '<br />'; // KDHTODO this is the userbadge.display -- specific info for this badge for this user (hide line if blank)
-            content += (data.name != data.tagline ? '<em>' + data.tagline + '</em><br />' : '');
-            content += 'Type: ' + data.type + ', power points: ' + data.points + '<br />';
-            content += data.description;
+            content += '<div class="type-label">User Badge</div>';
+            content += (data.tagline && data.name != data.tagline ? '<small><em>' + data.tagline + '</em></small>' : '');
+            content += '<table class="table table-condensed small popover-table">';
+            content += (data.year ? '<tr><td>Awarded</td><td>' + data.year + '</td></tr>' : '');
+            content += (data.info ? '<tr><td>Detail</td><td>' + data.info + '</td></tr>' : '');
+            content += '<tr class="separator"><td>Type</td><td>' + data.type + '</td></tr>';
+            // KDHTODO turn unlocked user into a link to their profile page
+            content += (data.unlockedYear || data.unlockedUser ? '<tr><td>Unlocked</td><td>' + (data.unlockedYear ? data.unlockedYear : '') + (data.unlockedUser ? ' by <a href="#">' + data.unlockedUser + '</a>' : '') + '</td></tr>' : '');
+            content += '<tr><td>Power&nbsp;Points</td><td>' + data.points + '</td></tr>';
+            content += '<tr><td>Description</td><td>' + data.description + '</td></tr>';
+            content += '</table>';
             return content;
         },
         placement: 'auto top'
@@ -284,11 +285,11 @@ Debug Order: {{order}}<br />
                             <?php
                             if (userField('show_badges')) {
                                 ?>
-                                <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnerbadge-wrapper" data-pot="{{win.pot}}" data-place="{{win.place}}" data-year="{{win.yr}}" data-money="{{win.winnings}}">
+                                <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnertrophy-wrapper" data-pot="{{win.pot}}" data-place="{{win.place}}" data-year="{{win.yr}}" data-money="{{win.winnings}}">
                                     <!-- KDHTODO make badges clickable to show modal or go to a link? -->
                                     <!-- KDHTODO after bootstrap is all up and running, adjust style so year overlays are more readable -->
                                     <img ng-src="/images/badges/winnerbadge-{{win.pot}}{{win.place}}.png" />
-                                    <div class="year pot{{win.pot}}">{{win.yr | shortenYear}}</div>
+                                    <div class="year pot{{win.pot}} place{{win.place}}">{{win.yr | shortenYear}}</div>
                                 </div>
                                 <img class="user-badge" ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" data-info="{{userBadge.display}}" data-name="{{userBadge.badge.name}}" data-year="{{userBadge.yr}}" data-tagline="{{userBadge.badge.display}}" data-description="{{userBadge.badge.description}}" data-unlockedYear="{{userBadge.badge.unlocked_year}}" data-unlockedUser="{{userBadge.badge.unlockedBy.username}}" data-img="{{userBadge.badge.img}}" data-type="{{userBadge.badge.type}}" data-points="{{userBadge.badge.power_points}}" />
                                 <?php

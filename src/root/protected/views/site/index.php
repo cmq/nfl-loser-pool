@@ -37,58 +37,100 @@ $currentWeek = getCurrentWeek();
 /****************************************************************/
 //KDHTODO move this popover stuff somewhere else
 $(function() {
-    // KDHTODO close other popovers each time one opens
-    $('.winnerbadge-wrapper').on('click', function() {
+
+    var fnHideAll, fnGetTrophyData, fnGetBadgeData;
+
+    fnHideAll = function() {
         $('.winnerbadge-wrapper').add('.user-badge').not(this).popover('hide');
+    };
+
+    fnGetTrophyData = function() {
+        var $this = $(this),
+            data = {
+                year:  $this.data('year'),
+                pot:   $this.data('pot'),
+                place: $this.data('place'),
+                money: $this.data('money')
+            };
+        return data;
+    };
+
+    fnGetBadgeData = function() {
+        var $this = $(this),
+            data = {
+                name:         $this.data('name'),
+                img:          $this.data('img'),
+                type:         $this.data('type'),
+                points:       $this.data('points'),
+                info:         $this.data('info'),
+                year:         $this.data('year'),
+                tagline:      $this.data('tagline'),
+                description:  $this.data('description'),
+                unlockedYear: $this.data('unlockedyear'),
+                unlockedUser: $this.data('unlockeduser')
+            };
+        return data;
+    };
+    
+    // popovers for winner trophies
+    $('.winnerbadge-wrapper').on('click', function() {
+        fnHideAll.call(this);
     }).popover({
         html: true,
-        title: 'Winner Trophy',
+        title: function() {
+            var data = fnGetTrophyData.call($(this)),
+                content;
+            // KDHTODO see if the icon's negative margin still works on other devices
+            content = '<div class="icon"><img src="/images/badges/winnerbadge-' + data.pot + data.place + '.png" /></div>';
+            content += (data.place == 1 ? 'First' : 'Second') + ' Place';
+            return content;
+        },
         content: function() {
-            var $this = $(this),
-                year  = $this.data('year'),
-                pot   = $this.data('pot'),
-                place = $this.data('place'),
-                money = $this.data('money'),
+            var data = fnGetTrophyData.call($(this)),
                 content;
 
             // KDHTODO format this better
             // KDHTODO show the actual badge image (possibly in the title)
             // KDHTODO show the number of power points it's worth
             content = '';
-            content += '<strong>' + money + '</strong><br />';    // KDHTODO format as money
-            content += year + ' - ';
-            content += (place == 1 ? 'First' : 'Second') + ' Place - ';
-            content += 'Pot ' + pot + ' Pot<br />';   // KDHTODO get the real name of the pot
+            content += '<div class="type-label">Winner Trophy</div>';  // KDHTODO put this in a smaller font in the top right corner (floating maybe)
+            content += '<strong>' + data.money + '</strong><br />';    // KDHTODO format as money
+            content += data.year + ' - ';
+            content += (data.place == 1 ? 'First' : 'Second') + ' Place - ';
+            content += 'Pot ' + data.pot + ' Pot<br />';   // KDHTODO get the real name of the pot
             // KDHTODO also get the record (or week of incorrect, or sum of MOV) for additional detail?
             return content;
         },
         placement: 'auto top'
     });
+
+    // popovers for user badges
     $('.user-badge').on('click', function() {
-        $('.winnerbadge-wrapper').add('.user-badge').not(this).popover('hide');
+        fnHideAll.call(this);
     }).popover({
         html: true,
-        title: 'User Badge',
+        title: function() {
+            var data = fnGetBadgeData.call($(this)),
+                content;
+            // KDHTODO see if the icon's negative margin still works on other devices
+            content = '<div class="icon"><img src="' + data.img + '" /></div>' + data.name;
+            return content;
+        },
         content: function() {
-            var $this        = $(this),
-                name         = $this.data('name'),
-                info         = $this.data('info'),
-                tagline      = $this.data('tagline'),
-                description  = $this.data('description'),
-                unlockedYear = $this.data('unlockedyear'),
+            var data = fnGetBadgeData.call($(this)),
                 content;
 
             // KDHTODO format this better
-            // KDHTODO add unlockedBy username?
             // KDHTODO add the year it was earned by the user
-            // KDHTODO show the number of power points it's worth
-            // KDHTODO show the actual badge image (possibly in the title)
-            // KDHTODO add the badge TYPE
+            // KDHTODO move badge image to the title
             content = '';
-            content += '<strong>' + name + '</strong> (Unlocked: ' + unlockedYear + ')<br />';    // KDHTODO move unlockedYear somewhere else?
-            content += info + '<br />'; // this is the userbadge.display -- specific info for this badge for this user
-            content += (name != tagline ? '<em>' + tagline + '</em><br />' : '');
-            content += description;
+            content += '<div class="type-label">User Badge</div>';  // KDHTODO put this in a smaller font in the top right corner (floating maybe)
+            content += '<strong>' + data.name + '</strong> (Unlocked: ' + data.unlockedYear + ' by ' + data.unlockedUser + ')<br />';    // KDHTODO move unlockedYear somewhere else?
+            content += (data.year ? 'Awarded: ' + data.year + '<br />' : '');
+            content += data.info + '<br />'; // KDHTODO this is the userbadge.display -- specific info for this badge for this user (hide line if blank)
+            content += (data.name != data.tagline ? '<em>' + data.tagline + '</em><br />' : '');
+            content += 'Type: ' + data.type + ', power points: ' + data.points + '<br />';
+            content += data.description;
             return content;
         },
         placement: 'auto top'
@@ -184,6 +226,7 @@ foreach ($talk as $t) {
 <h5>Debug Current Week / Header Week: <?php echo $currentWeek;?> / <?php echo getHeaderWeek();?></h5>
 <div ng-controller="BoardCtrl">
 Debug Order: {{order}}<br />
+    <!-- KDHTODO clean up table (center headings, etc) -->
     <div class="table-responsive">
         <table class="picks table table-striped table-bordered">
             <thead>
@@ -247,7 +290,7 @@ Debug Order: {{order}}<br />
                                     <img ng-src="/images/badges/winnerbadge-{{win.pot}}{{win.place}}.png" />
                                     <div class="year pot{{win.pot}}">{{win.yr | shortenYear}}</div>
                                 </div>
-                                <img class="user-badge" ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" data-info="{{userBadge.display}}" data-name="{{userBadge.badge.name}}" data-tagline="{{userBadge.badge.display}}" data-description="{{userBadge.badge.description}}" data-unlockedYear="{{userBadge.badge.unlocked_year}}" />
+                                <img class="user-badge" ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" data-info="{{userBadge.display}}" data-name="{{userBadge.badge.name}}" data-year="{{userBadge.yr}}" data-tagline="{{userBadge.badge.display}}" data-description="{{userBadge.badge.description}}" data-unlockedYear="{{userBadge.badge.unlocked_year}}" data-unlockedUser="{{userBadge.badge.unlockedBy.username}}" data-img="{{userBadge.badge.img}}" data-type="{{userBadge.badge.type}}" data-points="{{userBadge.badge.power_points}}" />
                                 <?php
                             }
                             ?>

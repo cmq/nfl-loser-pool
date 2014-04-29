@@ -82,8 +82,16 @@ class User extends DeepActiveRecord
             'withBadges' => array(
                 'with' => array(
                     'userBadges' => array(
-                        'select' => 'display',
-                        'with' => array('badge'),
+                        'select' => array('display', 'yr'),
+                        'with' => array(
+                            'badge' => array(
+                                'with' => array(
+                                    'unlockedBy' => array(
+                                        'select' => array('username'),
+                                    ),
+                                ),
+                            ),
+                        ),
                     ),
                 ),
             ),

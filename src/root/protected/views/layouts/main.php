@@ -9,6 +9,7 @@
  *  KDHTODO larger items
  *  
  *  - On the index page, add an interval that will poll for new board data and automatically update the model with changes
+ *  - Really need to speed up the index page
  *  - Graph of referrers for how people know each other
  *  - Allow likes/dislikes for trash talk -- include these in power ranking
  *  - Keep track of WHEN picks are made so we know how early people picked

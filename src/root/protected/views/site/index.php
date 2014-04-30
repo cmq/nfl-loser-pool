@@ -260,7 +260,7 @@ Debug Order: {{order}}<br />
                         for ($week=1; $week<=21; $week++) {
                             if (!userField('collapse_history') || $week >= $currentWeek) {
                                 // KDHTODO make font much smaller so it doesn't make columns wider
-                                echo '<th><a href="' . Yii::app()->createAbsoluteUrl('admin/showCorrect', array('week'=>$week)) . '">Cor</th>';
+                                echo '<th><a href="' . Yii::app()->createAbsoluteUrl('admin/showCorrect', array('week'=>$week)) . '"><span class="glyphicon glyphicon-flash"></span></th>';
                             }
                         }
                         ?>
@@ -278,7 +278,7 @@ Debug Order: {{order}}<br />
                     <td>
                         <!-- KDHTODO this is normally a PHP function, but make an analogous JS function to get avatars too -->
                         <!-- KDHTODO remove inline styles -->
-                        <div style="width:44px;float:left;"><img class="avatar" ng-src="{{user | userAvatar}}" /></div>
+                        <div style="width:44px;float:left;margin-right:10px;"><img class="avatar" ng-src="{{user | userAvatar}}" /></div>
                         <div>
                             {{user.username}}<br />
                             <!-- KDHTODO format this similar to the old site (extract into directive or something?) -->

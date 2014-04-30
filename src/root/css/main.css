@@ -32,6 +32,9 @@ table.picks > tbody > tr > td.incorrect {
     padding: 1px;
     vertical-align: middle;
 }
+.picks > thead > tr > th, .picks > tbody > tr > th, .picks > tfoot > tr > th, .picks > thead > tr > td {
+    text-align: center;
+}
 
 /*
  * Avatars
@@ -199,7 +202,7 @@ img.user-badge {
  * - "Like" styles
  */
 .talk {
-    width: 500px;
+    width: 600px;
     margin: 20px 10px;
 }
 .talk .talk-time {
@@ -233,6 +236,11 @@ img.user-badge {
     margin-top: 5px;
     cursor: pointer;
     display: inline-block;
+}
+@media screen and (max-width: 600px) {
+    .talk {
+        width: 100%;
+    }
 }
 
 

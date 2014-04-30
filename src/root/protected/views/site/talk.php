@@ -66,7 +66,7 @@ $(function() {
         <?php
     }
     ?>
-    <button type="submit" class="btn btn-default" id="talksubmit">Post Message</button><br />
+    <button type="submit" class="btn btn-primary" id="talksubmit">Post Message</button><br />
 </form>
 
 <?php

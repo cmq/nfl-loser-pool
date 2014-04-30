@@ -13,7 +13,7 @@ foreach ($talk->likes as $like) {
 }
 
 ?>
-<div class="panel talk <?php echo ($talk->admin ? 'panel-danger' : ($talk->at && $talk->at->id == userId() ? 'panel-primary' : 'panel-default'));?>">
+<div class="panel talk <?php echo ($talk->admin ? 'panel-warning' : ($talk->at && $talk->at->id == userId() ? 'panel-primary' : 'panel-default'));?>">
     <div class="panel-heading">
         <div class="talk-time small">
             <?php echo date('n:ia \o\n D, M jS, Y', strtotime($talk->postedon));?>
@@ -37,10 +37,11 @@ foreach ($talk->likes as $like) {
     </div>
     <div class="panel-footer">
         <div>
+            <div class="like-button<?php echo ($thisUserLiked ? ' active' : '')?>" data-talkid="<?php echo $talk->id;?>"></div>
             <div class="likes small<?php echo ($numLikes ? '' : ' hidden');?>" data-talkid="<?php echo $talk->id;?>" data-likes="<?php echo htmlentities(CJSON::encode($userLikes));?>">
                 Liked by <?php echo $numLikes;?> User<?php echo ($numLikes == 1 ? '' : 's');?>
             </div>
-            <div class="like-button<?php echo ($thisUserLiked ? ' active' : '')?>" data-talkid="<?php echo $talk->id;?>"></div>
+            <br />
         </div>
     </div>
 </div>

@@ -35,7 +35,7 @@
  *  	- Ability to show/hide badges
  *  	- Ability to show/hide user avatars
  *  	- Ability to show/hide the bandwagon section
- *  	- Ability to show/hide trash talk
+ *  	- Ability to show/hide trash talk (still need admin messages to show)
  *  	- Ability to show/hide the season outlook (pots)
  *  	- Ability to show/hide power rank columns
  *  	- Ability to show team short names instead of team icons?
@@ -60,7 +60,9 @@
  *  		- Prime time badge (picture of Deion) - most TNF + SNF + MNF games picked.
  *  - Power ranking formula
  *  	- less emphasis on longevity
- *  	- include points for likes/dislikes on trash talk
+ *  	- include points for likes on trash talk
+ *          - Only give credits for posts made that were liked by at least 3 people so people can't team-spam
+ *          - Give credit for liking other people's posts, but only if at least 2 other people liked the same post (otherwise you could simply spam likes)
  *  	- make the formula public, with a page that shows how each user's score was calculated
  *  	- create the ability to re-calculate up to a given week (like, figure out what the power rankings would have been after week 5, 2010)
  *  		- use this ability to create a full history of power rankings by week

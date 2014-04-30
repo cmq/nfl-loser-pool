@@ -206,6 +206,10 @@ img.user-badge {
     position: relative;
     float: right;
 }
+.talk .like-button {
+    position: relative;
+    float: right;
+}
 .like-button {
     background-image: url(/images/like.png);
     background-position: 0 0;
@@ -226,10 +230,9 @@ img.user-badge {
     margin: 0;
 }
 .likes {
-    position: relative;
-    float: right;
     margin-top: 5px;
     cursor: pointer;
+    display: inline-block;
 }
 
 

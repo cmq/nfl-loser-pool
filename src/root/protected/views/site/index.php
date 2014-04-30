@@ -1,28 +1,8 @@
-<!-- KDHTODO are any of these JS objects even necessary now that we're using angular? -->
-<script src="<?php echo baseUrl('/js/model/Badge.js'); ?>"></script>
-<script src="<?php echo baseUrl('/js/model/Pick.js'); ?>"></script>
-<script src="<?php echo baseUrl('/js/model/Team.js'); ?>"></script>
-<script src="<?php echo baseUrl('/js/model/User.js'); ?>"></script>
-<script src="<?php echo baseUrl('/js/model/UserYear.js'); ?>"></script>
 <?php
 // KDHTODO handle AJAX errors where user is logged out
 // KDHTODO since Yii::app()->user is only updated on login, need to update relevant session information when the user changes their login name or password without having them have to log out and back in again
 
 // KDHTODO as cool as Angular is, keeping the controls to toggle the view so much on the main page is slowing things down.  Make them options that are moved to the profile page
-$this->pageTitle = Yii::app()->name;
-$user = Yii::app()->user;
-?>
-
-<h1>Welcome to <i><?php echo CHtml::encode(Yii::app()->name); ?></i></h1>
-
-<h2>You are logged in as <?php echo ($user->isGuest ? 'guest' : 'registered user ' . userId() . ' (' . userField('username') . ' - ' . userField('firstname') . ' ' . userField('lastname') . ')')?></h2>
-<?php
-if (Yii::app()->user->isGuest) {
-    // KDHTODO how to handle what guests can see?
-    ?>You are a guest.  What does that mean you can access?  Past seasons, perhaps?  But you may want to <a href="<?php echo $this->createUrl('site/login')?>">log in</a><br /><?php
-} else {
-    ?><a href="<?php echo $this->createUrl('site/logout')?>">Logout</a><br /><?php
-}
 
 
 $currentWeek = getCurrentWeek();

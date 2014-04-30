@@ -25,6 +25,9 @@ table.picks > tbody > tr > td.incorrect {
 /*
  * Updates to help work with Twitter Bootstrap
  */
+body {
+    padding-top: 70px;  /* @see http://getbootstrap.com/components/#navbar-fixed-top */
+}
 .table-nonfluid {
     width: auto;
 }
@@ -34,6 +37,15 @@ table.picks > tbody > tr > td.incorrect {
 }
 .picks > thead > tr > th, .picks > tbody > tr > th, .picks > tfoot > tr > th, .picks > thead > tr > td {
     text-align: center;
+}
+.navbar-brand {
+    font-weight: bold;
+}
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+    color: #ff0;
+}
+.navbar .loginlogout a {
+    color: #fff;
 }
 
 /*

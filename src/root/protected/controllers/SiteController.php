@@ -3,17 +3,6 @@
 class SiteController extends Controller
 {
     /**
-     * declare action filters
-     * @see CController::filters()
-     */
-    public function filters() {
-        return array(
-            array('application.filters.RegisteredFilter + profile, pick'),
-            array('application.filters.PaidFilter + profile'),
-        );
-    }
-    
-    /**
      * Declares class-based actions.
      */
     public function actions()
@@ -51,40 +40,6 @@ class SiteController extends Controller
             'order'     => 't.postedon desc'
         ));
         $this->render('index', array('boardData'=>$boardData, 'talk'=>$talk));
-    }
-    
-    /**
-     * A separate page for the user to make their picks
-     */
-    public function actionPick()
-    {
-        // KDHTODO prevent this action if the user is a guest
-        $userPicks = Pick::model()->current()->findAll();
-        $teams = Team::model()->findAll(array('order'=>'longname'));
-        $this->render('pick', array('picks'=>$userPicks, 'teams'=>$teams));
-    }
-
-    /**
-     * A separate page for the user to talk trash
-     */
-    public function actionTalk()
-    {
-        // KDHTODO prevent this action if the user is a guest
-        $talks = Talk::model()->current()->withLikes()->findAll(array('order'=>'postedon desc'));
-        $users = User::model()->active()->findAll(array('order'=>'username'));
-        $this->render('talk', array('talks'=>$talks, 'users'=>$users));
-    }
-
-    /**
-     * A separate page for the user to adjust their profile
-     */
-    public function actionProfile()
-    {
-        // KDHTODO prevent this action if the user is a guest
-        // KDHTODO prevent this action if the user hasn't paid
-        $userId = (isset($_GET['uid']) && isSuperadmin() ? (int) $_GET['uid'] : userId());
-        $user = User::model()->findByPk($userId); 
-        $this->render('profile', array('user'=>$user));
     }
 
     /**

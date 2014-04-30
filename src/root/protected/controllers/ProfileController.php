@@ -35,8 +35,10 @@ class ProfileController extends Controller
     
     public function actionIndex()
     {
-        // no index action
-        // KDHTODO redirect to site/profile
+        $this->layout = 'main';
+        $userId = (isset($_GET['uid']) && isSuperadmin() ? (int) $_GET['uid'] : userId());
+        $user = User::model()->findByPk($userId); 
+        $this->render('index', array('user'=>$user));
     }
     
     public function actionUsername()

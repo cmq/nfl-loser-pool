@@ -9,8 +9,10 @@ class TalkController extends Controller
     
     public function actionIndex()
     {
-        // no index action
-        // KDHTODO redirect to site/talk
+        $this->layout = 'main';
+        $talks = Talk::model()->current()->withLikes()->findAll(array('order'=>'postedon desc'));
+        $users = User::model()->active()->findAll(array('order'=>'username'));
+        $this->render('index', array('talks'=>$talks, 'users'=>$users));
     }
     
     public function actionSave()

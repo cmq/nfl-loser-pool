@@ -63,6 +63,7 @@
  *  	- less emphasis on longevity
  *  	- include points for likes on trash talk
  *          - Only give credits for posts made that were liked by at least 3 people so people can't team-spam
+ *          - Give more credit for more likes, but diminishing returns
  *          - Give credit for liking other people's posts, but only if at least 2 other people liked the same post (otherwise you could simply spam likes)
  *  	- make the formula public, with a page that shows how each user's score was calculated
  *  	- create the ability to re-calculate up to a given week (like, figure out what the power rankings would have been after week 5, 2010)
@@ -162,27 +163,10 @@ html, body {
     <body>
         <!-- KDHTODO container-fluid vs container should maybe be on a page-by-page basis? -->
         <div class="container-fluid">
-            <!-- KDHTODO what does navigation look like for a guest? -->
-            Navigation:<br />
             <?php
-            echo CHtml::link('Home', $this->createAbsoluteUrl('site/index')) . '<br />';
-            if (!isGuest()) {
-                echo CHtml::link('Enter Picks', $this->createAbsoluteUrl('site/pick')) . '<br />';
-                if (isPaid()) {
-                    echo CHtml::link('Talk', $this->createAbsoluteUrl('site/talk')) . '<br />';
-                    echo CHtml::link('Profile', $this->createAbsoluteUrl('site/profile')) . '<br />';
-                }
-            }
-            // KDHTODO nav links that still need to be added and written:
-            // KDHTODO About page
-            // KDHTODO NFL Schedule
-            // KDHTODO Stat Rankings page
-            // KDHTODO Pick Stats page
-            // KDHTODO Prior Winners page
-            // KDHTODO Season Archive page
+            $this->renderPartial('//_partials/navigation', array());
+            echo $content;
             ?>
-            <hr />
-            <?php echo $content; ?>
         </div>
     </body>
 </html>

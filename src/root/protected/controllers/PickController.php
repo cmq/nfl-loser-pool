@@ -8,8 +8,10 @@ class PickController extends Controller
     // KDHTODO prevent any actions on this controller from executing if the user is a guest
     public function actionIndex()
     {
-        // no index action
-        // KDHTODO redirect to site/pick
+        $this->layout = 'main';
+        $userPicks = Pick::model()->current()->findAll();
+        $teams = Team::model()->findAll(array('order'=>'longname'));
+        $this->render('index', array('picks'=>$userPicks, 'teams'=>$teams));
     }
     
     public function actionSave()

@@ -391,127 +391,128 @@ $(function() {
 </script>
 
 
-<form class="form-horizontal" role="form">
-    <div class="form-group fieldwrap-username">
-        <label class="control-label col-sm-2" for="username">Username</label>
-        <div class="col-sm-5">
-            <input type="text" id="username" class="form-control" />
-            <span class="help-block"></span>
-        </div>
-        <div class="col-sm-5 gutter"></div>
-    </div>
-    <div class="form-group fieldwrap-email">
-        <label class="control-label col-sm-2" for="email">Email</label>
-        <div class="col-sm-5">
-            <input type="text" id="email" class="form-control" />
-            <span class="help-block"></span>
-        </div>
-        <div class="col-sm-5 gutter"></div>
-    </div>
-    <div class="form-group fieldwrap-timezone">
-        <label class="control-label col-sm-2" for="email">Timezone</label>
-        <div class="col-sm-5">
-            <select id="timezone" class="form-control">
-                <?php
-                $defaultTimezone = userField('timezone');
-                echo createOption(-2, 'Pacific Time', $defaultTimezone);
-                echo createOption(-1, 'Mountain Time', $defaultTimezone);
-                echo createOption(0, 'Central Time', $defaultTimezone);
-                echo createOption(1, 'Eastern Time', $defaultTimezone);
-                ?>
-            </select>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" id="use_dst"<?php echo userField('use_dst') ? ' checked="checked"' : ''?> /> Enable Automatic Daylight Savings Time Adjustments
-                </label>
-            </div>
-            <span class="help-block"></span>
-        </div>
-        <div class="col-sm-5 gutter"></div>
-    </div>
-    <div class="form-group fieldwrap-password">
-        <label class="control-label col-sm-2" for="username">Password</label>
-        <div class="col-sm-5">
-            <div id="change-password-static">   <!-- KDHTODO add a top padding of about 9px for this -->
-                *****************
-                <button type="button" class="btn btn-xs btn-default">Change</button>
-            </div>
-            <div id="change-password-form" style="display:none;">
-                <!-- KDHTODO make sure these placeholders work for all devices, otherwise we might need to show some form labels for certain devices -->
-                <div class="form-group">
-                    <div class="col-sm-6">
-                        <input type="password" id="oldpw" class="form-control" placeholder="Old Password" />
-                    </div>
-                    <span class="help-block"></span>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-6">
-                        <input type="password" id="newpw1" class="form-control" placeholder="New Password" />
-                    </div>
-                    <span class="help-block"></span>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-6">
-                        <input type="password" id="newpw2" class="form-control" placeholder="Confirm New Password" />
-                    </div>
-                    <span class="help-block"></span>
-                </div>
-                <button type="button" class="btn btn-primary save">Save</button>
-                <button type="button" class="btn btn-default cancel">Cancel</button>
+<div class="container">
+    <form class="form-horizontal" role="form">
+        <div class="form-group fieldwrap-username">
+            <label class="control-label col-sm-2" for="username">Username</label>
+            <div class="col-sm-5">
+                <input type="text" id="username" class="form-control" />
                 <span class="help-block"></span>
             </div>
+            <div class="col-sm-5 gutter"></div>
         </div>
-        <div class="col-sm-5 gutter"></div>
-    </div>
-    <div class="form-group fieldwrap-view">
-        <label class="control-label col-sm-2">View Settings</label>
-        <div class="col-sm-5">
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" id="collapse_history"<?php echo userField('collapse_history') ? ' checked="checked"' : ''?> /> Collapse History
-                </label>
+        <div class="form-group fieldwrap-email">
+            <label class="control-label col-sm-2" for="email">Email</label>
+            <div class="col-sm-5">
+                <input type="text" id="email" class="form-control" />
+                <span class="help-block"></span>
             </div>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" id="show_badges"<?php echo userField('show_badges') ? ' checked="checked"' : ''?> /> Show User Badges
-                </label>
-            </div>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" id="show_logos"<?php echo userField('show_logos') ? ' checked="checked"' : ''?> /> Show Team Logos
-                </label>
-            </div>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" id="show_mov"<?php echo userField('show_mov') ? ' checked="checked"' : ''?> /> Show Margin of Defeat
-                </label>
-            </div>
-            <span class="help-block"></span>
-            <div id="viewsetting-saved" style="display:none;">Saved</div>   <!-- KDHTODO use help-block instead -->
+            <div class="col-sm-5 gutter"></div>
         </div>
-    </div>
-    <div class="form-group fieldwrap-avatar">
-        <label class="control-label col-sm-2">Profile Image</label>
-        <div class="col-sm-5">
-            <?php
-            echo getUserAvatar($user->id, $user->avatar_ext);
-            ?>
-            <br />
-            This is your profile image that will appear on the home page.  Note:<br />
-            <ul>
-                <li>File size limit of 1MB.</li>
-                <li>Only images of type .jpg, .gif, or .png are allowed.</li>
-                <li>The images will be automatically resized for you.</li>
-            </ul>
-            Click the button below to select an image, or drag an image over the button to upload.<br />(Unless you have IE in which case you suck and don't deserve to have such convenient features.)<br />
-            <br />
-            <div id="file-uploader"></div>
-            <span class="help-block"></span>
+        <div class="form-group fieldwrap-timezone">
+            <label class="control-label col-sm-2" for="email">Timezone</label>
+            <div class="col-sm-5">
+                <select id="timezone" class="form-control">
+                    <?php
+                    $defaultTimezone = userField('timezone');
+                    echo createOption(-2, 'Pacific Time', $defaultTimezone);
+                    echo createOption(-1, 'Mountain Time', $defaultTimezone);
+                    echo createOption(0, 'Central Time', $defaultTimezone);
+                    echo createOption(1, 'Eastern Time', $defaultTimezone);
+                    ?>
+                </select>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="use_dst"<?php echo userField('use_dst') ? ' checked="checked"' : ''?> /> Enable Automatic Daylight Savings Time Adjustments
+                    </label>
+                </div>
+                <span class="help-block"></span>
+            </div>
+            <div class="col-sm-5 gutter"></div>
         </div>
-        <div class="col-sm-5 gutter"></div>
-    </div>
-</form>
-
+        <div class="form-group fieldwrap-password">
+            <label class="control-label col-sm-2" for="username">Password</label>
+            <div class="col-sm-5">
+                <div id="change-password-static">   <!-- KDHTODO add a top padding of about 9px for this -->
+                    *****************
+                    <button type="button" class="btn btn-xs btn-default">Change</button>
+                </div>
+                <div id="change-password-form" style="display:none;">
+                    <!-- KDHTODO make sure these placeholders work for all devices, otherwise we might need to show some form labels for certain devices -->
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <input type="password" id="oldpw" class="form-control" placeholder="Old Password" />
+                        </div>
+                        <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <input type="password" id="newpw1" class="form-control" placeholder="New Password" />
+                        </div>
+                        <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <input type="password" id="newpw2" class="form-control" placeholder="Confirm New Password" />
+                        </div>
+                        <span class="help-block"></span>
+                    </div>
+                    <button type="button" class="btn btn-primary save">Save</button>
+                    <button type="button" class="btn btn-default cancel">Cancel</button>
+                    <span class="help-block"></span>
+                </div>
+            </div>
+            <div class="col-sm-5 gutter"></div>
+        </div>
+        <div class="form-group fieldwrap-view">
+            <label class="control-label col-sm-2">View Settings</label>
+            <div class="col-sm-5">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="collapse_history"<?php echo userField('collapse_history') ? ' checked="checked"' : ''?> /> Collapse History
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="show_badges"<?php echo userField('show_badges') ? ' checked="checked"' : ''?> /> Show User Badges
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="show_logos"<?php echo userField('show_logos') ? ' checked="checked"' : ''?> /> Show Team Logos
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="show_mov"<?php echo userField('show_mov') ? ' checked="checked"' : ''?> /> Show Margin of Defeat
+                    </label>
+                </div>
+                <span class="help-block"></span>
+                <div id="viewsetting-saved" style="display:none;">Saved</div>   <!-- KDHTODO use help-block instead -->
+            </div>
+        </div>
+        <div class="form-group fieldwrap-avatar">
+            <label class="control-label col-sm-2">Profile Image</label>
+            <div class="col-sm-5">
+                <?php
+                echo getUserAvatar($user->id, $user->avatar_ext);
+                ?>
+                <br />
+                This is your profile image that will appear on the home page.  Note:<br />
+                <ul>
+                    <li>File size limit of 1MB.</li>
+                    <li>Only images of type .jpg, .gif, or .png are allowed.</li>
+                    <li>The images will be automatically resized for you.</li>
+                </ul>
+                Click the button below to select an image, or drag an image over the button to upload.<br />(Unless you have IE in which case you suck and don't deserve to have such convenient features.)<br />
+                <br />
+                <div id="file-uploader"></div>
+                <span class="help-block"></span>
+            </div>
+            <div class="col-sm-5 gutter"></div>
+        </div>
+    </form>
+</div>
 
 <?php
 

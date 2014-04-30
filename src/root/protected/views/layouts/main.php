@@ -161,12 +161,9 @@ html, body {
         </script>
     </head>
     <body>
-        <!-- KDHTODO container-fluid vs container should maybe be on a page-by-page basis? -->
-        <div class="container-fluid">
-            <?php
-            $this->renderPartial('//_partials/navigation', array());
-            echo $content;
-            ?>
-        </div>
+        <?php
+        $this->renderPartial('//_partials/navigation', array());
+        echo $content;
+        ?>
     </body>
 </html>

@@ -105,6 +105,24 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                 Welcome, <?php echo (isGuest() ? 'Guest' : '<a href="#" class="navbar-link">' . userField('username') . '</a>');?>
                 <small>(<?php echo (isGuest() ? CHtml::link('Login', array('site/login')) : CHtml::link('Logout', array('site/logout')));?>)</small>
             </p>
+            <?php
+            if (isAdmin()) {
+                ?>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown<?php echo ($controllerName == 'admin' ? ' active' : '')?>">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <?php
+                            echo navItem('Correct Picks', 'admin/showCorrect', null, $controllerName == 'admin' && $actionName == 'showCorrect', isAdmin());
+                            echo navItem('Create Account', 'admin/newAccount', null, $controllerName == 'admin' && $actionName == 'newAccount', isSuperadmin());
+                            echo navItem('Recalculate Rankings', 'admin/recalculateRankings', null, $controllerName == 'admin' && $actionName == 'recalculateRankings', isSuperadmin());
+                            ?>
+                        </ul>
+                    </li>
+                </ul>
+                <?
+            }
+            ?>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>                

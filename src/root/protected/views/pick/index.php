@@ -55,41 +55,43 @@ loserpool.controller('PickPageCtrl', ['$scope', '$http', function($scope, $http)
 }]);
 </script>
 
-<div ng-controller="PickPageCtrl" class="table-responsive">
-    <table class="table table-nonfluid">
-        <thead>
-            <tr>
-                <th>Week</th>
-                <th colspan="2">Pick</th>
-                <th>Lock Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            for ($week=1; $week<=21; $week++) {
-                ?>
-                <tr ng-class="{danger: picks[<?=$week-1?>].incorrect == 1, success: picks[<?=$week-1?>].incorrect == '0'}">
-                    <td><?=$week?></td>
-                    <td>
-                        <!--
-                        // KDHTODO select what the user had
-                        // KDHTODO add a column for the logo
-                        // KDHTODO make a fancier select like the main page, to select a team by logo in a small modal?
-                        // KDHTODO AJAX call to save when the dropdown changes
-                        // KDHTODO disable dropdowns that are locked
-                        -->
-                        <select class="form-control" ng-model="picks[<?=$week-1?>].team" ng-options="t.longname for (id, t) in teams">
-                            <option value="">Select Loser...</option>
-                        </select>
-                    </td>
-                    <!-- KDHTODO populate -->
-                    <td>Logo</td>
-                    <!-- KDHTODO populate -->
-                    <td><?=getLockTime($week, true)?></td>
+<div class="container">
+    <div ng-controller="PickPageCtrl" class="table-responsive">
+        <table class="table table-nonfluid">
+            <thead>
+                <tr>
+                    <th>Week</th>
+                    <th colspan="2">Pick</th>
+                    <th>Lock Time</th>
                 </tr>
-                <?
-            }
-            ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php
+                for ($week=1; $week<=21; $week++) {
+                    ?>
+                    <tr ng-class="{danger: picks[<?=$week-1?>].incorrect == 1, success: picks[<?=$week-1?>].incorrect == '0'}">
+                        <td><?=$week?></td>
+                        <td>
+                            <!--
+                            // KDHTODO select what the user had
+                            // KDHTODO add a column for the logo
+                            // KDHTODO make a fancier select like the main page, to select a team by logo in a small modal?
+                            // KDHTODO AJAX call to save when the dropdown changes
+                            // KDHTODO disable dropdowns that are locked
+                            -->
+                            <select class="form-control" ng-model="picks[<?=$week-1?>].team" ng-options="t.longname for (id, t) in teams">
+                                <option value="">Select Loser...</option>
+                            </select>
+                        </td>
+                        <!-- KDHTODO populate -->
+                        <td>Logo</td>
+                        <!-- KDHTODO populate -->
+                        <td><?=getLockTime($week, true)?></td>
+                    </tr>
+                    <?
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
 </div>

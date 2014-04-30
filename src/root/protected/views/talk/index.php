@@ -39,37 +39,40 @@ $(function() {
 <?php
 // KDHTODO clean up the display of this
 ?>
-<form role="form">
-    <div class="form-group">
-        <label for="talkuser">Direct Message At</label>
-        <select class="form-control" id="talkuser">
-            <option value="0"></option>
-            <?php
-            foreach ($users as $user) {
-                echo createOption($user->id, $user->username);
-            }
-            ?>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="talkuser">Message</label>
-        <textarea class="form-control" id="talkmessage"></textarea>
-    </div>
-    <?php
-    if (isSuperadmin()) {
-        ?>
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" id="talksuperadmin" /> Post as Administrative Message
-            </label>
+<div class="container">
+    <form role="form">
+        <div class="form-group">
+            <label for="talkuser">Direct Message At</label>
+            <select class="form-control" id="talkuser">
+                <option value="0"></option>
+                <?php
+                foreach ($users as $user) {
+                    echo createOption($user->id, $user->username);
+                }
+                ?>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="talkuser">Message</label>
+            <textarea class="form-control" id="talkmessage"></textarea>
         </div>
         <?php
+        if (isSuperadmin()) {
+            ?>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" id="talksuperadmin" /> Post as Administrative Message
+                </label>
+            </div>
+            <?php
+        }
+        ?>
+        <button type="submit" class="btn btn-primary" id="talksubmit">Post Message</button><br />
+    </form>
+    
+    <?php
+    foreach ($talks as $talk) {
+        $this->renderPartial('//_partials/talk', array('talk'=>$talk));
     }
     ?>
-    <button type="submit" class="btn btn-primary" id="talksubmit">Post Message</button><br />
-</form>
-
-<?php
-foreach ($talks as $talk) {
-    $this->renderPartial('//_partials/talk', array('talk'=>$talk));
-}
+</div>

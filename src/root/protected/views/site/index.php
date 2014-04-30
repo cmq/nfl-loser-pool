@@ -198,114 +198,119 @@ loserpool.filter('userAvatar', function() {
 </script>
 
 
-<h4>Most Recent Talk</h4>
-<?php
-foreach ($talk as $t) {
-    $this->renderPartial('//_partials/talk', array('talk'=>$t));
-}
-?>
+<div class="container">
+    <h4>Most Recent Talk</h4>
+    <?php
+    foreach ($talk as $t) {
+        $this->renderPartial('//_partials/talk', array('talk'=>$t));
+    }
+    ?>
+</div>
+<div class="container-fluid">
 
-<h5>Debug Current Week / Header Week: <?php echo $currentWeek;?> / <?php echo getHeaderWeek();?></h5>
-<div ng-controller="BoardCtrl">
-Debug Order: {{order}}<br />
-    <!-- KDHTODO clean up table (center headings, etc) -->
-    <div class="table-responsive">
-        <table class="picks table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>&nbsp;</th>
-                    <!-- KDHTODO add support for reversing the sort order (should work by simply prefixing the sort properties with a minus sign) -->
-                    <th ng-click="order = 'username'">User</th>
-                    <?php
-                    if (userField('collapse_history') && $currentWeek > 2) {
-                        echo '<th>Weeks 1 - ' . ($currentWeek-1) . '</th>';
-                    }
-                    for ($week=1; $week<=21; $week++) {
-                        if (!userField('collapse_history') || $week >= $currentWeek) {
-                            ?><th ng-click="setOrder(<?=$week?>-1)"><?=getWeekName($week)?></th><?php
-                        }
-                    }
-                    ?>
-                    <!-- KDHTODO instead of old way, where there tries to be 1 column for who's ahead, let there be a column for every pot, and a final column for total money -->
-                </tr>
-                <?php
-                if (isAdmin()) {
-                    ?>
+    
+    <h5>Debug Current Week / Header Week: <?php echo $currentWeek;?> / <?php echo getHeaderWeek();?></h5>
+    <div ng-controller="BoardCtrl">
+    Debug Order: {{order}}<br />
+        <!-- KDHTODO clean up table (center headings, etc) -->
+        <div class="table-responsive">
+            <table class="picks table table-striped table-bordered">
+                <thead>
                     <tr>
-                        <th colspan="2"/>
+                        <th>&nbsp;</th>
+                        <!-- KDHTODO add support for reversing the sort order (should work by simply prefixing the sort properties with a minus sign) -->
+                        <th ng-click="order = 'username'">User</th>
                         <?php
                         if (userField('collapse_history') && $currentWeek > 2) {
-                            echo '<th></th>';
+                            echo '<th>Weeks 1 - ' . ($currentWeek-1) . '</th>';
                         }
                         for ($week=1; $week<=21; $week++) {
                             if (!userField('collapse_history') || $week >= $currentWeek) {
-                                // KDHTODO make font much smaller so it doesn't make columns wider
-                                echo '<th><a href="' . Yii::app()->createAbsoluteUrl('admin/showCorrect', array('week'=>$week)) . '"><span class="glyphicon glyphicon-flash"></span></th>';
+                                ?><th ng-click="setOrder(<?=$week?>-1)"><?=getWeekName($week)?></th><?php
                             }
                         }
                         ?>
-                        </tr>
+                        <!-- KDHTODO instead of old way, where there tries to be 1 column for who's ahead, let there be a column for every pot, and a final column for total money -->
+                    </tr>
                     <?php
-                }
-                ?>
-            </thead>
-            <tbody>
-                <!-- KDHTODO highlight the current user's row -->
-                <!-- all of these ng-repeats may be extraneous... ng-repeat is only useful for data binding, but for static data that won't change, we're just slowing things down on the client side -->
-                <!-- on second thought, without the ng-repeat data binding, we couldn't dynamically sort on the client-side (without a plugin or something) -->
-                <tr ng-repeat="user in board | orderBy:[order,'username']" ng-class="{success: user.id == <?php echo userId()?>}">   <!-- KDHTODO have sort order secondary sort be record before username -->
-                    <td>{{$index+1}}</td>
-                    <td>
-                        <!-- KDHTODO this is normally a PHP function, but make an analogous JS function to get avatars too -->
-                        <!-- KDHTODO remove inline styles -->
-                        <div style="width:44px;float:left;margin-right:10px;"><img class="avatar" ng-src="{{user | userAvatar}}" /></div>
-                        <div>
-                            {{user.username}}<br />
-                            <!-- KDHTODO format this similar to the old site (extract into directive or something?) -->
-                            <!-- KDHTODO add "alt" tags and title attributes -->
+                    if (isAdmin()) {
+                        ?>
+                        <tr>
+                            <th colspan="2"/>
                             <?php
-                            if (userField('show_badges')) {
-                                ?>
-                                <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnertrophy-wrapper" data-pot="{{win.pot}}" data-place="{{win.place}}" data-year="{{win.yr}}" data-money="{{win.winnings}}">
-                                    <!-- KDHTODO make badges clickable to show modal or go to a link? -->
-                                    <!-- KDHTODO after bootstrap is all up and running, adjust style so year overlays are more readable -->
-                                    <img ng-src="/images/badges/winnerbadge-{{win.pot}}{{win.place}}.png" />
-                                    <div class="year pot{{win.pot}} place{{win.place}}">{{win.yr | shortenYear}}</div>
-                                </div>
-                                <img class="user-badge" ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" data-info="{{userBadge.display}}" data-name="{{userBadge.badge.name}}" data-year="{{userBadge.yr}}" data-tagline="{{userBadge.badge.display}}" data-description="{{userBadge.badge.description}}" data-unlockedYear="{{userBadge.badge.unlocked_year}}" data-unlockedUser="{{userBadge.badge.unlockedBy.username}}" data-img="{{userBadge.badge.img}}" data-type="{{userBadge.badge.type}}" data-points="{{userBadge.badge.power_points}}" />
-                                <?php
+                            if (userField('collapse_history') && $currentWeek > 2) {
+                                echo '<th></th>';
+                            }
+                            for ($week=1; $week<=21; $week++) {
+                                if (!userField('collapse_history') || $week >= $currentWeek) {
+                                    // KDHTODO make font much smaller so it doesn't make columns wider
+                                    echo '<th><a href="' . Yii::app()->createAbsoluteUrl('admin/showCorrect', array('week'=>$week)) . '"><span class="glyphicon glyphicon-flash"></span></th>';
+                                }
                             }
                             ?>
-                        </div>
-                    </td>
-                    <td ng-if="viewOptions.collapseHistory" align="center">{{getOldRecord(user)}}</td>
-                    <td ng-repeat="pick in user.picks" ng-if="pick.week >= currentWeek || !viewOptions.collapseHistory" ng-class="{incorrect: pick.incorrect}" align="center">
-                        <div style="position:relative;">    <!-- KDHTODO add a mov-wrapper class instead of an inline style -->
-                            <?php
-                            if (userField('show_mov')) {
-                                ?><div class="pickMov" ng-class="{old: pick.week < currentWeek || pick.year < currentYear, incorrect: pick.incorrect}">{{pick.mov.mov | stylizeMov}}</div><?php
-                            }
-                            ?>
-                            <!-- KDHTODO add "set by system" to the title when appropriate -->
-                            <!-- KDHTODO determine when to use logo-small-inactive, logo-medium-inactive, etc -->
-                            
-                            <!-- KDHTODO the filter for image offset is a fixed 50ximage_offset, but we can't supply a filter for a parameter of another filter (that I've seen).  However, since we know the constant is there an easier way to do this? -->
-                            <?php
-                            if (userField('show_logos')) {
-                                ?><div class="logo logo-{{pick | teamLogo}}" style="background-position:{{pick.team | teamLogoOffset:'small'}}" title="{{pick.team.longname}}"></div><?php
-                            } else {
-                                ?><span>{{pick.team.shortname}}</span><?php
-                            }
-                            ?>
-                        </div>
-                    </td>
-                    <?php
-                    for ($week=1; $week<=21; $week++) {
-                        ?><td ng-if="user.picks.length < <?=$week?>">&nbsp;</td><?php
+                            </tr>
+                        <?php
                     }
                     ?>
-                </tr>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <!-- KDHTODO highlight the current user's row -->
+                    <!-- all of these ng-repeats may be extraneous... ng-repeat is only useful for data binding, but for static data that won't change, we're just slowing things down on the client side -->
+                    <!-- on second thought, without the ng-repeat data binding, we couldn't dynamically sort on the client-side (without a plugin or something) -->
+                    <tr ng-repeat="user in board | orderBy:[order,'username']" ng-class="{success: user.id == <?php echo userId()?>}">   <!-- KDHTODO have sort order secondary sort be record before username -->
+                        <td>{{$index+1}}</td>
+                        <td>
+                            <!-- KDHTODO this is normally a PHP function, but make an analogous JS function to get avatars too -->
+                            <!-- KDHTODO remove inline styles -->
+                            <div style="width:44px;float:left;margin-right:10px;"><img class="avatar" ng-src="{{user | userAvatar}}" /></div>
+                            <div>
+                                {{user.username}}<br />
+                                <!-- KDHTODO format this similar to the old site (extract into directive or something?) -->
+                                <!-- KDHTODO add "alt" tags and title attributes -->
+                                <?php
+                                if (userField('show_badges')) {
+                                    ?>
+                                    <div ng-repeat="win in user.wins | orderBy:['place','pot','yr']" class="winnertrophy-wrapper" data-pot="{{win.pot}}" data-place="{{win.place}}" data-year="{{win.yr}}" data-money="{{win.winnings}}">
+                                        <!-- KDHTODO make badges clickable to show modal or go to a link? -->
+                                        <!-- KDHTODO after bootstrap is all up and running, adjust style so year overlays are more readable -->
+                                        <img ng-src="/images/badges/winnerbadge-{{win.pot}}{{win.place}}.png" />
+                                        <div class="year pot{{win.pot}} place{{win.place}}">{{win.yr | shortenYear}}</div>
+                                    </div>
+                                    <img class="user-badge" ng-repeat="userBadge in user.userBadges | orderBy:'badge.zindex'" ng-src="{{userBadge.badge.img}}" alt="{{userBadge.badge.zindex}}" data-info="{{userBadge.display}}" data-name="{{userBadge.badge.name}}" data-year="{{userBadge.yr}}" data-tagline="{{userBadge.badge.display}}" data-description="{{userBadge.badge.description}}" data-unlockedYear="{{userBadge.badge.unlocked_year}}" data-unlockedUser="{{userBadge.badge.unlockedBy.username}}" data-img="{{userBadge.badge.img}}" data-type="{{userBadge.badge.type}}" data-points="{{userBadge.badge.power_points}}" />
+                                    <?php
+                                }
+                                ?>
+                            </div>
+                        </td>
+                        <td ng-if="viewOptions.collapseHistory" align="center">{{getOldRecord(user)}}</td>
+                        <td ng-repeat="pick in user.picks" ng-if="pick.week >= currentWeek || !viewOptions.collapseHistory" ng-class="{incorrect: pick.incorrect}" align="center">
+                            <div style="position:relative;">    <!-- KDHTODO add a mov-wrapper class instead of an inline style -->
+                                <?php
+                                if (userField('show_mov')) {
+                                    ?><div class="pickMov" ng-class="{old: pick.week < currentWeek || pick.year < currentYear, incorrect: pick.incorrect}">{{pick.mov.mov | stylizeMov}}</div><?php
+                                }
+                                ?>
+                                <!-- KDHTODO add "set by system" to the title when appropriate -->
+                                <!-- KDHTODO determine when to use logo-small-inactive, logo-medium-inactive, etc -->
+                                
+                                <!-- KDHTODO the filter for image offset is a fixed 50ximage_offset, but we can't supply a filter for a parameter of another filter (that I've seen).  However, since we know the constant is there an easier way to do this? -->
+                                <?php
+                                if (userField('show_logos')) {
+                                    ?><div class="logo logo-{{pick | teamLogo}}" style="background-position:{{pick.team | teamLogoOffset:'small'}}" title="{{pick.team.longname}}"></div><?php
+                                } else {
+                                    ?><span>{{pick.team.shortname}}</span><?php
+                                }
+                                ?>
+                            </div>
+                        </td>
+                        <?php
+                        for ($week=1; $week<=21; $week++) {
+                            ?><td ng-if="user.picks.length < <?=$week?>">&nbsp;</td><?php
+                        }
+                        ?>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

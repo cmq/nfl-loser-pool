@@ -150,6 +150,11 @@ html, body {
             <?php
         endif;
         ?>
+        <script>
+        <?php
+        $this->renderPartial('//_partials/globaljs', array());
+        ?>
+        </script>
     </head>
     <body>
         <!-- KDHTODO container-fluid vs container should maybe be on a page-by-page basis? -->

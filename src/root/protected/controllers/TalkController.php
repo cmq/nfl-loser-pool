@@ -38,5 +38,28 @@ class TalkController extends Controller
         $this->writeJson(array('error'=>$error));
         exit;
     }
+    
+    public function actionLike()
+    {
+        $error = '';
+        
+        $userId = userId();
+        $talkId = (int) getRequestParameter('talkid', 0);
+        $like   = (int) getRequestParameter('like', 0);
+        
+        $record = Like::model()->findByAttributes(array('talkid'=>$talkId, 'userid'=>$userId));
+        if ($record) {
+            $record->active = $like;
+        } else {
+            $record = new Like;
+            $record->talkid = $talkId;
+            $record->userid = $userId;
+            $record->active = $like;
+        }
+        $record->save();
+        
+        $this->writeJson(array('error'=>$error));
+        exit;
+    }
 
 }

@@ -33,3 +33,13 @@ update userbadge set yr = 2010 where (badgeid=17 and userid=117);
 update userbadge set yr = 2011 where (badgeid=8 and userid=9) or (badgeid=17 and userid=129);
 update userbadge set yr = 2012 where (badgeid=8 and userid=52) or (badgeid=17 and userid=130);
 update userbadge set yr = 2013 where (badgeid=7 and userid=26) or (badgeid=8 and userid=121) or (badgeid=8 and userid=18) or (badgeid=8 and userid=100) or (badgeid=17 and userid=141);
+
+create table likes (
+	id bigint not null auto_increment,
+	talkid bigint not null,
+	userid bigint not null,
+	active tinyint(1) not null default 1,
+	created datetime null,
+	updated datetime null,
+	primary key (id)
+);

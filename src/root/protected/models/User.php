@@ -36,6 +36,7 @@ class User extends DeepActiveRecord
             'talks'      => array(self::HAS_MANY, 'Talk', 'postedby'),
             'talkats'    => array(self::HAS_MANY, 'Talk', 'postedat'),
             'thisYear'   => array(self::HAS_ONE, 'UserYear', 'userid', 'on'=>'thisYear.yr=' . getCurrentYear()),
+            'likes'      => array(self::HAS_MANY, 'Like', 'userid'),
         );
     }
     

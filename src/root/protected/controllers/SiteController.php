@@ -45,7 +45,7 @@ class SiteController extends Controller
             'select' => 't.id, t.username, t.avatar_ext, t.power_points, t.power_ranking, t.previous_power_ranking, t.previous_power_points, t.best_power_ranking',
             'order' => 't.id, picks.yr, picks.week',
         ));
-        $talk = Talk::model()->findAll(array(
+        $talk = Talk::model()->withLikes()->findAll(array(
             'condition' => 't.yr = ' . getCurrentYear(),
             'limit'     => 5,
             'order'     => 't.postedon desc'
@@ -70,7 +70,7 @@ class SiteController extends Controller
     public function actionTalk()
     {
         // KDHTODO prevent this action if the user is a guest
-        $talks = Talk::model()->current()->findAll(array('order'=>'postedon desc'));
+        $talks = Talk::model()->current()->withLikes()->findAll(array('order'=>'postedon desc'));
         $users = User::model()->active()->findAll(array('order'=>'username'));
         $this->render('talk', array('talks'=>$talks, 'users'=>$users));
     }

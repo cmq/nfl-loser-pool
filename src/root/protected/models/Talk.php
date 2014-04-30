@@ -30,6 +30,7 @@ class Talk extends DeepActiveRecord
         return array(
             'user'  => array(self::BELONGS_TO, 'User', 'postedby'),
             'at'    => array(self::BELONGS_TO, 'User', 'postedat'),
+            'likes' => array(self::HAS_MANY, 'Like', 'talkid'),
         );
     }
     
@@ -51,6 +52,18 @@ class Talk extends DeepActiveRecord
                     ),
                     'at' => array(
                         'select' => 'username',
+                    ),
+                ),
+            ),
+            'withLikes' => array(
+                'with' => array(
+                    'likes' => array(
+                        'on' => 'likes.active = 1',
+                        'with' => array(
+                            'user' => array(
+                                'select' => array('id', 'username'),
+                            ),
+                        ),
                     ),
                 ),
             ),

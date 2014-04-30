@@ -196,6 +196,7 @@ img.user-badge {
 /*
  * Talk
  * - Override some panel styles from Bootstrap
+ * - "Like" styles
  */
 .talk {
     width: 500px;
@@ -204,6 +205,31 @@ img.user-badge {
 .talk .talk-time {
     position: relative;
     float: right;
+}
+.like-button {
+    background-image: url(/images/like.png);
+    background-position: 0 0;
+    width: 28px;
+    height: 24px;
+    cursor: pointer;
+}
+.like-button:hover {
+    margin: 1px -1px -1px 1px;
+}
+.like-button.active {
+    background-position: 0 -24px;
+}
+.like-button.pending {
+    background-position: 0 -48px;
+}
+.like-button.active:hover, .like-button.pending:hover {
+    margin: 0;
+}
+.likes {
+    position: relative;
+    float: right;
+    margin-top: 5px;
+    cursor: pointer;
 }
 
 

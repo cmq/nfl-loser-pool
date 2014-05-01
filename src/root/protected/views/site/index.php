@@ -1,15 +1,6 @@
 <?php
-// KDHTODO handle AJAX errors where user is logged out
-// KDHTODO since Yii::app()->user is only updated on login, need to update relevant session information when the user changes their login name or password without having them have to log out and back in again
-
-// KDHTODO as cool as Angular is, keeping the controls to toggle the view so much on the main page is slowing things down.  Make them options that are moved to the profile page
-
-
 $currentWeek = getCurrentWeek();
 ?>
-
-
-
 
 <script>
 /****************************************************************/

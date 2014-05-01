@@ -74,7 +74,7 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                         <li><a href="#">Player Stat Rankings</a></li>
                         <li><a href="#">Pick Statistics</a></li>
                         <?php
-                        echo navItem('Player Profiles', 'stats/profiles', null, $controllerName == 'stats' && ($actionName == 'profiles' || $actionName == 'profile'));
+                        echo navItem('Player Profiles', 'stats/profiles', null, $controllerName == 'stats' && ($actionName == 'index' ||$actionName == 'profiles' || $actionName == 'profile'));
                         echo navItem('Player Stat Rankings', 'stats/rankings', null, $controllerName == 'stats' && $actionName == 'rankings');
                         echo navItem('Pick Statistics', 'stats/picks', null, $controllerName == 'stats' && $actionName == 'picks');
                         ?>

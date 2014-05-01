@@ -1,3 +1,4 @@
+<script>
 $(function() {
     $('.like-button').on('click', function(e) {
         var $this     = $(this),
@@ -86,3 +87,4 @@ $(function() {
         placement: 'auto top'
     });
 });
+</script>

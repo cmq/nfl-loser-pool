@@ -57,7 +57,7 @@ loserpool.controller('PickPageCtrl', ['$scope', '$http', function($scope, $http)
 
 <div class="container">
     <div ng-controller="PickPageCtrl" class="table-responsive">
-        <table class="table table-nonfluid">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Week</th>

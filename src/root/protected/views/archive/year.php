@@ -1,0 +1,1 @@
+Placeholder for the Season Archive for a specific year page

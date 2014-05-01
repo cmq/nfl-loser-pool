@@ -10,6 +10,7 @@
  *  
  *  - On the index page, add an interval that will poll for new board data and automatically update the model with changes
  *  - Really need to speed up the index page
+ *  - KDHTODO handle AJAX errors where user is logged out
  *  - Graph of referrers for how people know each other
  *  - Allow likes/dislikes for trash talk -- include these in power ranking
  *  - Keep track of WHEN picks are made so we know how early people picked
@@ -153,12 +154,8 @@ html, body {
             <script src="<?php echo baseUrl('/js/lib/fileuploader.js'); ?>"></script>
             <?php
         endif;
-        ?>
-        <script>
-        <?php
         $this->renderPartial('//_partials/globaljs', array());
         ?>
-        </script>
     </head>
     <body>
         <?php

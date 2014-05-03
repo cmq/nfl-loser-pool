@@ -69,7 +69,7 @@ globals.isEmail = function(e) {
 };
 
 globals.dollarFormat = function(n) {
-    n = parseFloat(n);
+    n = types.float(n, 0);
     if (isNaN(n)) {
         n = 0;
     }
@@ -77,6 +77,7 @@ globals.dollarFormat = function(n) {
 };
 
 globals.getPotName = function(n) {
+    n = types.integer(n, 0);
     switch (n) {
         case 1:
             return 'Stay-Alive';

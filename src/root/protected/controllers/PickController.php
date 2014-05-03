@@ -18,12 +18,11 @@ class PickController extends Controller
     {
         // KDHTODO verify the user can't save a pick for a past week (unless superadmin)
         $error  = '';
-        $params = json_decode(file_get_contents('php://input'), true);    // angular sends POST data differently than jQuery
         
-        $userId = isSuperadmin() ? (int) $params['user'] : userId();
-        $week   = (int) $params['week'];
+        $userId = isSuperadmin() ? (int) getRequestParameter('user', 0) : userId();
+        $week   = (int) getRequestParameter('week', 0);
         $year   = getCurrentYear();
-        $teamId = (int) $params['team'];
+        $teamId = (int) getRequestParameter('team', 0);
         
         if ($week < getCurrentWeek() || !isSuperadmin()) {
             $error = 'This pick is already locked.';
@@ -50,11 +49,6 @@ class PickController extends Controller
         
         $this->writeJson(array('error'=>$error));
         exit;
-    }
-    
-    public function actionSaveAll()
-    {
-        // KDHTODO verify the user can't save a pick for a past week (unless superadmin)
     }
 
 }

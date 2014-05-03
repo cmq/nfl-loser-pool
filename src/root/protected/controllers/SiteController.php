@@ -9,7 +9,7 @@ class SiteController extends Controller
         // ironically, if you apply them in the same order twice, the second time everything works properly... must be something jacked with Yii
         $boardData = User::model()->withPicks(true, isSuperadmin())->active()->withBadges()->withWins()->findAll(array(
             'select' => 't.id, t.username, t.avatar_ext, t.power_points, t.power_ranking, t.previous_power_ranking, t.previous_power_points, t.best_power_ranking',
-            'order' => 't.id, picks.yr, picks.week',
+            'order' => 't.id, picks.yr, picks.week, wins.place, wins.pot, wins.yr, badge.zindex',
         ));
         return $boardData;
     }

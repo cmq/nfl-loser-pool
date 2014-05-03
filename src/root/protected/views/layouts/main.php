@@ -115,7 +115,7 @@ html, body {
  *  
  */
 ?><!DOCTYPE html>
-<html ng-app="loserpool">
+<html>
     <head>
         <!-- KDHTODO change the title -->
         <title><?php echo CHtml::encode($this->pageTitle); ?></title>
@@ -141,12 +141,10 @@ html, body {
         <link href="<?php echo baseUrl('/css/main.css'); ?>" rel="stylesheet" />
         <script src="<?php echo baseUrl('/js/conf.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/jquery.ba-getobject.min.js'); ?>"></script>
-        <script src="<?php echo baseUrl('/js/lib/angular.min.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/moment.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/oo.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/types.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/globals.js'); ?>"></script>
-        <script src="<?php echo baseUrl('/js/module/main.js'); ?>"></script>
         <?php
         if (Yii::app()->controller->id == 'site' && Yii::app()->controller->action->id == 'profile'):
             ?>

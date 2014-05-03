@@ -1,62 +1,51 @@
 <?php
 $pickByWeek = array();
 for ($i=1; $i<21; $i++) {
-    $pickByWeek[$i] = 0;
+    $pickByWeek[$i] = null;
 }
 foreach ($picks as $pick) {
-    $pickByWeek[$pick['week']] = $pick['teamid'];
+    $pickByWeek[$pick['week']] = $pick;
 }
 ?>
 <script>
-loserpool.controller('PickPageCtrl', ['$scope', '$http', function($scope, $http) {
-    var pick, team;
-    $scope.picks = <?php echo CJSON::encode($picks);?>;
-    $scope.teams = <?php echo CJSON::encode($teams);?>;
-    for (pick in $scope.picks) {
-        for (team in $scope.teams) {
-            if ($scope.teams[team].id == $scope.picks[pick].teamid) {
-                $scope.picks[pick].team = $scope.teams[team];
-                break;
-            }
-        }
-    }
-
-    $scope.$watch('picks', function(newValue, oldValue) {
-        var week;
-        if (newValue !== oldValue) {
-            for (week=0; week<newValue.length; week++) {
-                if (newValue[week].team.id != oldValue[week].team.id) {
-                    // KDHTODO remove next line
-                    console.log('week ' + week + ' changed from ' + oldValue[week].team.longname + ' to ' + newValue[week].team.longname);
-                    // KDHTODO have some kind of tracker to prevent multiple requests from going to the server while one is still pending (or better yet, just disable the field)
-                    $http.post('<?php echo $this->createAbsoluteUrl('pick/save')?>', {
-                        user: <?php echo userId(); ?>,   // KDHTODO update this to the user being edited so that superadmins can change other users' picks
-                        week: week+1,
-                        team: newValue[week].team.id
-                    }).success(function(data, status, headers, config) {
-                        // KDHTODO do something different
-                        if (data && data.hasOwnProperty('error') && data.error !== '') {
-                            alert(data.error);
-                        }
-                        console.dir(arguments);
-                    }).error(function(data, status, headers, config) {
-                        // KDHTODO do something different
-                        if (data && data.hasOwnProperty('error') && data.error !== '') {
-                            alert(data.error);
-                        }
-                        console.dir(arguments);
-                    });
+$(function() {
+    $('.team-pick').on('change', function() {
+        var $this = $(this),
+            week = $(this).data('week'),
+            team = $(this).val(),
+            data = {
+                user: <?php echo userId(); ?>,   // KDHTODO update this to the user being edited so that superadmins can change other users' picks
+                week: week,
+                team: team
+            };
+        $this.prop('disabled', true);
+        $.ajax({
+            url: '<?php echo $this->createAbsoluteUrl('pick/save')?>',
+            type: 'POST',
+            data: data,
+            success: function(response) {
+                if (response.hasOwnProperty('error') && response.error !== '') {
+                    // KDHTODO do something different
+                    alert(response.error);
+                } else {
+                    // KDHTODO set new logo
                 }
-            }
-        }
-    }, true);   // this 3rd parameter being true is what makes $watch work with an array ("picks")
-
-    //console.dir($scope.picks);  // KDHTODO remove
-}]);
+            },
+            error: function() {
+                // KDHTODO do something different
+                alert('An error ocurred, please try again.');
+            },
+            complete: function() {
+                $this.prop('disabled', false);
+            },
+            dataType: 'json'
+        });
+    });
+});
 </script>
 
 <div class="container">
-    <div ng-controller="PickPageCtrl" class="table-responsive">
+    <div class="table-responsive">
         <table class="table">
             <thead>
                 <tr>
@@ -67,10 +56,14 @@ loserpool.controller('PickPageCtrl', ['$scope', '$http', function($scope, $http)
             </thead>
             <tbody>
                 <?php
-                for ($week=1; $week<=21; $week++) {
+                foreach ($pickByWeek as $pick) {
+                    $class = '';
+                    if (!is_null($pick['incorrect'])) {
+                        $class = $pick['incorrect'] == 1 ? 'danger' : 'success';
+                    }
                     ?>
-                    <tr ng-class="{danger: picks[<?=$week-1?>].incorrect == 1, success: picks[<?=$week-1?>].incorrect == '0'}">
-                        <td><?=$week?></td>
+                    <tr class="<?php echo $class?>">
+                        <td><?php echo getWeekName($pick['week']);?></td>
                         <td>
                             <!--
                             // KDHTODO select what the user had
@@ -79,16 +72,21 @@ loserpool.controller('PickPageCtrl', ['$scope', '$http', function($scope, $http)
                             // KDHTODO AJAX call to save when the dropdown changes
                             // KDHTODO disable dropdowns that are locked
                             -->
-                            <select class="form-control" ng-model="picks[<?=$week-1?>].team" ng-options="t.longname for (id, t) in teams">
+                            <select class="form-control team-pick" data-week="<?php echo $pick['week']?>">
                                 <option value="">Select Loser...</option>
+                                <?php
+                                foreach ($teams as $team) {
+                                    echo createOption($team['id'], $team['longname'], $pick['teamid']);
+                                }
+                                ?>
                             </select>
                         </td>
                         <!-- KDHTODO populate -->
                         <td>Logo</td>
                         <!-- KDHTODO populate -->
-                        <td><?=getLockTime($week, true)?></td>
+                        <td><?php echo getLockTime($pick['week'], true)?></td>
                     </tr>
-                    <?
+                    <?php
                 }
                 ?>
             </tbody>

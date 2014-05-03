@@ -15,6 +15,7 @@ function Board(options) {
         settings = $.extend(true, {
             table:       null,
             order:       'username',
+            poll:        false,
             currentUser: <?php echo userId();?>,            // KDHTODO set a JS variable to this instead, so we don't need PHP
             currentWeek: <?php echo $currentWeek;?>,        // KDHTODO set a JS variable to this instead, so we don't need PHP
             currentYear: <?php echo getCurrentYear();?>,    // KDHTODO set a JS variable to this instead, so we don't need PHP
@@ -28,6 +29,8 @@ function Board(options) {
                 showLogos:       true                       // KDHTODO this is defined in userField('show_logos')
             }
         }, options),
+        polling = false,
+        drawn = false,
         lastBoard = JSON.stringify(settings.board),
         $table;
 
@@ -85,28 +88,6 @@ function Board(options) {
             return '+' + mov;
         }
         return mov;
-    }
-
-    // KDHTODO make this function public, and prevent it from running if it's already running
-    // KDHTODO show a loading message the first time this runs so we know the board is being populated
-    // KDHTODO make polling optional, because on the archive pages we'll just supply a raw board data that'll never be updated
-    function poll() {
-        // KDHTODO can't use PHP here
-        $.get('<?php echo $this->createAbsoluteUrl('site/poll')?>?_='+new Date().getTime(), function(r) {
-            var boardString;
-            if (r && r.board) {
-                boardString = JSON.stringify(r.board);
-                // KDHTODO implement for real
-                if (lastBoard !== boardString) {
-                    lastBoard = boardString;
-                    settings.board = r.board;
-                    self.sort();
-                    self.redraw();
-                }
-            }
-            // KDHTODO can't use PHP here
-            setTimeout(poll, <?php echo param('boardPollerInterval')?>);
-        }, 'json');      
     }
 
     // KDHTODO move this function outside of the Board class
@@ -351,6 +332,7 @@ function Board(options) {
         $table = self.getTable();
         $table.empty().append($thead).append($tbody);
         self.buildPopovers();
+        drawn = true;
     };
 
     this.buildPopovers = function() {
@@ -456,6 +438,41 @@ function Board(options) {
         });
     };
 
+    this.poll = function() {
+        if (settings.poll && !polling) {
+            polling = true;
+            if (!drawn) {
+                $table = self.getTable();
+                $table.empty().append('<tbody><tr><td>Loading...</td></tr></tbody>');
+            }
+            $.ajax({
+                url:        CONF.url.poll,
+                data:       {
+                                '_': new Date().getTime()
+                            },
+                type:       'get',
+                cache:      false,
+                success:    function(r) {
+                                var boardString;
+                                if (r && r.board) {
+                                    boardString = JSON.stringify(r.board);
+                                    if (lastBoard !== boardString) {
+                                        lastBoard = boardString;
+                                        settings.board = r.board;
+                                        self.sort();
+                                        self.redraw();
+                                    }
+                                }
+                                setTimeout(self.poll, CONF.boardPollerInterval);
+                            },
+                complete:   function() {
+                                polling = false;
+                            },
+                dataType:   'json'
+            });
+        }
+    };
+
     if (settings.table instanceof jQuery) {
         $table = settings.table;
     } else if (typeof settings.table == 'string') {
@@ -466,18 +483,15 @@ function Board(options) {
         $.error('Invalid table specified');
     }
 
-    // KDHTODO make poll a public function so it can be manually called
-    poll();
+    if (settings.poll) {
+        self.poll();
+    }
 };
 $(function() {
     window.board = new Board({
-        table: $('#pick-board')/*,
-        board: <?php echo CJSON::encode($boardData);?>
-        */
-        // KDHTODO do we need the above?
+        table: $('#pick-board'),
+        poll:  true
     });
-    // KDHTODO call board.poll here after making it public
-    // board.redraw();
 });
 
 </script>

@@ -1,4 +1,6 @@
 <script>
+//KDHTODO change this file to be something that turns PHP vars into JS vars
+//KDHTODO refactor function below so that it doesn't use PHP and can live in another global js file
 $(function() {
     $('.like-button').on('click', function(e) {
         var $this     = $(this),

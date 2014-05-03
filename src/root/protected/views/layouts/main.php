@@ -139,7 +139,7 @@ html, body {
         <![endif]-->
         
         <link href="<?php echo baseUrl('/css/main.css'); ?>" rel="stylesheet" />
-        <script src="<?php echo baseUrl('/js/conf.js'); ?>"></script>
+        <script><?php require(__DIR__ . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array('..', '..', '..', 'js', 'conf.js.php')))?></script>
         <script src="<?php echo baseUrl('/js/lib/jquery.ba-getobject.min.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/moment.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/oo.js'); ?>"></script>

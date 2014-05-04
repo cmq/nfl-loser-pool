@@ -11,10 +11,10 @@ function Board(options) {
             board:       [],
             viewOptions: {
                 // KDHTODO make these togglable in real-time now that angular is gone
-                collapseHistory: false,                     // KDHTODO this is defined in userField('collapse_history')
-                showBadges:      true,                      // KDHTODO this is defined in userField('show_badges')
-                showMov:         true,                      // KDHTODO this is defined in userField('show_mov')
-                showLogos:       true                       // KDHTODO this is defined in userField('show_logos')
+                collapseHistory: false,
+                showBadges:      true,
+                showMov:         true,
+                showLogos:       true
             }
         }, options),
         polling = false,

@@ -3,7 +3,13 @@
 $(function() {
     window.board = new Board({
         table: $('#pick-board'),
-        poll:  true
+        poll:  true,
+        viewOptions: {
+            collapseHistory: <?php echo userField('collapse_history') ? 'true' : 'false'?>,
+            showBadges:      <?php echo userField('show_badges') ? 'true' : 'false'?>,
+            showMov:         <?php echo userField('show_mov') ? 'true' : 'false'?>,
+            showLogos:       <?php echo userField('show_logos') ? 'true' : 'false'?>
+        }
     });
 });
 </script>

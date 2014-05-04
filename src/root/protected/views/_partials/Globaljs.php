@@ -1,6 +1,6 @@
 <script>
-//KDHTODO change this file to be something that turns PHP vars into JS vars
-//KDHTODO refactor function below so that it doesn't use PHP and can live in another global js file
+// this file is JS code that should run on every page
+
 $(function() {
     $('.like-button').on('click', function(e) {
         var $this     = $(this),
@@ -11,7 +11,7 @@ $(function() {
         if (!$this.hasClass('pending')) {
             $this.addClass('pending');
             $.ajax({
-                url:        '<?php echo $this->createAbsoluteUrl('talk/like')?>',
+                url:        CONF.url.like,
                 data:       {
                                 talkid: talkid,
                                 like:   like
@@ -28,12 +28,12 @@ $(function() {
                                 try {
                                     if ($likeLink) {
                                         userLikes = $likeLink.data('likes');
-                                        i = <?php echo userId()?>;
+                                        i = CONF.userId;
                                         if (userLikes.hasOwnProperty(i)) {
                                             delete userLikes[i];
                                         }
                                         if (addActive) {
-                                            userLikes[i] = '<?php echo addslashes(userField('username'))?>';
+                                            userLikes[i] = CONF.username;
                                         }
                                         for (i in userLikes) {
                                             if (userLikes.hasOwnProperty(i)) {

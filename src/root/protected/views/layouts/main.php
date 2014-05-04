@@ -9,7 +9,6 @@
  *  KDHTODO larger items
  *  
  *  - On the index page, add an interval that will poll for new board data and automatically update the model with changes
- *  - Really need to speed up the index page
  *  - handle AJAX errors where user is logged out
  *  - Graph of referrers for how people know each other
  *  - Allow likes/dislikes for trash talk -- include these in power ranking
@@ -74,7 +73,7 @@
  *  - A sample way of doing an animation (like Xenforo does, post-admin-login):
 <script>
 $(function() {
-    $('#kirktest_wrap').height($(window).height() - $('#kirktest_wrap').position().top);    // KDHTODO do this any time the window size changes too
+    $('#kirktest_wrap').height($(window).height() - $('#kirktest_wrap').position().top);    // do this any time the window size changes too
     $('#kirktest_reset').on('click', function() {
         $('#kirktest').css({
             width:  '1242px',
@@ -84,7 +83,7 @@ $(function() {
         $('#kirktest_wrap').css({
             'padding-top': 0
         });
-        $('#kirktest_wrap').height($(window).height() - $('#kirktest_wrap').position().top);    // KDHTODO do this any time the window size changes too
+        $('#kirktest_wrap').height($(window).height() - $('#kirktest_wrap').position().top);    // do this any time the window size changes too
     });
     $('#kirktest_go').on('click', function() {
         $('#kirktest').animate({
@@ -139,7 +138,7 @@ html, body {
         <![endif]-->
         
         <link href="<?php echo baseUrl('/css/main.css'); ?>" rel="stylesheet" />
-        <script><?php require(__DIR__ . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array('..', '..', '..', 'js', 'conf.js.php')))?></script>
+        <?php require(__DIR__ . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array('..', '..', '..', 'js', 'conf.js.php')))?>
         <script src="<?php echo baseUrl('/js/lib/jquery.ba-getobject.min.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/moment.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/oo.js'); ?>"></script>

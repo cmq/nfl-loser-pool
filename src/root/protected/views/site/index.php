@@ -16,10 +16,10 @@ function Board(options) {
             table:       null,
             order:       'username',
             poll:        false,
-            currentUser: <?php echo userId();?>,            // KDHTODO set a JS variable to this instead, so we don't need PHP
-            currentWeek: <?php echo $currentWeek;?>,        // KDHTODO set a JS variable to this instead, so we don't need PHP
-            currentYear: <?php echo getCurrentYear();?>,    // KDHTODO set a JS variable to this instead, so we don't need PHP
-            showAdmin:   <?php echo isAdmin();?>,           // KDHTODO set a JS variable to this instead, so we don't need PHP (value should be isAdmin() + isCurrentYear)
+            currentUser: CONF.userId,
+            currentWeek: CONF.currentWeek,
+            currentYear: CONF.currentYear,
+            showAdmin:   CONF.isAdmin,
             board:       [],
             viewOptions: {
                 // KDHTODO make these togglable in real-time now that angular is gone
@@ -101,8 +101,7 @@ function Board(options) {
         } else {
             img += '0.png';
         }
-        // KDHTODO can't use PHP here
-        return '<?php echo param('avatarWebDirectory')?>/' + img;
+        return CONF.avatarWebDirectory + img;
     }
 
     // KDHTODO move this function outside of the Board class
@@ -223,8 +222,7 @@ function Board(options) {
             }
             for (i=startWeek; i<=21; i++) {
                 $tr.append($('<th/>')
-                    // KDHTODO can't use PHP here, find another way to get this URL
-                    .html('<a href="<?php echo Yii::app()->createAbsoluteUrl('admin/showCorrect')?>?week=' + i + '"><span class="glyphicon glyphicon-flash"></span></a>')
+                    .html('<a href="' + CONF.url.showCorrect + '?week=' + i + '"><span class="glyphicon glyphicon-flash"></span></a>')
                     .on('click', function(e) {
                         e.preventDefault();
                         self.sort('pick' + i);
@@ -255,6 +253,7 @@ function Board(options) {
             );
 
             if (settings.viewOptions.showBadges) {
+                // KDHTODO extract this logic to something outside the Board class
                 // add trophies to the username display area
                 if (user.wins) {
                     for (j=0; j<user.wins.length; j++) {
@@ -264,8 +263,7 @@ function Board(options) {
                             .data('place', user.wins[j].place)
                             .data('year', user.wins[j].yr)
                             .data('money', user.wins[j].winnings)
-                            // KDHTODO get badge URL from PHP
-                            .append('<img src="/images/badges/winnerbadge-' + user.wins[j].pot + user.wins[j].place + '.png" />')
+                            .append('<img src="' + CONF.winnerTrophyUrlPrefix + user.wins[j].pot + user.wins[j].place + '.png" />')
                             .append($('<div/>')
                                 .addClass('year pot' + user.wins[j].pot + ' place' + user.wins[j].place)
                                 .append(shortenYear(user.wins[j].yr))

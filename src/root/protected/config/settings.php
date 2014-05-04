@@ -40,5 +40,6 @@ return array(
     'avatarMaxHeight'       => 40,
     'avatarDirectory'       => getcwd() . DIRECTORY_SEPARATOR  . 'images' . DIRECTORY_SEPARATOR  . 'avatar',
     'avatarWebDirectory'    => '/images/avatar',
+    'winnerTrophyUrlPrefix' => '/images/badges/winnerbadge-',
     'boardPollerInterval'   => 1000 * 60 * 10,  // poll every 10 minutes
 );

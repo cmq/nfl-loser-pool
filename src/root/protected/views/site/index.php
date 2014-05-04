@@ -243,8 +243,8 @@ function Board(options) {
             }
             $tr.append('<td>' + (i+1) + '</td>');
             $tr.append($('<td/>')
-                // KDHTODO remove inline styles
-                .append($('<div style="width:44px;float:left;margin-right:10px;"/>')
+                .append($('<div/>')
+                    .addClass('avatar-wrapper')
                     .append('<img class="avatar" src="' + getUserAvatar(user) + '"/>')
                 )
                 .append($userDisplay = $('<div/>')
@@ -290,8 +290,8 @@ function Board(options) {
                 if (pick) {
                     $tr.append($('<td/>')
                         .addClass(pick.incorrect == 1 ? 'incorrect' : '')
-                        // KDHTODO add a mov-wrapper class instead of an inline style
-                        .append($('<div style="position:relative;"/>')
+                        .append($('<div/>')
+                            .addClass('pick-wrapper')
                             .append(!settings.viewOptions.showMov || j > settings.currentWeek ? '' : $('<div/>')
                                 .addClass('pickMov')
                                 .addClass(pick.week < settings.currentWeek || pick.year < settings.currentYear ? 'old' : '')

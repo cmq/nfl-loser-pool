@@ -51,6 +51,11 @@ body {
 /*
  * Avatars
  */
+.avatar-wrapper {
+     width: 44px;
+     float: left;
+     margin-right: 10px;
+}
 img.avatar {
     margin: 0 5px;
 }
@@ -148,8 +153,11 @@ img.user-badge {
 
 
 /*
- * MOV Stuff
+ * Pick/MOV Stuff
  */
+.pick-wrapper {
+    position: relative;
+}
 .pickMov {
     /*
     float: right;

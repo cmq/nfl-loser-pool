@@ -88,3 +88,51 @@ globals.getPotName = function(n) {
     }
     return '';
 };
+
+globals.getUserAvatar = function(user, fullsize) {
+    var img;
+    if (fullsize !== true) {
+        img = 't';
+    }
+    if (user.avatar_ext) {
+        img += user.id + '.' + user.avatar_ext;
+    } else {
+        img += '0.png';
+    }
+    return CONF.avatarWebDirectory + '/' + img;
+};
+
+globals.getTeamLogoOffset = function(team, size) {
+    var multiplier = 50;
+    var offset     = (team && team.hasOwnProperty('image_offset') ? parseInt(team.image_offset, 10) : 0);
+    if (size.toLowerCase == 'large') {
+        multiplier = 80;
+    }
+    return '0 -' + (multiplier * offset) + 'px';
+};
+
+globals.getTeamLogoClass = function(pick) {
+    var suffix = '';
+    suffix += pick.week == settings.currentWeek ? 'medium' : 'small';
+    suffix += pick.setbysystem ? '-inactive' : '';
+    return suffix;
+};
+
+globals.shortenYear = function(input) {
+    var yr = '' + input;
+    if (yr.length === 4) {
+        return yr.substr(2, 2);
+    }
+    return yr;
+};
+
+globals.getOldRecord = function(user, currentWeek) {
+    var i, wins = losses = 0;
+    for (i=0; i<user.picks.length; i++) {
+        if (user.picks[i].week < currentWeek) {
+            wins   += user.picks[i].incorrect ? 0 : 1;
+            losses += user.picks[i].incorrect ? 1 : 0;
+        }
+    }
+    return wins + '-' + losses;
+};

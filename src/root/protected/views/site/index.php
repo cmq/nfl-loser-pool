@@ -89,58 +89,8 @@ function Board(options) {
         }
         return mov;
     }
-
-    // KDHTODO move this function outside of the Board class
-    function getUserAvatar(user, fullsize) {
-        var img;
-        if (fullsize !== true) {
-            img = 't';
-        }
-        if (user.avatar_ext) {
-            img += user.id + '.' + user.avatar_ext;
-        } else {
-            img += '0.png';
-        }
-        return CONF.avatarWebDirectory + '/' + img;
-    }
-
-    // KDHTODO move this function outside of the Board class
-    function getTeamLogoOffset(team, size) {
-        var multiplier = 50;
-        var offset     = (team && team.hasOwnProperty('image_offset') ? parseInt(team.image_offset, 10) : 0);
-        if (size.toLowerCase == 'large') {
-            multiplier = 80;
-        }
-        return '0 -' + (multiplier * offset) + 'px';
-    }
-    // KDHTODO move this function outside of the Board class
-    function getTeamLogoClass(pick) {
-        var suffix = '';
-        suffix += pick.week == settings.currentWeek ? 'medium' : 'small';
-        suffix += pick.setbysystem ? '-inactive' : '';
-        return suffix;
-    }
-    // KDHTODO move this function outside of the Board class
-    function shortenYear(input) {
-        var yr = '' + input;
-        if (yr.length === 4) {
-            return yr.substr(2, 2);
-        }
-        return yr;
-    }
-    // KDHTODO move this function outside of the Board class
-    function getOldRecord(user) {
-        var i, wins = losses = 0;
-        for (i=0; i<user.picks.length; i++) {
-            if (user.picks[i].week < settings.currentWeek) {    // KDHTODO when we move this function, we'll need to supply currentWeek as a parameter
-                wins   += user.picks[i].incorrect ? 0 : 1;
-                losses += user.picks[i].incorrect ? 1 : 0;
-            }
-        }
-        return wins + '-' + losses;
-    }
     
-
+    
     this.getTable = function() {
         if (typeof $table == 'function') {
             return $table();
@@ -245,7 +195,7 @@ function Board(options) {
             $tr.append($('<td/>')
                 .append($('<div/>')
                     .addClass('avatar-wrapper')
-                    .append('<img class="avatar" src="' + getUserAvatar(user) + '"/>')
+                    .append('<img class="avatar" src="' + globals.getUserAvatar(user) + '"/>')
                 )
                 .append($userDisplay = $('<div/>')
                     .append(user.username + '<br />')
@@ -263,7 +213,7 @@ function Board(options) {
                             .append('<img src="' + CONF.winnerTrophyUrlPrefix + user.wins[j].pot + user.wins[j].place + '.png" />')
                             .append($('<div/>')
                                 .addClass('year pot' + user.wins[j].pot + ' place' + user.wins[j].place)
-                                .append(shortenYear(user.wins[j].yr))
+                                .append(globals.shortenYear(user.wins[j].yr))
                             )
                         );
                     }
@@ -283,7 +233,7 @@ function Board(options) {
             
             // show picks for this user
             if (settings.viewOptions.collapseHistory) {
-                $tr.append('<td align="center">' + getOldRecord(user) + '</td>');
+                $tr.append('<td align="center">' + globals.getOldRecord(user, settings.currentWeek) + '</td>');
             }
             for (j=startWeek; j<=21; j++) {
                 pick = getPick(user, j);
@@ -300,8 +250,8 @@ function Board(options) {
                             )
                             .append(!settings.viewOptions.showLogos ? pick.team.shortname : $('<div/>')
                                 .addClass('logo')
-                                .addClass('logo-' + getTeamLogoClass(pick))
-                                .css('background-position', getTeamLogoOffset(pick.team, 'small'))
+                                .addClass('logo-' + globals.getTeamLogoClass(pick))
+                                .css('background-position', globals.getTeamLogoOffset(pick.team, 'small'))
                                 .attr('title', pick.team.longname + (pick.setbysystem ? ' (Set by System)' : ''))
                             )
                         )

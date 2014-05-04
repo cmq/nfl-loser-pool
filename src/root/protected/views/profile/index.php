@@ -1,3 +1,5 @@
+<script src="<?php echo baseUrl('/js/lib/fileuploader.js'); ?>"></script>
+
 <?php
 
 // KDHTODO re-enable lightbox

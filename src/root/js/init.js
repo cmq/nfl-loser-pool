@@ -1,6 +1,3 @@
-<script>
-// this file is JS code that should run on every page
-
 $(function() {
     $('.like-button').on('click', function(e) {
         var $this     = $(this),
@@ -89,4 +86,3 @@ $(function() {
         placement: 'auto top'
     });
 });
-</script>

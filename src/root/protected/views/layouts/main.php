@@ -138,21 +138,14 @@ html, body {
         <![endif]-->
         
         <link href="<?php echo baseUrl('/css/main.css'); ?>" rel="stylesheet" />
+        <link href="<?php echo baseUrl('/css/fileuploader.css'); ?>" rel="stylesheet" />
         <?php require(__DIR__ . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array('..', '..', '..', 'js', 'conf.js.php')))?>
         <script src="<?php echo baseUrl('/js/lib/jquery.ba-getobject.min.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/moment.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/oo.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/types.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/globals.js'); ?>"></script>
-        <?php
-        if (Yii::app()->controller->id == 'site' && Yii::app()->controller->action->id == 'profile'):
-            ?>
-            <link href="<?php echo baseUrl('/css/fileuploader.css'); ?>" rel="stylesheet" />
-            <script src="<?php echo baseUrl('/js/lib/fileuploader.js'); ?>"></script>
-            <?php
-        endif;
-        $this->renderPartial('//_partials/globaljs', array());
-        ?>
+        <script src="<?php echo baseUrl('/js/init.js'); ?>"></script>
     </head>
     <body>
         <?php

@@ -111,9 +111,9 @@ globals.getTeamLogoOffset = function(team, size) {
     return '0 -' + (multiplier * offset) + 'px';
 };
 
-globals.getTeamLogoClass = function(pick) {
+globals.getTeamLogoClass = function(pick, currentWeek) {
     var suffix = '';
-    suffix += pick.week == settings.currentWeek ? 'medium' : 'small';
+    suffix += pick.week == currentWeek ? 'medium' : 'small';
     suffix += pick.setbysystem ? '-inactive' : '';
     return suffix;
 };

@@ -181,7 +181,7 @@ class ProfileController extends Controller
             $uploader = new qqFileUploader($allowedExtensions, $sizeLimit);
         
             // Call handleUpload() with the name of the folder, relative to PHP's getcwd()
-            $result = $uploader->handleUpload(param('avatarDirectory') . DIRECTORY_SEPARATOR, true, $userId);
+            $result = $uploader->handleUpload(param('avatarDirectory') . DIRECTORY_SEPARATOR, true, $user->id);
             if (isset($result['success']) && $result['success']) {
                 $source      = $result['uploadDirectory'] . $result['basename'];
                 $destination = $result['uploadDirectory'] . 't' . $result['basename'];
@@ -211,8 +211,8 @@ class ProfileController extends Controller
                 createThumbnail($source, $destination, param('avatarMaxWidth'), param('avatarMaxHeight'));
                 
                 // add the thumb URL to the response
-                $result['thumbnail']    = getUserAvatar($userId, $extension);
-                $result['thumbnailurl'] = getUserAvatarUrl($userId, $extension, true);
+                $result['thumbnail']    = getUserAvatar($user->id, $extension);
+                $result['thumbnailurl'] = getUserAvatarUrl($user->id, $extension, true);
                 
                 // for security reasons, empty out the upload directory
                 unset($result['uploadDirectory']);

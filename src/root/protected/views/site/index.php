@@ -101,7 +101,7 @@ function Board(options) {
         } else {
             img += '0.png';
         }
-        return CONF.avatarWebDirectory + img;
+        return CONF.avatarWebDirectory + '/' + img;
     }
 
     // KDHTODO move this function outside of the Board class
@@ -259,10 +259,7 @@ function Board(options) {
                     for (j=0; j<user.wins.length; j++) {
                         $userDisplay.append($('<div/>')
                             .addClass('winnertrophy-wrapper')
-                            .data('pot', user.wins[j].pot)
-                            .data('place', user.wins[j].place)
-                            .data('year', user.wins[j].yr)
-                            .data('money', user.wins[j].winnings)
+                            .data('win', user.wins[j])
                             .append('<img src="' + CONF.winnerTrophyUrlPrefix + user.wins[j].pot + user.wins[j].place + '.png" />')
                             .append($('<div/>')
                                 .addClass('year pot' + user.wins[j].pot + ' place' + user.wins[j].place)
@@ -278,17 +275,7 @@ function Board(options) {
                             .addClass('user-badge')
                             .attr('src', user.userBadges[j].badge.img)
                             .attr('alt', user.userBadges[j].display)
-                            // KDHTODO instead of all this data crap, can we just put the whole badge in the data?
-                            .data('info', user.userBadges[j].display)
-                            .data('name', user.userBadges[j].badge.name)
-                            .data('year', user.userBadges[j].yr)
-                            .data('tagline', user.userBadges[j].badge.display)
-                            .data('description', user.userBadges[j].badge.description)
-                            .data('unlockedyear', user.userBadges[j].badge.unlocked_year)
-                            .data('unlockeduser', user.userBadges[j].badge.unlockedBy ? user.userBadges[j].badge.unlockedBy.username : '')
-                            .data('img', user.userBadges[j].badge.img)
-                            .data('type', user.userBadges[j].badge.type)
-                            .data('points', user.userBadges[j].badge.power_points)
+                            .data('userBadge', user.userBadges[j])
                         );
                     }
                 }
@@ -336,64 +323,36 @@ function Board(options) {
     this.buildPopovers = function() {
         // KDHTODO move this popover stuff somewhere else?
         // KDHTODO draw the popups using Yii partials
-        var fnHideAll, fnGetTrophyData, fnGetBadgeData;
+        var fnHideAll;
 
         fnHideAll = function() {
             $('.winnertrophy-wrapper', self.getTable()).add('.user-badge', self.getTable()).not(this).popover('hide');
         };
 
-        fnGetTrophyData = function() {
-            var $this = $(this),
-                data = {
-                    year:  $this.data('year'),
-                    pot:   $this.data('pot'),
-                    place: $this.data('place'),
-                    money: $this.data('money')
-                };
-            return data;
-        };
-
-        fnGetBadgeData = function() {
-            var $this = $(this),
-                data = {
-                    name:         $this.data('name'),
-                    img:          $this.data('img'),
-                    type:         $this.data('type'),
-                    points:       $this.data('points'),
-                    info:         $this.data('info'),
-                    year:         $this.data('year'),
-                    tagline:      $this.data('tagline'),
-                    description:  $this.data('description'),
-                    unlockedYear: $this.data('unlockedyear'),
-                    unlockedUser: $this.data('unlockeduser')
-                };
-            return data;
-        };
-        
         // popovers for winner trophies
         $('.winnertrophy-wrapper', self.getTable()).on('click', function() {
             fnHideAll.call(this);
         }).popover({
             html: true,
             title: function() {
-                var data = fnGetTrophyData.call($(this)),
+                var win = $(this).data('win'),
                     content;
                 // KDHTODO see if the icon's negative margin still works on other devices
-                content = '<div class="icon"><img src="/images/badges/winnerbadge-' + data.pot + data.place + '.png" /></div>';
-                content += (data.place == 1 ? 'First' : 'Second') + ' Place';
+                content = '<div class="icon"><img src="/images/badges/winnerbadge-' + win.pot + win.place + '.png" /></div>';
+                content += (win.place == 1 ? 'First' : 'Second') + ' Place';
                 return content;
             },
             content: function() {
-                var data = fnGetTrophyData.call($(this)),
+                var win = $(this).data('win'),
                     content;
 
                 content = '';
                 content += '<div class="type-label">Winner Trophy</div>';
                 content += '<table class="table table-condensed small popover-table">';
-                content += '<tr><td>Year</td><td>' + data.year + '</td></tr>';
-                content += '<tr><td>Place</td><td>' + (data.place == 1 ? '1st' : '2nd') + '</td></tr>';
-                content += '<tr><td>Pot</td><td>' + globals.getPotName(data.pot) + '</td></tr>';
-                content += '<tr><td>Won</td><td>' + globals.dollarFormat(data.money) + '</td></tr>';
+                content += '<tr><td>Year</td><td>' + win.yr + '</td></tr>';
+                content += '<tr><td>Place</td><td>' + (win.place == 1 ? '1st' : '2nd') + '</td></tr>';
+                content += '<tr><td>Pot</td><td>' + globals.getPotName(win.pot) + '</td></tr>';
+                content += '<tr><td>Won</td><td>' + globals.dollarFormat(win.winnings) + '</td></tr>';
                 content += '</table>';
                 // KDHTODO show the number of power points it's worth
                 // KDHTODO also get the record (pot2) or week of incorrect (pot1), or sum of MOV (pot3) for additional detail?
@@ -408,27 +367,28 @@ function Board(options) {
         }).popover({
             html: true,
             title: function() {
-                var data = fnGetBadgeData.call($(this)),
+                var userBadge = $(this).data('userBadge'),
                     content;
                 // KDHTODO see if the icon's negative margin still works on other devices
-                content = '<div class="icon"><img src="' + data.img + '" /></div>' + data.name;
+                content = '<div class="icon"><img src="' + userBadge.badge.img + '" /></div>' + userBadge.badge.name;
                 return content;
             },
             content: function() {
-                var data = fnGetBadgeData.call($(this)),
+                var userBadge = $(this).data('userBadge'),
+                    unlockedUser = (userBadge.badge.unlockedBy && userBadge.badge.unlockedBy.username ? userBadge.badge.unlockedBy.username : null),
                     content;
 
                 content = '';
                 content += '<div class="type-label">User Badge</div>';
-                content += (data.tagline && data.name != data.tagline ? '<small><em>' + data.tagline + '</em></small>' : '');
+                content += (userBadge.badge.display && userBadge.badge.name != userBadge.badge.display ? '<small><em>' + userBadge.badge.display + '</em></small>' : '');
                 content += '<table class="table table-condensed small popover-table">';
-                content += (data.year ? '<tr><td>Awarded</td><td>' + data.year + '</td></tr>' : '');
-                content += (data.info ? '<tr><td>Detail</td><td>' + data.info + '</td></tr>' : '');
-                content += '<tr class="separator"><td>Type</td><td>' + data.type + '</td></tr>';
+                content += (userBadge.yr ? '<tr><td>Awarded</td><td>' + userBadge.yr + '</td></tr>' : '');
+                content += (userBadge.display ? '<tr><td>Detail</td><td>' + userBadge.display + '</td></tr>' : '');
+                content += '<tr class="separator"><td>Type</td><td>' + userBadge.badge.type + '</td></tr>';
                 // KDHTODO turn unlocked user into a link to their profile page
-                content += (data.unlockedYear || data.unlockedUser ? '<tr><td>Unlocked</td><td>' + (data.unlockedYear ? data.unlockedYear : '') + (data.unlockedUser ? ' by <a href="#">' + data.unlockedUser + '</a>' : '') + '</td></tr>' : '');
-                content += '<tr><td>Power&nbsp;Points</td><td>' + data.points + '</td></tr>';
-                content += '<tr><td>Description</td><td>' + data.description + '</td></tr>';
+                content += (userBadge.badge.unlocked_year || unlockedUser ? '<tr><td>Unlocked</td><td>' + (userBadge.badge.unlocked_year ? userBadge.badge.unlocked_year : '') + (unlockedUser ? ' by <a href="#">' + unlockedUser + '</a>' : '') + '</td></tr>' : '');
+                content += '<tr><td>Power&nbsp;Points</td><td>' + userBadge.badge.power_points + '</td></tr>';
+                content += '<tr><td>Description</td><td>' + userBadge.badge.description + '</td></tr>';
                 content += '</table>';
                 return content;
             },

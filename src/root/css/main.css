@@ -155,6 +155,9 @@ img.user-badge {
 /*
  * Pick/MOV Stuff
  */
+.picks tr.sortheads th {
+    cursor: pointer;
+}
 .pick-wrapper {
     position: relative;
 }

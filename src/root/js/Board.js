@@ -54,7 +54,7 @@ function Board(options) {
         var week;
         key = key.toLowerCase();
         if (key.indexOf('-') === 0) {
-            key = key.substrin(1);
+            key = key.substring(1);
         }
         if (key.indexOf('pick') === 0) {
             week = parseInt(key.substring(4), 10);
@@ -78,12 +78,31 @@ function Board(options) {
         return mov;
     }
     
+    function getSortOrder(order, currentOrder) {
+        var wasReversed = false;
+        if (currentOrder.indexOf('-') === 0) {
+            currentOrder = currentOrder.substring(1);
+            wasReversed = true;
+        }
+        if (currentOrder == order) {
+            if (wasReversed) {
+                return order;
+            }
+            return '-' + order;
+        }
+        return order;
+    }
+    
     
     this.getTable = function() {
         if (typeof $table == 'function') {
             return $table();
         }
         return $table;
+    };
+    
+    this.getBoard = function() {
+        return settings.board;
     };
 
     this.sort = function(newOrder, andRedraw) {
@@ -119,16 +138,16 @@ function Board(options) {
             $thead    = $('<thead/>'),
             $tbody    = $('<tbody/>');
 
-        // KDHTODO add support for reversing the sort order (should work by simply prefixing the sort properties with a minus sign)
         // KDHTODO instead of old way, where there tries to be 1 column for who's ahead, let there be a column for every pot, and a final column for total money
 
         // set up the primary table header
         $tr = $('<tr/>')
+            .addClass('sortheads')
             .append($('<th colspan="2"/>')
                 .html('User')
                 .on('click', function(e) {
                     e.preventDefault();
-                    self.sort('username');
+                    self.sort(getSortOrder('username', settings.order), true);
                 })
             );
         if (settings.viewOptions.collapseHistory) {
@@ -143,10 +162,12 @@ function Board(options) {
         for (i=startWeek; i<=21; i++) {
             $tr.append($('<th/>')
                 .html(globals.getWeekName(i))
-                .on('click', function(e) {
-                    e.preventDefault();
-                    self.sort('pick' + i);
-                })
+                .on('click', (function(i) {
+                    return function(e) {
+                        e.preventDefault();
+                        self.sort(getSortOrder('pick' + i, settings.order), true);
+                    };
+                })(i))
             );
         }
         $thead.append($tr);
@@ -163,7 +184,7 @@ function Board(options) {
                     .html('<a href="' + CONF.url.showCorrect + '?week=' + i + '"><span class="glyphicon glyphicon-flash"></span></a>')
                     .on('click', function(e) {
                         e.preventDefault();
-                        self.sort('pick' + i);
+                        self.sort(getSortOrder('pick' + i, settings.order), true);
                     })
                 );
             }

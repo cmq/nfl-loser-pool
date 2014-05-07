@@ -67,23 +67,22 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                 echo navItem('Make Picks', 'pick/index', null, $controllerName == 'pick', !$isGuest);
                 echo navItem('Messages', 'talk/index', null, $controllerName == 'talk', !$isGuest, !$isPaid);
                 ?>
-                <li class="dropdown">
+                <li class="dropdown<?php echo ($controllerName == 'stats' ? ' active' : '')?>">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Statistics <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Player Profiles</a></li>
-                        <li><a href="#">Player Stat Rankings</a></li>
-                        <li><a href="#">Pick Statistics</a></li>
                         <?php
-                        echo navItem('Player Profiles', 'stats/profiles', null, $controllerName == 'stats' && ($actionName == 'index' ||$actionName == 'profiles' || $actionName == 'profile'));
+                        echo navItem('Player Profiles', 'stats/profiles', null, $controllerName == 'stats' && ($actionName == 'index' || $actionName == 'profiles' || $actionName == 'profile'));
                         echo navItem('Player Stat Rankings', 'stats/rankings', null, $controllerName == 'stats' && $actionName == 'rankings');
                         echo navItem('Pick Statistics', 'stats/picks', null, $controllerName == 'stats' && $actionName == 'picks');
                         ?>
                     </ul>
                 </li>
-                <li class="dropdown">
+                <li class="dropdown<?php echo ($controllerName == 'archive' ? ' active' : '')?>">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Archive <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Previous Winners</a></li>
+                        <?php
+                        echo navItem('Previous Winners', 'archive/winners', null, $controllerName == 'profile' && ($actionName == 'index' || $actionName == 'winners'));
+                        ?>
                         <li class="divider"></li>
                         <li><a href="#">Past Season Results</a></li>
                         <?php
@@ -95,14 +94,13 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                     </ul>
                 </li>
                 <?php
-                echo navItem('Profile', 'profile/index', null, $controllerName == 'profile', !$isGuest, !$isPaid);
+                echo navItem('Settings', 'profile/index', null, $controllerName == 'profile', !$isGuest, !$isPaid);
                 echo navItem('About', 'about/index', null, $controllerName == 'about');
                 echo navItem('NFL Schedule', 'http://www.nfl.com/schedules/' . getCurrentYear() . (getHeaderWeek() <= 17 ? '/REG/' . max(getHeaderWeek(), 1) : '/POST' . (getHeaderWeek()-17)), null, false, true, false, false, true);
                 ?>
             </ul>
-            <!-- KDHTODO make this a link to their profile page when they are logged in -->
             <p class="navbar-text navbar-right loginlogout">
-                Welcome, <?php echo (isGuest() ? 'Guest' : '<a href="#" class="navbar-link">' . userField('username') . '</a>');?>
+                Welcome, <?php echo (isGuest() ? 'Guest' : getProfileLink(user()));?>
                 <small>(<?php echo (isGuest() ? CHtml::link('Login', array('site/login')) : CHtml::link('Logout', array('site/logout')));?>)</small>
             </p>
             <?php

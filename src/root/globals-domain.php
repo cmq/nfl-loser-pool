@@ -230,10 +230,14 @@ function createThumbnail($source, $destination, $maxWidth, $maxHeight) {
 }
 
 
-function getUserAvatar($userid, $ext) {
+function getUserAvatar($userid, $ext, $linkToFull=true) {
     $url  = getUserAvatarUrl($userid, $ext);
     $turl = getUserAvatarUrl($userid, $ext, true);
-    return "<a href=\"$url?x=" . time() . "\" class=\"avatar\" id=\"avatar$userid\"><img src=\"$turl\" /></a>";
+    if ($linkToFull) {
+        return "<a href=\"$url?x=" . time() . "\" class=\"avatar\" id=\"avatar$userid\"><img src=\"$turl\" /></a>";
+    } else {
+        return "<img class=\"avatar\" src=\"$turl\" />";
+    }
 }
 
 
@@ -296,4 +300,19 @@ function getLiveScoring($week=null) {
         $scoresFinal = null;
     }
     return $scoresFinal;
+}
+
+function getProfileLink($userOrId, $username='') {
+    // provide either an ID/name as two parameters, or a User object as a single parameter
+    if ($userOrId instanceof User) {
+        $userId   = $userOrId->id;
+        $username = $userOrId->username;
+    } else {
+        $userId   = $userOrId;
+    }
+    return CHtml::link($username, array('stats/profile', 'id'=>$userId));
+}
+
+function getAvatarProfileLink($user) {
+    return getProfileLink($user->id, getUserAvatar($user->id, $user->avatar_ext, false));
 }

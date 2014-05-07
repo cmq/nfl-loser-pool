@@ -12,14 +12,20 @@ class StatsController extends Controller
     
     public function actionProfiles()
     {
-        // KDHTODO implement
-        $this->render('profiles');
+        // KDHTODO get badges/trophies as well
+        // KDHTODO allow searching?
+        $users = User::model()->findAll(array(
+            'order' => 't.username'
+        ));
+        $this->render('profiles', array('users'=>$users));
     }
 
     public function actionProfile()
     {
-        // KDHTODO implement
-        $this->render('profile');
+        // KDHTODO get all stats, badges, trophies, etc
+        $userId  = (int) getRequestParameter('id', 0);
+        $user = User::model()->findByPk($userId);
+        $this->render('profile', array('user'=>$user));
     }
 
     public function actionRankings()

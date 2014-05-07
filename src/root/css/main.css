@@ -38,6 +38,9 @@ body {
 .picks > thead > tr > th, .picks > tbody > tr > th, .picks > tfoot > tr > th, .picks > thead > tr > td {
     text-align: center;
 }
+.picks.table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
+    background-color: #f0f0f0
+}
 .navbar-brand {
     font-weight: bold;
 }
@@ -226,6 +229,10 @@ img.user-badge {
  */
 .talk {
     margin: 20px 10px;
+    box-shadow: 4px 4px 3px #999999;
+}
+.talk.panel-warning {
+    box-shadow: 4px 4px 3px #C09853;
 }
 .talk .talk-time {
     position: relative;

@@ -43,3 +43,7 @@ create table likes (
 	updated datetime null,
 	primary key (id)
 );
+
+insert into loseruser (userid, paid, paidnote, yr) (
+    select distinct loserpick.userid, 1, 'Pre-2009', loserpick.yr from loserpick where not exists (select * from loseruser where loseruser.userid= loserpick.userid and loserpick.yr = loseruser.yr)
+);

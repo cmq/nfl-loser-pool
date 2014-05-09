@@ -394,7 +394,10 @@ $(function() {
 
 
 <div class="container">
-    <form class="form-horizontal" role="form">
+    <div class="row">
+        <div class="col-sm-offset-6"><?php echo CHtml::link('View Profile', array('stats/profile', 'id'=>$user->id)) . '<br />'?></div>
+    </div>
+    <form class="form-horizontal" role="form" style="margin-top:10px;">
         <div class="form-group fieldwrap-username">
             <label class="control-label col-sm-2" for="username">Username</label>
             <div class="col-sm-5">

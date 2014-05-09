@@ -274,6 +274,26 @@ img.user-badge {
 
 
 /*
+ * Profiles
+ */
+.panel.profile .panel-heading .username {
+    font-size: 25px;
+    font-weight: bold;
+    display: block;
+    margin-top: -35px;
+    margin-left: 60px;
+}
+.loseryear {
+    margin: 0 3px;
+}
+.loseryear.inactive {
+    background-color: transparent;
+    color: #999;
+}
+
+
+
+/*
  * Unique displays for top power/money
  */
 .power1 {

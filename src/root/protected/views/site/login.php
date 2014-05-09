@@ -9,8 +9,8 @@ $this->pageTitle=Yii::app()->name . ' - Login';
 if (isset($errorMessage)):
     echo $errorMessage;
 endif;
+// KDHTODO clean up this form
 ?>
-<!-- KDHTODO turn this into an Angular form (need to remove the form's action attribute and use a JS/Ajax form POST) -->
 <form method="post" action="<?php echo Yii::app()->request->requestUri;?>">
 	Username: <input type="text" name="username"/><br />
 	Password: <input type="password" name="password"/><br />

@@ -24,7 +24,7 @@ class StatsController extends Controller
     {
         // KDHTODO get all stats, badges, trophies, etc
         $userId  = (int) getRequestParameter('id', 0);
-        $user = User::model()->findByPk($userId);
+        $user = User::model()->withYears()->findByPk($userId);
         $this->render('profile', array('user'=>$user));
     }
 

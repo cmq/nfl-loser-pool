@@ -80,6 +80,14 @@ class User extends DeepActiveRecord
                     ),
                 ),
             ),
+            'withYears' => array(
+                'with' => array(
+                    'userYears' => array(
+                        'select'   => 'userYears.yr',
+                        'joinType' => 'INNER JOIN'
+                    ),
+                ),
+            ),
             'withBadges' => array(
                 'with' => array(
                     'userBadges' => array(

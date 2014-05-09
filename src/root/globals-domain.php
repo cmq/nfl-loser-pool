@@ -230,7 +230,11 @@ function createThumbnail($source, $destination, $maxWidth, $maxHeight) {
 }
 
 
-function getUserAvatar($userid, $ext, $linkToFull=true) {
+function getUserAvatar($userid, $ext='png', $linkToFull=true) {
+    if ($userid instanceof User) {
+        $ext    = $userid->avatar_ext;
+        $userid = $userid->id;
+    }
     $url  = getUserAvatarUrl($userid, $ext);
     $turl = getUserAvatarUrl($userid, $ext, true);
     if ($linkToFull) {

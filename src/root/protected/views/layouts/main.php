@@ -52,6 +52,7 @@
  *  	- Bandwagon Column:
  *  		- If user is currently ON the bandwagon:  covered wagon icon & number of weeks on (+xxx)
  *  		- If user is currently OFF the bandwagon:  no covered wagon & number of weeks off (-xxx)
+ *      - Track the number of times a user hops off the bandwagon at just the right time
  *  - New badges
  *  	- Skating by (ice skate) - lowest margin of defeat for those tied for first place in the overall record pool.
  *  	- Variety - longest to go without picking the same team twice in a season.

@@ -11,6 +11,10 @@ return array(
     'headerWeek'            => getHeaderWeek(),
     'earliestYear'          => 2004,
     'adminEmail'            => 'kirk.hemmen@gmail.com',
+    'firstYearEntryFee'     => 10,
+    'entryFee'              => 20,
+    'movFee'                => 5,
+    'movFirstYear'          => 2013,
     'firstGame'             => array(
         1  => mktime(19, 30, 0, 9, 5, 2013),
         2  => mktime(19, 25, 0, 9, 12, 2013),

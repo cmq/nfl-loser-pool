@@ -8,6 +8,7 @@
  *  
  *  KDHTODO larger items
  *  
+ *  - When showing Talk posts, only get those where active = 1 (just added that new field to the database)
  *  - On the index page, add an interval that will poll for new board data and automatically update the model with changes
  *  - handle AJAX errors where user is logged out
  *  - Graph of referrers for how people know each other
@@ -69,6 +70,8 @@
  *  	- make the formula public, with a page that shows how each user's score was calculated
  *  	- create the ability to re-calculate up to a given week (like, figure out what the power rankings would have been after week 5, 2010)
  *  		- use this ability to create a full history of power rankings by week
+ *      - We don't want to have to calculate power rank with weekly "talk", "like", and "badge" stats, so make note that points for these are only awarded at the end of the year!!
+ *      - Adjust the power points of all the badges/trophies
  *  
  *  
  *  - A sample way of doing an animation (like Xenforo does, post-admin-login):

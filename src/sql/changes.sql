@@ -41,9 +41,25 @@ create table likes (
 	active tinyint(1) not null default 1,
 	created datetime null,
 	updated datetime null,
+	yr int not null,
 	primary key (id)
 );
 
 insert into loseruser (userid, paid, paidnote, yr) (
     select distinct loserpick.userid, 1, 'Pre-2009', loserpick.yr from loserpick where not exists (select * from loseruser where loseruser.userid= loserpick.userid and loserpick.yr = loseruser.yr)
 );
+
+alter table losertalk add active tinyint(1) not null default 1;
+update losertalk set yr=2011 where id=538;
+
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Current Streak', 'The current streak the user is on', null, 0, 'int', 300);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Posts By', 'The number of posts made by the user', null, 0, 'int', 310);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Posts At', 'The number of posts made AT the user', null, 0, 'int', 320);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Likes Given', 'The number of times the user has liked a post', null, 0, 'int', 330);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Posts Liked', 'The number of times the user''s post has been liked', null, 0, 'int', 340);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Referrals', 'The number of other users referred by the user', null, 0, 'int', 350);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('First Place Finishes', 'The number of times the user has finished in first place in one of the pots', null, 0, 'int', 360);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Second Place Finishes', 'The number of times the user has finished in second place in one of the pots', null, 0, 'int', 370);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Trophies', 'The number of times the user has finished in first or second place in one of the pots', null, 0, 'int', 380);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Badges', 'The number of badges the user has', null, 0, 'int', 390);
+

@@ -58,6 +58,7 @@ class Like extends DeepActiveRecord
         } else {
             $this->updated = new CDbExpression('NOW()');
         }
+        $this->yr = getCurrentYear();
         return parent::save($runValidation, $attributes);
     }
     

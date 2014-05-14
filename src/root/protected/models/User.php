@@ -31,6 +31,8 @@ class User extends DeepActiveRecord
             'picks'      => array(self::HAS_MANY, 'Pick', 'userid'),
             'userBadges' => array(self::HAS_MANY, 'UserBadge', 'userid'),
             'badges'     => array(self::HAS_MANY, 'Badge', array('badgeid'=>'id'), 'through'=>'userBadges'),
+            'userStats'  => array(self::HAS_MANY, 'UserStat', 'userid'),
+            'stats'      => array(self::HAS_MANY, 'Stat', array('statid'=>'id'), 'through'=>'userStats'),
             'userYears'  => array(self::HAS_MANY, 'UserYear', 'userid'),
             'wins'       => array(self::HAS_MANY, 'Win', 'userid'),
             'talks'      => array(self::HAS_MANY, 'Talk', 'postedby'),
@@ -108,6 +110,15 @@ class User extends DeepActiveRecord
                 'with' => array(
                     'wins' => array(
             			'select' => array('yr', 'pot', 'place', 'winnings'),
+                    ),
+                ),
+            ),
+            'withStats' => array(
+                'with' => array(
+                    'userStats' => array(
+                        'with' => array('stat' => array(
+                            'order' => 'stat.zindex',
+                        )),
                     ),
                 ),
             ),

@@ -2,6 +2,36 @@
 // KDHTODO put power ranking in top-right corner of profile titlebar
 // KDHTODO show user badges/trophies in header
 // KDHTODO implement all stats
+// KDHTODO re-order the zindex in the stats table, and also group them for display using a new field
+
+
+
+// KDHTODO move this method somewhere else
+function formatValue($value, $type, $meta1='', $meta2='') {
+    $ret = $value;
+    switch ($type) {
+        case 'money':
+            $ret = '$' . number_format((float) $value, 2);
+            break;
+        case 'int':
+            $ret = (int) $value;
+            break;
+        case 'decimal':
+            $ret = number_format((float) $value, 3);
+            break;
+        case 'percent':
+            $ret = number_format((float) $value * 100, 2) . '%';
+            break;
+    }
+    if ($meta1) {
+        $ret .= " ($meta1";
+        if ($meta2) {
+            $ret .= " - $meta2";
+        }
+        $ret .= ')';
+    }
+    return $ret;
+}
 ?>
 <div class="container">
 <?php
@@ -26,47 +56,19 @@ if ($user) {
             for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
                 echo '<span class="loseryear badge' . (array_search($y, $userYears) === false ? ' inactive' : '') . '">' . $y . '</span>';
             }
+            
+            
+            echo '<hr />';
+            foreach ($user->userStats as $userStat) {
+                // KDHTODO pull the formatValue() function from the old script so "1" becomes "1st" and so on.  Also so that different stat types get formatted differently (money, etc)
+                echo $userStat->stat->name . ': ' . formatValue($userStat->value, $userStat->stat->type, $userStat->meta1, $userStat->meta2) . ' (' . $userStat->place . ($userStat->tied ? 'T' : '') . ' / ' . $userStat->placeactive . ($userStat->tiedactive ? 'T' : '') . ')<br />';
+            }
+            
             ?>
             <ul>
-                <li>Years played</li>
-                <li>Trophies/Badges</li>
                 <li>Record per Year (show as bar graph?)</li>
-                <li>Seasons Played (count)</li>
-                <li>Entry Fees Paid</li>
-                <li>Money Earned</li>
-                <li>ROI</li>
-                <li>Total Picks and Percentage Made for:
-                    <ul>
-                        <li>Total (this won't have a percentage (well, it'll always be 100%))</li>
-                        <li>Correct</li>
-                        <li>Incorrect</li>
-                        <li>Manual</li>
-                        <li>Set by System</li>
-                        <li>Correct/Manual</li>
-                        <li>Correct/Set by System</li>
-                        <li>Incorrect/Manual</li>
-                        <li>Incorrect/Set by System</li>
-                    </ul>
-                </li>
-                <li>Power Ranking</li>
-                <li>Total MOV</li>
-                <li>Average MOV</li>
-                <li>Longest Correct Streak</li>
-                <li>Longest Incorrect Streak</li>
-                <li>Average Correct per Season</li>
-                <li>Average Incorrect per Season</li>
-                <li>Average Week of First Incorrect Pick</li>
-                <li>Messages Posted</li>
-                <li>Likes Given</li>
-                <li>Likes Received</li>
-                <li>Average Time Pick Made Before Lock</li>
                 <li>Times on Bandwagon</li>
                 <li>Times Off Bandwagon</li>
-                <li>Num Players Referred</li>
-                <li>Num 1st Place Finishes</li>
-                <li>Num 2nd Place Finishes</li>
-                <li>Num Trophies</li>
-                <li>Num Badges</li>
                 <li>Times Dodging a Bandwagon Crash</li>
                 <li>Times Being Bandwagon Chief</li>
                 <li>Number of Times Picking Each Team</li>
@@ -75,6 +77,7 @@ if ($user) {
                 <li>Lowest Power Ranking</li>
                 <li>Largest One-Week Power Ranking Jump</li>
                 <li>Power-Ranking Calculation Details</li>
+                <li>Year-by-year Stat Breakdown?</li>
             </ul>
         </div>
     </div>

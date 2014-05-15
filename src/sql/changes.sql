@@ -63,3 +63,21 @@ insert into stat (name, description, asterisk, reverse, `type`, zindex) values (
 insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Trophies', 'The number of times the user has finished in first or second place in one of the pots', null, 0, 'int', 380);
 insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Badges', 'The number of badges the user has', null, 0, 'int', 390);
 
+insert into badge (name, img, `type`, display, power_points, description, zindex, internal, unlocked_userid, unlocked_year) values ('Chief of the Bandwagon', '/images/badges/bwchief.png', 'Floating', 'Chief of the Bandwagon', 0, 'Belongs to the player that has been on the bandwagon the longest (with ties being awarded to the player with the highest Power Rank)', 170, null, null, 2014);
+
+create table bandwagon (
+	yr int not null,
+	week int not null,
+	teamid int not null,
+	chiefid bigint null,
+	primary key (yr, week)
+);
+
+update loserpick, loserpick l2
+	set loserpick.teamid = 0
+where loserpick.yr = 2004 and loserpick.teamid > 0
+	and l2.userid = loserpick.userid and l2.yr=2004 and l2.week < loserpick.week and l2.incorrect = 1;
+
+update loserpick set incorrect = 0 where userid=136 and yr=2012 and week in (15,16);
+update loserpick set incorrect = 1 where userid=136 and yr=2012 and week > 16;
+

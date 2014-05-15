@@ -78,6 +78,7 @@ if ($user) {
                 <li>Largest One-Week Power Ranking Jump</li>
                 <li>Power-Ranking Calculation Details</li>
                 <li>Year-by-year Stat Breakdown?</li>
+                <li>Floating or losable badges owned at one point (and which points)</li>
             </ul>
         </div>
     </div>

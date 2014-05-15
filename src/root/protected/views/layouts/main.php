@@ -23,6 +23,10 @@
  *  - Allow talk messages to be flagged by superadmin as "admin" to show up in a different color
  *  - For users viewing a talk message directed at them, show them in a different color
  *  - Use language to differentiate "winner TROPHIES" from "user BADGES"
+ *  - Note somewhere that floating badges, despite their year of introduction, are applied retroactively to past years
+ *  - Distinguish badges more.  Like, the 800 badge isn't "floating", it's earnable.  But some earnable badges are permanent and some aren't.
+ *  - For floating/losable badges, have a "badge history" page that shows where they belonged?  Maybe that's overkill
+ *  - When showing all the badges, show floating badges as "year introduced" instead of "year unlocked", and show "current owner" instead of "unlocked by"
  *  - Clean up the data fields for the userbadge and badge tables so the popovers look cooler
  *  - On the homepage, show a bandwagon section that has the stats:
  *      - Week xx pick:  {team}

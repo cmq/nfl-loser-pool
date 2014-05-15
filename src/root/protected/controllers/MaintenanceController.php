@@ -15,13 +15,15 @@
     <li>Largest One-Week Power Ranking Jump</li>
     <li>Power-Ranking Calculation Details</li>
     <li>Year-by-year Stat Breakdown?</li>
+    <li>Floating or losable badges owned at one point (and which points)</li>
 </ul>
 */
 class MaintenanceController extends Controller
 {
     
     private $reverseStats = null;
-    private $users = array();
+    private $users        = array();
+    private $bandwagons   = array();
     
     // map of stat.id to the key we'll use to describe/calculate that stat
     private $STATS = array(
@@ -91,6 +93,56 @@ class MaintenanceController extends Controller
             }
         }
         return $previous;
+    }
+    
+    private function _getHighestRankedUser($users) {
+        $bestPowerRank = 99999;
+        $highestUser   = null;
+        foreach ($users as $user) {
+            if ($user['powerrank'] < $bestPowerRank) {
+                $bestPowerRank = $user['powerrank'];
+                $highestUser   = $user;
+            }
+        }
+        return $highestUser;
+    }
+    
+    private function _userHasPick($user, $year, $week, $teams, $searchPending=false) {
+        if (!is_array($teams)) {
+            $teams = array($teams);
+        }
+        if (array_key_exists($year, $user['years']) &&
+            array_key_exists($week, $user['years'][$year]['weeks']) &&
+            array_search($user['years'][$year]['weeks'][$week]['teamid'], $teams) !== false) {
+            // this user has this year/week and one of the teams in the list
+            return true;
+        }
+        if ($searchPending) {
+            if (array_key_exists($year, $user['years']) &&
+                array_key_exists($week, $user['years'][$year]['pendingPicks']) &&
+                array_search($user['years'][$year]['pendingPicks'][$week], $teams) !== false) {
+                // this user has this year/week and one of the teams in the list
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private function _weeksOnBandwagon($user, $toYear, $toWeek) {
+        $b = array_reverse($this->bandwagons);
+        $weeksOn = 0;
+        foreach ($b as $bandwagon) {
+            if ($bandwagon['year'] > $toYear || ($bandwagon['year'] == $toYear && $bandwagon['week'] >= $toWeek)) {
+                // we haven't traveled backwards far enough yet
+                continue;
+            }
+            if ($this->_userHasPick($user, $bandwagon['year'], $bandwagon['week'], $bandwagon['teamid'], true)) {
+                $weeksOn++;
+            } else {
+                break;
+            }
+        }
+        return $weeksOn;
     }
     
     private function _buildStreaks(&$user) {
@@ -373,8 +425,7 @@ class MaintenanceController extends Controller
         		from user   u
         		inner join  loserpick p on u.id = p.userid
         					and p.teamid > 0
-        					and p.incorrect is not null
-        		inner join	mov on p.teamid = mov.teamid
+        		left join	mov on p.teamid = mov.teamid
         		            and p.yr = mov.yr
         		            and p.week = mov.week
                 where       1 = 1
@@ -421,6 +472,7 @@ class MaintenanceController extends Controller
             if ($y != $lastYear) {
                 $user['years'][$y] = array(
                     'weeks'          => array(),
+                    'pendingPicks'   => array(),    // key = week#, value = teamid
                     'entryFee'       => $this->_getEntryFee($y),
                     'money'          => 0,
                     'firstPlace'     => 0,
@@ -438,29 +490,38 @@ class MaintenanceController extends Controller
             }
             
             // record the pick itself
-            $user['years'][$y]['weeks'][$w] = array(
-                'teamid'      => $row['teamid'],
-                'mov'         => (int)  $row['mov'],
-                'incorrect'   => (bool) $row['incorrect'],
-                'setbysystem' => (bool) $row['setbysystem'],
-                'streak'      => 0,
-            );
-            
-            // update totals and other counters
-            $user['years'][$y]['firstIncorrect'] = ($row['incorrect'] ? min($row['week'], $user['years'][$y]['firstIncorrect']) : $user['years'][$y]['firstIncorrect']);
-            $this->_updatePickTotals($row, $user['pickTotals']);
-            $this->_updatePickTotals($row, $user['years'][$y]['pickTotals']);
-            
-            // check for streaks
-            if ($currentStreak == 0 || ((bool) $row['incorrect'] === (bool) ($currentStreak < 0))) {
-                // streak continues
-                $currentStreak += ($row['incorrect'] ? -1 : 1);
+            if (is_null($row['incorrect'])) {
+                // this is a pending pick.  We don't want it recorded as part of the normal set of picks,
+                // but we still want to hold onto it because the bandwagon calculations use it
+                $user['years'][$y]['pendingPicks'][$w] = $row['teamid'];
             } else {
-                // streak reversed
-                $currentStreak = ($row['incorrect'] ? -1 : 1);
+                // this is a normal pick that we want to record for all normal calculations
+                $user['years'][$y]['weeks'][$w] = array(
+                    'teamid'      => $row['teamid'],
+                    'mov'         => (int)  $row['mov'],
+                    'incorrect'   => (bool) $row['incorrect'],
+                    'setbysystem' => (bool) $row['setbysystem'],
+                    'streak'      => 0,
+                );
+                
+                // update totals and other counters
+                $user['years'][$y]['firstIncorrect'] = ($row['incorrect'] ? min($row['week'], $user['years'][$y]['firstIncorrect']) : $user['years'][$y]['firstIncorrect']);
+                $this->_updatePickTotals($row, $user['pickTotals']);
+                $this->_updatePickTotals($row, $user['years'][$y]['pickTotals']);
+                
+                // check for streaks
+                if ($currentStreak == 0 || ((bool) $row['incorrect'] === (bool) ($currentStreak < 0))) {
+                    // streak continues
+                    $currentStreak += ($row['incorrect'] ? -1 : 1);
+                } else {
+                    // streak reversed
+                    $currentStreak = ($row['incorrect'] ? -1 : 1);
+                }
+                $user['currentStreak'] = $currentStreak;
+                if (!is_null($row['incorrect'])) {
+                    $user['years'][$y]['weeks'][$w]['streak'] = $currentStreak;
+                }
             }
-            $user['years'][$y]['weeks'][$w]['streak'] = $currentStreak;
-            $user['currentStreak']                    = $currentStreak;
         }
         if ($lastUserId) {
             $users[$lastUserId] = $user;
@@ -519,33 +580,6 @@ class MaintenanceController extends Controller
         }
         
         
-        // number of badges for each user (also by year)
-        // NOTE:  This does not include badges that are floating or can be lost like the .800 badge -- those are calculated and added to these totals in the recalcBadges() method
-        $sql = 'select ub.userid, b.id, ub.yr, b.unlocked_year from badge b inner join userbadge ub on ub.badgeid = b.id where b.unlocked_year is not null';
-        $rsBadge = Yii::app()->db->createCommand($sql)->query();
-        foreach ($rsBadge as $row) {
-            if (array_key_exists($row['userid'], $users)) {
-                $users[$row['userid']]['badges'][] = $row['id'];
-                if ($row['yr']) {
-                    $users[$row['userid']]['years'][$row['yr']]['badges'][] = $row['id'];
-                }
-            }
-        }
-        
-        
-        // KDHTODO (later)
-        //<li>Times on Bandwagon</li>
-        //<li>Times Off Bandwagon</li>
-        //<li>Times Dodging a Bandwagon Crash</li>
-        //<li>Times Being Bandwagon Chief</li>
-        
-        // KDHTODO (later)
-        //<li>Current Power Ranking</li>
-        //<li>Highest Power Ranking</li>
-        //<li>Lowest Power Ranking</li>
-        //<li>Largest One-Week Power Ranking Jump</li>
-        
-        
         // calculate stats that are based on counting/grouping
         foreach ($users as &$user) {
             $user['numSeasons'] = count($user['years']);
@@ -576,18 +610,25 @@ class MaintenanceController extends Controller
             }
             
             $this->_buildStreaks($user);
-            // KDHTODO more things to do here
         }
 
-        // set the internal users array
+
+        // set the internal users array for the following functions to use
         $this->users = $users;
         
-        // recalculate the floating and losable badges
-        $this->_recalcBadges();
+        // number of badges for each user (also by year)
+        $this->_recalcBadges();     // recalculate the floating and losable badges
         
         // recalculate the power ranking
-        // - populates $user['powerrank']
+        // KDHTODO (later) this should populate $user['powerrank']
+        //<li>Current Power Ranking</li>
+        //<li>Highest Power Ranking</li>
+        //<li>Lowest Power Ranking</li>
+        //<li>Largest One-Week Power Ranking Jump</li>
         $this->_recalcPower();
+
+        // recalculate bandwagons and bandwagon badges/stats
+        $this->_recalcBandwagon();
         
         // empty out any previous userstat values
         $sql = 'delete from userstat';
@@ -599,23 +640,263 @@ class MaintenanceController extends Controller
         }
     }
     
+    private function _calculateBadge_monkey($y) {
+        $sql = '
+        	select		user.id, count(loserpick.week) numright
+        	from		user
+        	inner join	loserpick on loserpick.userid = user.id
+        				and loserpick.incorrect = 0
+        				and loserpick.teamid > 0
+                        and loserpick.yr <= ' . $y . '
+            inner join  loseruser on loseruser.userid = user.id
+                        and loseruser.yr = ' . $y . '
+        	where		1 = 1
+        				and not exists (
+                            select * from winners
+                            where winners.userid = user.id
+                                and winners.yr <= ' . $y . '
+                        )
+        	group by	user.id
+        	order by	numright desc
+        	limit		1
+        ';
+        $rsMonkey = Yii::app()->db->createCommand($sql)->query();
+        foreach ($rsMonkey as $row) {
+            return array(
+                'userId' => $row['id'],
+                'value'  => $row['numright']
+            );
+        }
+        return null;
+    }
+    
+    private function _calculateBadge_onfire($y) {
+        $sql = '
+        	select		user.id, loserpick.yr, loserpick.week, loserpick.incorrect
+        	from		user
+        	inner join	loserpick on loserpick.userid = user.id
+        				and loserpick.incorrect is not null
+        				and loserpick.yr > 2004
+                        and loserpick.yr <= ' . $y . '
+            inner join  loseruser on loseruser.userid = user.id
+                        and loseruser.yr = ' . $y . '
+            where		1 = 1
+        	order by	user.id, loserpick.yr, loserpick.week';
+        $rsStreak = Yii::app()->db->createCommand($sql)->query();
+        $streaks = array();
+        $highCurrent = 0;
+        $highAlltime = 0;
+        $lastUserId = 0;
+        foreach ($rsStreak as $row) {
+            if ($row['id'] != $lastUserId) {
+                if ($lastUserId > 0) {
+                    $thisStreakData['maxStreak'] = max($thisStreakData['maxStreak'], $thisStreakData['currentStreak']);
+                    $highCurrent = max($highCurrent, $thisStreakData['currentStreak']);
+                    $streaks[] = $thisStreakData;
+                }
+                $thisStreakData = array(
+                    'userId'        => $row['id'],
+                    'currentStreak' => 0,
+                    'maxStreak'     => 0
+                );
+                $lastUserId = $row['id'];
+            }
+            if ($row['incorrect'] == 1) {
+                $thisStreakData['maxStreak'] = max($thisStreakData['maxStreak'], $thisStreakData['currentStreak']);
+                $thisStreakData['currentStreak'] = 0;
+            } else {
+                $thisStreakData['currentStreak']++;
+                $highAlltime = max($highAlltime, $thisStreakData['currentStreak']);
+            }
+        }
+        if ($lastUserId > 0) {
+            $thisStreakData['maxStreak'] = max($thisStreakData['maxStreak'], $thisStreakData['currentStreak']);
+            $highCurrent = max($highCurrent, $thisStreakData['currentStreak']);
+            $streaks[] = $thisStreakData;
+        }
+        $currentUserId = 0;
+        foreach ($streaks as $streak) {
+            if ($streak['currentStreak'] == $highCurrent) {
+                if ($currentUserId > 0) {
+                    // two or more users are tied
+                    $currentUserId = 0;
+                    break;
+                } else {
+                    $currentUserId = $streak['userId'];
+                }
+            }
+        }
+        $alltimeUserId = 0;
+        foreach ($streaks as $streak) {
+            if ($streak['maxStreak'] == $highAlltime) {
+                if ($alltimeUserId > 0) {
+                    // two or more users are tied
+                    $alltimeUserId = 0;
+                    break;
+                } else {
+                    $alltimeUserId = $streak['userId'];
+                }
+            }
+        }
+        return array(
+            'currentUserId' => $currentUserId,
+            'currentStreak' => $highCurrent,
+            'alltimeUserId' => $alltimeUserId,
+            'alltimeStreak' => $highAlltime
+        );
+    }
+    
+    private function _calculateBadge_defeat($y) {
+        $sql = '
+        	select		user.id, avg(mov.mov) avgmov, count(loserpick.week) totalPicks
+        	from		user
+        	inner join	loserpick on loserpick.userid = user.id
+        				and loserpick.incorrect is not null
+        				and loserpick.teamid > 0
+                        and loserpick.yr <= ' . $y . '
+            inner join  mov on loserpick.teamid = mov.teamid
+        				and loserpick.yr = mov.yr
+        				and loserpick.week = mov.week
+            inner join  loseruser on loseruser.userid = user.id
+                        and loseruser.yr = ' . $y . '
+            where		1 = 1
+            group by	user.id
+        	having      count(loserpick.week) > 20
+        	order by	avgmov
+        	limit		1
+        ';
+        $rsDefeat = Yii::app()->db->createCommand($sql)->query();
+        foreach ($rsDefeat as $row) {
+            return array(
+                'userId' => $row['id'],
+                'value'  => $row['avgmov'] * -1
+            );
+        }
+    }
+    
+    private function _calculateBadge_800($y) {
+        $sql = '
+            select      user.id, user.username, count(loserpick.userid) totalpicks,
+                        (select count(*) from loserpick l where l.userid = user.id and l.incorrect=0 and l.teamid > 0) / (select count(*) from loserpick l where l.userid = user.id and l.teamid > 0 and l.incorrect is not null) as pct
+            from        user
+            inner join  loserpick on loserpick.userid = user.id
+                        and loserpick.incorrect is not null
+                        and loserpick.yr <= ' . $y . '
+            inner join  loseruser on loseruser.userid = user.id
+                        and loseruser.yr = ' . $y . '
+            group by    user.id, user.username
+            having      count(loserpick.userid) >= 100
+                        and (select count(*) from loserpick l where l.userid = user.id and l.incorrect=0 and l.teamid > 0) / (select count(*) from loserpick l where l.userid = user.id and l.teamid > 0 and l.incorrect is not null) >= .800';
+        $badgeUsers = array();
+        $rs800 = Yii::app()->db->createCommand($sql)->query();
+        foreach ($rs800 as $row) {
+            $badgeUsers[] = $row['id'];
+        }
+        return $badgeUsers;
+    }
+    
     private function _recalcBadges() {
-        // KDHTODO calculate who currently has each badge
-        // KDHTODO calculate who had each badge at the end of each year, too (so who had the current streak at the end of every year, etc)
-        // KDHTODO Note that some badges have introduction years, so don't retroactively apply them to users in earlier years
+        // This method updates badges that need to be calculated on-the-fly, not just using the userbadge table
+        // This method also figures out who had each badge at the end of each year
         
-        // list of badges that need to be calculated on-the-fly, not just using the userbadge table:
+        // NOTE:  This method updates the $user['badges'] array and the $user['years'][$y]['badges'] array
+        // NOTE:  This does NOT handle the bandwagon-related badges, those need to be handled by the _recalcBandwagon() method
+        
+        // KDHTODO for these floating badges, can we do them by WEEK too, so we can record all floating badges a user had at any point in time?
+        
         // 12 - monkey on my back
+        for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
+            $badge = $this->_calculateBadge_monkey($y);
+            if ($badge) {
+                $this->users[$badge['userId']]['years'][$y]['badges'][] = 12;
+                // echo "year $y badge 12 belonged to " . $this->users[$badge['userId']]['username'] . " with {$badge['value']}<br />";
+                if ($y == getCurrentYear()) {
+                    $this->users[$badge['userId']]['badges'][] = 12;
+                    $sql = "update userbadge set userid = {$badge['userId']}, display = '{$badge['value']} manual correct picks without cashing.  And counting...' where badgeid = 12";
+                    Yii::app()->db->createCommand($sql)->query();
+                }
+            }
+        }
+        
         // 13 - on fire
         // 14 - all-time on fire
-        // 16 - total defeat
-        // 18 - .800 club
+        for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
+            $badge = $this->_calculateBadge_onfire($y);
+            if ($badge) {
+                if ($badge['currentUserId']) {
+                    $this->users[$badge['currentUserId']]['years'][$y]['badges'][] = 13;
+                    // echo "year $y badge 13 belonged to " . $this->users[$badge['currentUserId']]['username'] . " with {$badge['currentStreak']}<br />";
+                    if ($y == getCurrentYear()) {
+                        $this->users[$badge['currentUserId']]['badges'][] = 13;
+                        $sql = "update userbadge set userid = {$badge['currentUserId']}, display = 'Current streak leader, with {$badge['currentStreak']} consecutive correct picks.' where badgeid = 13";
+                        Yii::app()->db->createCommand($sql)->query();
+                    }
+                }
+                if ($badge['alltimeUserId']) {
+                    $this->users[$badge['alltimeUserId']]['years'][$y]['badges'][] = 14;
+                    // echo "year $y badge 14 belonged to " . $this->users[$badge['alltimeUserId']]['username'] . " with {$badge['alltimeStreak']}<br />";
+                    if ($y == getCurrentYear()) {
+                        $this->users[$badge['alltimeUserId']]['badges'][] = 14;
+                        $sql = "update userbadge set userid = {$badge['alltimeUserId']}, display = 'All-time streak leader, with {$badge['alltimeStreak']} consecutive correct picks.' where badgeid = 14";
+                        Yii::app()->db->createCommand($sql)->query();
+                    }
+                }
+            }
+        }
         
-        // loop over years and calculate who HAD these at each given year, and also who has them now
+        // 16 - total defeat
+        for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
+            $badge = $this->_calculateBadge_defeat($y);
+            if ($badge) {
+                $this->users[$badge['userId']]['years'][$y]['badges'][] = 16;
+                // echo "year $y badge 16 belonged to " . $this->users[$badge['userId']]['username'] . " with {$badge['value']}<br />";
+                if ($y == getCurrentYear()) {
+                    $this->users[$badge['userId']]['badges'][] = 16;
+                    $sql = "update userbadge set userid = {$badge['userId']}, display = 'Average Margin of Defeat: " . number_format($badge['value'], 2) . " points' where badgeid = 16";
+                    Yii::app()->db->createCommand($sql)->query();
+                }
+            }
+        }
+        
+        // 18 - .800 club
+        for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
+            $badgeUsers = $this->_calculateBadge_800($y);
+            if (count($badgeUsers)) {
+                if ($y == getCurrentYear()) {
+                    $sql = 'delete from userbadge where badgeid=18';
+                    Yii::app()->db->createCommand($sql)->query();
+                }
+                foreach ($badgeUsers as $userId) {
+                    // echo "year $y badge 18 belonged to " . $this->users[$userId]['username'] . "<br />";
+                    $this->users[$userId]['years'][$y]['badges'][] = 18;
+                    if ($y == getCurrentYear()) {
+                        $this->users[$userId]['badges'][] = 18;
+                        $sql = "insert into userbadge (userid, badgeid, display) values ($userId, 18, '.800 Club - Accuracy of at least 80% after at least 100 picks')";
+                        Yii::app()->db->createCommand($sql)->query();
+                    }
+                }
+            }
+        }
+        
+        
+        // do the rest of the normal badges that are awarded manually
+        $sql = 'select ub.userid, b.id, ub.yr, b.unlocked_year from badge b inner join userbadge ub on ub.badgeid = b.id where b.unlocked_year is not null';
+        $rsBadge = Yii::app()->db->createCommand($sql)->query();
+        foreach ($rsBadge as $row) {
+            if (array_key_exists($row['userid'], $this->users)) {
+                $this->users[$row['userid']]['badges'][] = $row['id'];
+                $this->users[$row['userid']]['badges'] = array_unique($this->users[$row['userid']]['badges']);
+                if ($row['yr']) {
+                    $this->users[$row['userid']]['years'][$row['yr']]['badges'][] = $row['id'];
+                    $this->users[$row['userid']]['years'][$row['yr']]['badges'] = array_unique($this->users[$row['userid']]['years'][$row['yr']]['badges']);
+                }
+            }
+        }
         
     }
     
     private function _recalcPower() {
+        // KDHTODO should update $user['powerrank']
         // KDHTODO allow calc of every week of every year so entire power history is available
             // this would require knowing which/how many badges they had AT THE TIME
             // No it wouldn't -- we're going to make a rule that points from badges/talks/likes only come at the end of the year
@@ -625,17 +906,160 @@ class MaintenanceController extends Controller
         }
     }
     
+    private function _recalcBandwagon() {
+        
+        $sql = 'select * from bandwagon order by yr, week';
+        $rsExistingBandwagons = Yii::app()->db->createCommand($sql)->query();
+        $existingBandwagons = array();
+        foreach ($rsExistingBandwagons as $eb) {
+            $existingBandwagons[] = $eb;
+        }
+        
+        // collect new bandwagons for every year/week that hasn't already been calculated (including multiple teams if there are ties)
+        $sql = '
+            select      loserpick.teamid, loserpick.yr, loserpick.week, count(*) total
+            from        loserpick
+            where       loserpick.yr > 2004
+            group by    teamid, yr, week
+            order by    loserpick.yr, loserpick.week, total desc';
+        $rsBandwagon = Yii::app()->db->createCommand($sql)->query();
+        $newBandwagons = array();
+        $lastYear = 0;
+        $lastWeek = 0;
+        foreach ($rsBandwagon as $row) {
+            if ($row['week'] != $lastWeek || $row['yr'] != $lastYear) {
+                if ($lastWeek) {
+                    $newBandwagons[] = array(
+                        'year'  => (int) $lastYear,
+                        'week'  => (int) $lastWeek,
+                        'picks' => (int) $numPicks,
+                        'teams' => $teamCandidates
+                    );
+                }
+                $teamCandidates = array();
+                $numPicks = (int) $row['total'];
+                $lastWeek = (int) $row['week'];
+                $lastYear = (int) $row['yr'];
+            }
+            if ((int) $row['total'] == $numPicks) {
+                // this team tied for most picks, so it's also a candidate
+                $teamCandidates[] = (int) $row['teamid'];
+            }
+        }
+        if ($lastWeek) {
+            $newBandwagons[] = array(
+                'year'  => (int) $lastYear,
+                'week'  => (int) $lastWeek,
+                'picks' => (int) $numPicks,
+                'teams' => $teamCandidates
+            );
+        }
+        
+        // resolve ties by going with the team chosen by the user with the highest power ranking
+        foreach ($newBandwagons as &$newBandwagon) {
+            if (count($newBandwagon['teams']) > 1) {
+                // echo "Bandwagon tie on week {$newBandwagon['week']}, {$newBandwagon['year']}<br />";
+                // collect all the users that have any of these teams
+                $users = array();
+                foreach ($this->users as $user) {
+                    if ($this->_userHasPick($user, $newBandwagon['year'], $newBandwagon['week'], $newBandwagon['teams'], true)) {
+                        // this user has this year/week and one of the teams in the bandwagon
+                        $users[] = $user;
+                    }
+                }
+                // find which of these users has the highest power ranking and take their team as the only candidate
+                $highestRankedUser = $this->_getHighestRankedUser($users);
+                if ($highestRankedUser) {
+                    $newBandwagon['teams'] = array($highestRankedUser['years'][$newBandwagon['year']]['weeks'][$newBandwagon['week']]['teamid']);
+                }
+            }
+        }
+        
+        // figure out the chief of each bandwagon and insert it
+        foreach ($newBandwagons as $bandwagon) {
+            $teamId          = $bandwagon['teams'][0];
+            $chiefId         = 0;
+            $chiefCandidates = array();
+            
+            // get all the candidates (users who selected the bandwagon team for this week)
+            foreach ($this->users as $user) {
+                if ($this->_userHasPick($user, $bandwagon['year'], $bandwagon['week'], $teamId, true)) {
+                    $chiefCandidates[] = $user;
+                }
+            }
+            
+            // determine how long each candidate has been on the bandwagon
+            $maxTimeOnBandwagon     = 0;
+            $revisedChiefCandidates = array();
+            foreach ($chiefCandidates as $chief) {
+                $timeOnBandwagon = $this->_weeksOnBandwagon($chief, $bandwagon['year'], $bandwagon['week']);
+                $maxTimeOnBandwagon = max($maxTimeOnBandwagon, $timeOnBandwagon);
+                $revisedChiefCandidates[] = array(
+                    'chief'   => $chief,
+                    'weeksOn' => $timeOnBandwagon
+                );
+            }
+            
+            // revise the chief candidates to only those who have been on it the longest
+            $chiefCandidates = array();
+            foreach ($revisedChiefCandidates as $candidate) {
+                if ($candidate['weeksOn'] == $maxTimeOnBandwagon) {
+                    $chiefCandidates[] = $candidate['chief'];
+                }
+            }
+            
+            // break any ties by awarding chief to the highest-ranked user
+            if (count($chiefCandidates) > 1) {
+                // echo "Chief tie on week {$bandwagon['week']}, {$bandwagon['year']}<br />";
+                $chief = $this->_getHighestRankedUser($chiefCandidates);
+                if ($chief) {
+                    $chiefId = $chief['id'];
+                }
+            } else {
+                $chiefId = $chiefCandidates[0]['id'];
+            }
+            
+            // add this new bandwagon to the global array
+            $this->bandwagons[] = array(
+                'year'    => $bandwagon['year'],
+                'week'    => $bandwagon['week'],
+                'chiefid' => $chiefId,
+                'teamid'  => $teamId
+            );
+            
+            // insert the bandwagon into the database if necessary
+            $insert = true;
+            foreach ($existingBandwagons as $eb) {
+                if ($eb['yr'] == $bandwagon['year'] && $eb['week'] == $bandwagon['week'] && $eb['teamid'] == $teamId && $eb['chiefid'] == $chiefId) {
+                    $insert = false;
+                    break;
+                }
+                if ($eb['yr'] > $bandwagon['year'] || ($eb['yr'] == $bandwagon['year'] && $eb['week'] > $bandwagon['week'])) {
+                    break;
+                }
+            }
+            if ($insert) { 
+                $sql = "replace into bandwagon (yr, week, chiefid, teamid) values ({$bandwagon['year']}, {$bandwagon['week']}, $chiefId, $teamId)";
+                // echo "$sql<br />";
+                Yii::app()->db->createCommand($sql)->query();
+            }
+        }
+        
+        // KDHTODO should assign bandwagon chief badge (id 19)
+        // KDHTODO add "incorrect" column to the bandwagon table so we can identify cases where the user dodged a crash or hopped on at the right time
+            // might need to do this by modifying the $users array to indicate on each pick whether or not it was a bandwagon pick
+        // KDHTODO (later)
+        //<li>Times on Bandwagon</li>
+        //<li>Times Off Bandwagon</li>
+        //<li>Times Dodging a Bandwagon Crash</li>
+        //<li>Times Being Bandwagon Chief</li>
+    }
+    
     public function actionIndex() {
         exit;
     }
     
     public function actionRecalc() {
-        /*
-        $userId = (int) getRequestParameter('uid', 0);
-        $year   = (int) getRequestParameter('year', 0);
-        $week   = (int) getRequestParameter('week', 0);
-        */
-        
         $this->_recalcStats();
         echo 'done.';
     }

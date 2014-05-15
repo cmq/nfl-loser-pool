@@ -30,6 +30,10 @@
  *  - Clean up the data fields for the userbadge and badge tables so the popovers look cooler
  *  - Add large power points for having uploaded a custom avatar
  *  - Make badges so they still have a title so that you can hover them for a name without having to click on them for the full details
+ *  - Add a weiner badge for someone who lets the system pick x number of picks for them in a given season
+ *  - Break the "about" nav item into a dropdown with multiple sections
+ *  - Make an "against the flow" badge for users who stay off the bandwagon the most
+ *  - Allow grouping of like-type badges so it only shows the badge once and then has a little counter if they have more than 1 of them.
  *  - On the homepage, show a bandwagon section that has the stats:
  *      - Week xx pick:  {team}
  *      - Current chief

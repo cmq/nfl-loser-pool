@@ -66,6 +66,7 @@ insert into stat (name, description, asterisk, reverse, `type`, zindex) values (
 insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Percentage of Time on Bandwagon', 'The frequency of picks for which the user is on the bandwagon', 'Does not include 2004, which was a sudden-death season', 0, 'percent', 410);
 insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Times as Chief of the Bandwagon', 'The number of times the user has been Chief of the Bandwagon', 'Does not include 2004, which was a sudden-death season', 0, 'int', 420);
 insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Percentage of Time as Chief of the Bandwagon', 'The frequency of all picks for which the user has been Chief of the Bandwagon', 'Does not include 2004, which was a sudden-death season', 0, 'percent', 430);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Timely Bandwagon Jumper', 'The number of times the user successfully rode the Bandwagon for 3 or more weeks, then jumped off and got their pick right, just as the Bandwagon was wrong', 'Does not include 2004, which was a sudden-death season', 0, 'int', 440);
 
 insert into badge (name, img, `type`, display, power_points, description, zindex, internal, unlocked_userid, unlocked_year) values ('Chief of the Bandwagon', '/images/badges/bwchief.png', 'Floating', 'Chief of the Bandwagon', 0, 'Belongs to the player that has been on the bandwagon the longest (with ties being awarded to the player with the highest Power Rank)', 170, null, null, 2014);
 
@@ -73,8 +74,17 @@ create table bandwagon (
 	yr int not null,
 	week int not null,
 	teamid int not null,
-	chiefid bigint null,
+	chiefid bigint not null,
+	incorrect tinyint(1) null,
 	primary key (yr, week)
+);
+
+create table bandwagonjump (
+	yr int not null,
+	week int not null,
+	userid int not null,
+	previous_weeks int not null,
+	primary key (yr, week, userid)
 );
 
 update loserpick, loserpick l2

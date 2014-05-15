@@ -1,5 +1,6 @@
 <?php
 // KDHTODO clean up this file so these random functions aren't hanging around all over cluttering things up
+// KDHTODO make this page have a layout so the navigation is still present, etc.
 
 /*
 <ul>
@@ -67,6 +68,7 @@ class MaintenanceController extends Controller
         41 => 'percentBandwagons',
         42 => 'bandwagonChief',
         43 => 'percentChief',
+        44 => 'bandwagonJumper',
     );
     
 
@@ -453,26 +455,27 @@ class MaintenanceController extends Controller
                     $users[$lastUserId] = $user;
                 }
                 $user = array(
-                    'id'             => $u,
-                    'username'       => $row['username'],
-                    'active'         => (bool) $row['active'],
-                    'entryFee'       => 0,
-                    'money'          => 0,
-                    'firstPlace'     => 0,
-                    'secondPlace'    => 0,
-                    'postsBy'        => 0,
-                    'postsAt'        => 0,
-                    'likesBy'        => 0,
-                    'likesAt'        => 0,
-                    'referrals'      => 0,
-                    'currentStreak'  => 0,
-                    'numTrophies'    => 0,
-                    'numBadges'      => 0,
-                    'numBandwagons'  => 0,
-                    'bandwagonChief' => 0,
-                    'badges'         => array(),
-                    'years'          => array(),
-                    'pickTotals'     => $this->_pickTotalsArray(),
+                    'id'              => $u,
+                    'username'        => $row['username'],
+                    'active'          => (bool) $row['active'],
+                    'entryFee'        => 0,
+                    'money'           => 0,
+                    'firstPlace'      => 0,
+                    'secondPlace'     => 0,
+                    'postsBy'         => 0,
+                    'postsAt'         => 0,
+                    'likesBy'         => 0,
+                    'likesAt'         => 0,
+                    'referrals'       => 0,
+                    'currentStreak'   => 0,
+                    'numTrophies'     => 0,
+                    'numBadges'       => 0,
+                    'numBandwagons'   => 0,
+                    'bandwagonChief'  => 0,
+                    'bandwagonJumper' => 0,
+                    'badges'          => array(),
+                    'years'           => array(),
+                    'pickTotals'      => $this->_pickTotalsArray(),
                 );
                 $currentStreak = 0;
                 $lastUserId    = $u;
@@ -482,21 +485,22 @@ class MaintenanceController extends Controller
             // on a new year?
             if ($y != $lastYear) {
                 $user['years'][$y] = array(
-                    'weeks'          => array(),
-                    'pendingPicks'   => array(),    // key = week#, value = teamid
-                    'entryFee'       => $this->_getEntryFee($y),
-                    'money'          => 0,
-                    'firstPlace'     => 0,
-                    'secondPlace'    => 0,
-                    'postsBy'        => 0,
-                    'postsAt'        => 0,
-                    'likesBy'        => 0,
-                    'likesAt'        => 0,
-                    'numBandwagons'  => 0,
-                    'bandwagonChief' => 0,
-                    'firstIncorrect' => 22,
-                    'badges'         => array(),
-                    'pickTotals'     => $this->_pickTotalsArray(),
+                    'weeks'           => array(),
+                    'pendingPicks'    => array(),    // key = week#, value = teamid
+                    'entryFee'        => $this->_getEntryFee($y),
+                    'money'           => 0,
+                    'firstPlace'      => 0,
+                    'secondPlace'     => 0,
+                    'postsBy'         => 0,
+                    'postsAt'         => 0,
+                    'likesBy'         => 0,
+                    'likesAt'         => 0,
+                    'numBandwagons'   => 0,
+                    'bandwagonChief'  => 0,
+                    'bandwagonJumper' => 0,
+                    'firstIncorrect'  => 22,
+                    'badges'          => array(),
+                    'pickTotals'      => $this->_pickTotalsArray(),
                 );
                 $user['entryFee'] += $user['years'][$y]['entryFee'];
                 $lastYear = $y;
@@ -634,11 +638,6 @@ class MaintenanceController extends Controller
         $this->_recalcBadges();     // recalculate the floating and losable badges
         
         // recalculate the power ranking
-        // KDHTODO (later) this should populate $user['powerrank']
-        //<li>Current Power Ranking</li>
-        //<li>Highest Power Ranking</li>
-        //<li>Lowest Power Ranking</li>
-        //<li>Largest One-Week Power Ranking Jump</li>
         $this->_recalcPower();
 
         // recalculate bandwagons and bandwagon badges/stats
@@ -909,17 +908,6 @@ class MaintenanceController extends Controller
         
     }
     
-    private function _recalcPower() {
-        // KDHTODO should update $user['powerrank']
-        // KDHTODO allow calc of every week of every year so entire power history is available
-            // this would require knowing which/how many badges they had AT THE TIME
-            // No it wouldn't -- we're going to make a rule that points from badges/talks/likes only come at the end of the year
-        foreach ($this->users as &$user) {
-            // KDHTODO figure this out for real
-            $user['powerrank'] = $user['id'];
-        }
-    }
-    
     private function _recalcBandwagon() {
         
         $sql = 'select * from bandwagon order by yr, week';
@@ -1034,26 +1022,43 @@ class MaintenanceController extends Controller
             }
             
             // add this new bandwagon to the global array
+            $incorrect = null;
+            if ($this->_userHasPick($this->users[$chiefId], $bandwagon['year'], $bandwagon['week'], $teamId, false)) {
+                $incorrect = $this->users[$chiefId]['years'][$bandwagon['year']]['weeks'][$bandwagon['week']]['incorrect'];
+                if (!is_null($incorrect)) {
+                    $incorrect = (int) $incorrect;
+                }
+            }
             $this->bandwagons[] = array(
-                'year'    => $bandwagon['year'],
-                'week'    => $bandwagon['week'],
-                'chiefid' => $chiefId,
-                'teamid'  => $teamId
+                'year'      => $bandwagon['year'],
+                'week'      => $bandwagon['week'],
+                'chiefid'   => $chiefId,
+                'teamid'    => $teamId,
+                'incorrect' => $incorrect
             );
             
             // insert the bandwagon into the database if necessary
             $insert = true;
+            // try to look at all existing bandwagons to see if we already have the exact content already in the database, and therefore have no need to do an insert
             foreach ($existingBandwagons as $eb) {
-                if ($eb['yr'] == $bandwagon['year'] && $eb['week'] == $bandwagon['week'] && $eb['teamid'] == $teamId && $eb['chiefid'] == $chiefId) {
+                $incorrectMatches = false;
+                if (is_null($eb['incorrect'])) {
+                    $incorrectMatches = is_null($incorrect);
+                } else {
+                    $incorrectMatches = ((int) $eb['incorrect'] === $incorrect);
+                }
+                if ($eb['yr'] == $bandwagon['year'] && $eb['week'] == $bandwagon['week'] && $eb['teamid'] == $teamId && $eb['chiefid'] == $chiefId && $incorrectMatches) {
+                    // nothing has changed between this bandwagon and the existing one -- no need to insert
                     $insert = false;
                     break;
                 }
                 if ($eb['yr'] > $bandwagon['year'] || ($eb['yr'] == $bandwagon['year'] && $eb['week'] > $bandwagon['week'])) {
+                    // in our loop over the existing bandwagons, we've already passed the one we're considering inserting -- no point in continuing the search, we're done
                     break;
                 }
             }
             if ($insert) { 
-                $sql = "replace into bandwagon (yr, week, chiefid, teamid) values ({$bandwagon['year']}, {$bandwagon['week']}, $chiefId, $teamId)";
+                $sql = "replace into bandwagon (yr, week, chiefid, teamid, incorrect) values ({$bandwagon['year']}, {$bandwagon['week']}, $chiefId, $teamId, " . (is_null($incorrect) ? 'null' : $incorrect) . ")";
                 // echo "$sql<br />";
                 Yii::app()->db->createCommand($sql)->query();
             }
@@ -1083,9 +1088,74 @@ class MaintenanceController extends Controller
             }
         }
         
-        // KDHTODO add "incorrect" column to the bandwagon table so we can identify cases where the user dodged a crash or hopped on at the right time
-        // KDHTODO (later)
-        //<li>Times Dodging a Bandwagon Crash</li>
+        // for all users, figure out the times they successfully hopped off the bandwagon!
+        // first, sort bandwagons into a structure so we don't have to constantly loop over them
+        $bandwagonsByYear = array();
+        foreach ($this->bandwagons as $bandwagon) {
+            if (!array_key_exists($bandwagon['year'], $bandwagonsByYear)) {
+                $bandwagonsByYear[$bandwagon['year']] = array();
+            }
+            $bandwagonsByYear[$bandwagon['year']][$bandwagon['week']] = $bandwagon;
+        }
+        // loop over users
+        foreach ($this->users as &$user) {
+            $lastBandwagonWeek      = 0;
+            $lastBandwagonYear      = 0;
+            $bandwagonCorrectStreak = 0;
+            $wasOnBandwagonLastWeek = false;
+            foreach ($user['years'] as $y=>$year) {
+                if ($y == 2004) continue;
+                foreach ($year['weeks'] as $w=>$week) {
+                    if ($week['onBandwagon']) {
+                        // the user was on the bandwagon this week
+                        $wasOnBandwagonLastWeek = true;
+                        if ($week['incorrect']) {
+                            // the bandwagon was wrong -- reset the correct streak
+                            $bandwagonCorrectStreak = 0;
+                        } else {
+                            // the bandwagon was right -- increment the streak
+                            $bandwagonCorrectStreak++;
+                        }
+                    } else {
+                        // the user was NOT on the bandwagon this week
+                        if ($wasOnBandwagonLastWeek && $bandwagonCorrectStreak >= 3 && !$week['incorrect'] &&
+                            array_key_exists($y, $bandwagonsByYear) && array_key_exists($w, $bandwagonsByYear[$y]) && $bandwagonsByYear[$y][$w]['incorrect']) {
+                            // magical case:
+                            // - the user was on the bandwagon last week
+                            // - the user had been on a correct streak on the bandwagon for at least 3 weeks leading up to this week
+                            // - the user got their pick right this week
+                            // - the bandwagon was WRONG this week!
+                            // echo "{$user['username']} hopped off the crashing bandwagon on week $w $y after riding for $bandwagonCorrectStreak weeks!<br />";                $sql = "replace into bandwagon (yr, week, chiefid, teamid, incorrect) values ({$bandwagon['year']}, {$bandwagon['week']}, $chiefId, $teamId, " . (is_null($incorrect) ? 'null' : $incorrect) . ")";
+                            $sql = "replace into bandwagonjump (yr, week, userid, previous_weeks) values ($y, $w, {$user['id']}, $bandwagonCorrectStreak)";
+                            Yii::app()->db->createCommand($sql)->query();
+                            $user['years'][$y]['bandwagonJumper']++;
+                            $user['bandwagonJumper']++;
+                        }
+                        $bandwagonCorrectStreak = 0;
+                        $wasOnBandwagonLastWeek = false;
+                    }
+                }
+            }
+        }
+    }
+
+    private function _recalcPower() {
+        // KDHTODO should update $user['powerrank']
+        // KDHTODO allow calc of every week of every year so entire power history is available
+        // this would require knowing which/how many badges they had AT THE TIME
+        // No it wouldn't -- we're going to make a rule that points from badges/talks/likes only come at the end of the year
+        foreach ($this->users as &$user) {
+            // KDHTODO figure this out for real
+            $user['powerrank'] = $user['id'];
+        }
+        // KDHTODO strip the user of chief badge before running the power ranking so that we can do bandwagon calculation first (and note the caveat that power ranking does not include chief for bandwagon calculatiosn) and then do final power ranking at the end
+        
+        // KDHTODO (later) this should populate $user['powerrank']
+        //<li>Current Power Ranking</li>
+        //<li>Highest Power Ranking</li>
+        //<li>Lowest Power Ranking</li>
+        //<li>Largest One-Week Power Ranking Jump</li>
+        
     }
     
     public function actionIndex() {

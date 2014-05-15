@@ -62,6 +62,10 @@ insert into stat (name, description, asterisk, reverse, `type`, zindex) values (
 insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Second Place Finishes', 'The number of times the user has finished in second place in one of the pots', null, 0, 'int', 370);
 insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Trophies', 'The number of times the user has finished in first or second place in one of the pots', null, 0, 'int', 380);
 insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Badges', 'The number of badges the user has', null, 0, 'int', 390);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Times on Bandwagon', 'The number of times the user has been on the bandwagon', 'Does not include 2004, which was a sudden-death season', 0, 'int', 400);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Percentage of Time on Bandwagon', 'The frequency of picks for which the user is on the bandwagon', 'Does not include 2004, which was a sudden-death season', 0, 'percent', 410);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Times as Chief of the Bandwagon', 'The number of times the user has been Chief of the Bandwagon', 'Does not include 2004, which was a sudden-death season', 0, 'int', 420);
+insert into stat (name, description, asterisk, reverse, `type`, zindex) values ('Percentage of Time as Chief of the Bandwagon', 'The frequency of all picks for which the user has been Chief of the Bandwagon', 'Does not include 2004, which was a sudden-death season', 0, 'percent', 430);
 
 insert into badge (name, img, `type`, display, power_points, description, zindex, internal, unlocked_userid, unlocked_year) values ('Chief of the Bandwagon', '/images/badges/bwchief.png', 'Floating', 'Chief of the Bandwagon', 0, 'Belongs to the player that has been on the bandwagon the longest (with ties being awarded to the player with the highest Power Rank)', 170, null, null, 2014);
 
@@ -80,4 +84,6 @@ where loserpick.yr = 2004 and loserpick.teamid > 0
 
 update loserpick set incorrect = 0 where userid=136 and yr=2012 and week in (15,16);
 update loserpick set incorrect = 1 where userid=136 and yr=2012 and week > 16;
+
+insert into userbadge (badgeid, userid) values (19, 0);
 

@@ -67,10 +67,7 @@ if ($user) {
             ?>
             <ul>
                 <li>Record per Year (show as bar graph?)</li>
-                <li>Times on Bandwagon</li>
-                <li>Times Off Bandwagon</li>
                 <li>Times Dodging a Bandwagon Crash</li>
-                <li>Times Being Bandwagon Chief</li>
                 <li>Number of Times Picking Each Team</li>
                 <li>Current Power Ranking</li>
                 <li>Highest Power Ranking</li>

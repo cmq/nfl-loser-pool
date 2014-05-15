@@ -4,10 +4,7 @@
 /*
 <ul>
     <li>Record per Year (show as bar graph?)</li>
-    <li>Times on Bandwagon</li>
-    <li>Times Off Bandwagon</li>
     <li>Times Dodging a Bandwagon Crash</li>
-    <li>Times Being Bandwagon Chief</li>
     <li>Number of Times Picking Each Team</li>
     <li>Current Power Ranking</li>
     <li>Highest Power Ranking</li>
@@ -66,6 +63,10 @@ class MaintenanceController extends Controller
         37 => 'secondPlace',
         38 => 'numTrophies',
         39 => 'numBadges',
+        40 => 'numBandwagons',
+        41 => 'percentBandwagons',
+        42 => 'bandwagonChief',
+        43 => 'percentChief',
     );
     
 
@@ -264,6 +265,12 @@ class MaintenanceController extends Controller
             case 'numBadges':
                 return count($user['badges']);
                 break;
+            case 'percentBandwagons':
+                $fetchKey = 'numBandwagons';
+                break;
+            case 'percentChief':
+                $fetchKey = 'bandwagonChief';
+                break;
         }
         
         // get the value out of the user array
@@ -289,6 +296,8 @@ class MaintenanceController extends Controller
             case 'percentsetbysystemcorrect':
             case 'percentsetbysystemincorrect':
             case 'averageMargin':
+            case 'percentBandwagons':
+            case 'percentChief':
                 $totalPicks = $this->_getStatFromUser($user, 'pickstotal', $y);
                 if ($totalPicks) {
                     $value = ((int) $value / $totalPicks);
@@ -444,24 +453,26 @@ class MaintenanceController extends Controller
                     $users[$lastUserId] = $user;
                 }
                 $user = array(
-                    'id'            => $u,
-                    'username'      => $row['username'],
-                    'active'        => (bool) $row['active'],
-                    'entryFee'      => 0,
-                    'money'         => 0,
-                    'firstPlace'    => 0,
-                    'secondPlace'   => 0,
-                    'postsBy'       => 0,
-                    'postsAt'       => 0,
-                    'likesBy'       => 0,
-                    'likesAt'       => 0,
-                    'referrals'     => 0,
-                    'currentStreak' => 0,
-                    'numTrophies'   => 0,
-                    'numBadges'     => 0,
-                    'badges'        => array(),
-                    'years'         => array(),
-                    'pickTotals'    => $this->_pickTotalsArray(),
+                    'id'             => $u,
+                    'username'       => $row['username'],
+                    'active'         => (bool) $row['active'],
+                    'entryFee'       => 0,
+                    'money'          => 0,
+                    'firstPlace'     => 0,
+                    'secondPlace'    => 0,
+                    'postsBy'        => 0,
+                    'postsAt'        => 0,
+                    'likesBy'        => 0,
+                    'likesAt'        => 0,
+                    'referrals'      => 0,
+                    'currentStreak'  => 0,
+                    'numTrophies'    => 0,
+                    'numBadges'      => 0,
+                    'numBandwagons'  => 0,
+                    'bandwagonChief' => 0,
+                    'badges'         => array(),
+                    'years'          => array(),
+                    'pickTotals'     => $this->_pickTotalsArray(),
                 );
                 $currentStreak = 0;
                 $lastUserId    = $u;
@@ -481,6 +492,8 @@ class MaintenanceController extends Controller
                     'postsAt'        => 0,
                     'likesBy'        => 0,
                     'likesAt'        => 0,
+                    'numBandwagons'  => 0,
+                    'bandwagonChief' => 0,
                     'firstIncorrect' => 22,
                     'badges'         => array(),
                     'pickTotals'     => $this->_pickTotalsArray(),
@@ -502,6 +515,7 @@ class MaintenanceController extends Controller
                     'incorrect'   => (bool) $row['incorrect'],
                     'setbysystem' => (bool) $row['setbysystem'],
                     'streak'      => 0,
+                    'onBandwagon' => false
                 );
                 
                 // update totals and other counters
@@ -1045,14 +1059,33 @@ class MaintenanceController extends Controller
             }
         }
         
-        // KDHTODO should assign bandwagon chief badge (id 19)
+        // figure out each user that is on each bandwagon
+        // KDHTODO should the bandwagon stats be "reverse=1"?  Is it good or bad to be on the bandwagon?
+        foreach ($this->bandwagons as $bandwagon) {
+            $teamId = $bandwagon['teamid'];
+            foreach ($this->users as &$user) {
+                if ($this->_userHasPick($user, $bandwagon['year'], $bandwagon['week'], $teamId)) {
+                    $user['years'][$bandwagon['year']]['weeks'][$bandwagon['week']]['onBandwagon'] = true;
+                    $user['years'][$bandwagon['year']]['numBandwagons']++;
+                    $user['numBandwagons']++;
+                }
+                if ($bandwagon['chiefid'] == $user['id']) {
+                    $user['years'][$bandwagon['year']]['bandwagonChief']++;
+                    $user['bandwagonChief']++;
+                }
+            }
+            // set chief of the bandwagon floating badge
+            if ($bandwagon['year'] == getCurrentYear() && $bandwagon['week'] == getCurrentWeek()) {
+                $this->users[$bandwagon['chiefid']]['years'][$bandwagon['year']]['badges'][] = 19;
+                $this->users[$bandwagon['chiefid']]['badges'][] = 19;
+                $sql = "update userbadge set userid = {$bandwagon['chiefid']}, display = 'Chief of the Bandwagon: " . $this->_weeksOnBandwagon($this->users[$bandwagon['chiefid']], $bandwagon['year'], $bandwagon['week']) . " Consecutive Weeks Riding' where badgeid = 19";
+                Yii::app()->db->createCommand($sql)->query();
+            }
+        }
+        
         // KDHTODO add "incorrect" column to the bandwagon table so we can identify cases where the user dodged a crash or hopped on at the right time
-            // might need to do this by modifying the $users array to indicate on each pick whether or not it was a bandwagon pick
         // KDHTODO (later)
-        //<li>Times on Bandwagon</li>
-        //<li>Times Off Bandwagon</li>
         //<li>Times Dodging a Bandwagon Crash</li>
-        //<li>Times Being Bandwagon Chief</li>
     }
     
     public function actionIndex() {

@@ -207,7 +207,7 @@ function Board(options) {
                     .append('<img class="avatar" src="' + globals.getUserAvatar(user) + '"/>')
                 )
                 .append($userDisplay = $('<div/>')
-                    .append(user.username + '<br />')
+                    .append(user.username + (CONF.isSuperadmin ? ' (' + user.id + ')' : '') + '<br />')
                 )
             );
 

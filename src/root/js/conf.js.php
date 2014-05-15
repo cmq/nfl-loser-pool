@@ -3,6 +3,7 @@ var CONF = {
     userId:                 <?php echo userId()?>,
     username:               '<?php echo addslashes(userField('username'))?>',
     isAdmin:                <?php echo (isAdmin() ? 'true' : 'false')?>,
+    isSuperadmin:           <?php echo (isSuperadmin() ? 'true' : 'false')?>,
     currentYear:            <?php echo param('currentYear')?>,
     currentWeek:            <?php echo param('currentWeek')?>,
     headerWeek:             <?php echo param('headerWeek')?>,

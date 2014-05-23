@@ -34,6 +34,8 @@
  *  - Break the "about" nav item into a dropdown with multiple sections
  *  - Make an "against the flow" badge for users who stay off the bandwagon the most
  *  - Allow grouping of like-type badges so it only shows the badge once and then has a little counter if they have more than 1 of them.
+ *  - Add a badge that takes away a power point for users who use IE
+ *  - When in production, re-run the recalc/maintenance page multiple times (letting it time out) until the power ranking table is filled
  *  - On the homepage, show a bandwagon section that has the stats:
  *      - Week xx pick:  {team}
  *      - Current chief

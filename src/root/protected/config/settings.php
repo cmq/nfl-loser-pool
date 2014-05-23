@@ -46,4 +46,20 @@ return array(
     'avatarWebDirectory'    => '/images/avatar',
     'winnerTrophyUrlPrefix' => '/images/badges/winnerbadge-',
     'boardPollerInterval'   => 1000 * 60 * 10,  // poll every 10 minutes
+    'powerMultipliers'      => array(
+        'pointsPerFirstPlace'   => 25,
+        'pointsPerSecondPlace'  => 10,
+        'pointsPerSeason'       => 4,
+        'pointsPerWin'          => 1,
+        'pointsPerDollar'       => .25,
+        'winPctRampUp'          => 50,      // after 50 picks, the user's win percentage fully applies, until then it's ramping up
+        'winPctThreshold'       => 50,      // if the user's win percentage is below this number, it will actually SUBTRACT from their power points
+        'winPctMultiplier'      => 3,       // the user's win percentage (minus the winPctThreshold) is multiplied by this
+        'movPoints'             => 6,       // points per average margin of defeat
+        'pointsPerSetBySystem'  => -.5,     // the user loses this many points for every pick set by the system
+        'pointsPerTalk'         => .4,
+        'pointsPerLikesBy'      => .1, 
+        'pointsPerLikesAt'      => .2,
+        'pointsPerReferral'     => 5,
+    ),
 );

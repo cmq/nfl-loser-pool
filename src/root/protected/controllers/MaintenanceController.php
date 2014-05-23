@@ -1,6 +1,7 @@
 <?php
 // KDHTODO clean up this file so these random functions aren't hanging around all over cluttering things up
 // KDHTODO make this page have a layout so the navigation is still present, etc.
+// KDHTODO show output on this screen for timing and whatnot
 
 /*
 <ul>
@@ -495,6 +496,7 @@ class MaintenanceController extends Controller
                     'postsAt'         => 0,
                     'likesBy'         => 0,
                     'likesAt'         => 0,
+                    'referrals'       => 0,
                     'numBandwagons'   => 0,
                     'bandwagonChief'  => 0,
                     'bandwagonJumper' => 0,
@@ -561,7 +563,7 @@ class MaintenanceController extends Controller
         
         
         // get talk/like info
-        $sql = 'select * from losertalk where active = 1' . ($userId ? " and (postedby = $userId or postedat = $userId)" : '');
+        $sql = 'select * from losertalk where active = 1 and admin = 0' . ($userId ? " and (postedby = $userId or postedat = $userId)" : '');
         $rsTalk = Yii::app()->db->createCommand($sql)->query();
         foreach ($rsTalk as $row) {
             if (array_key_exists($row['postedby'], $users)) {
@@ -588,12 +590,20 @@ class MaintenanceController extends Controller
         
         
         // number of players referred
-        // KDHTODO should I have special rules for myself since I have so many more referrals?
-        $sql = 'select u.referrer, count(u.id) num from user u where u.referrer is not null group by u.referrer';
+        $sql = 'select u.id, u.referrer, min(lu.yr) first_year from user u inner join loseruser lu on lu.userid = u.id where u.referrer is not null group by u.id, u.referrer';
         $rsReferral = Yii::app()->db->createCommand($sql)->query();
         foreach ($rsReferral as $row) {
             if (array_key_exists($row['referrer'], $users)) {
-                $users[$row['referrer']]['referrals'] = (int) $row['num'];
+                // find the year that the referrer will get credit for referring this user
+                $creditYear = 0;
+                foreach ($users[$row['referrer']]['years'] as $y=>$year) {
+                    $creditYear = $y;
+                    if ($y > $row['first_year']) {
+                        break;
+                    }
+                }
+                $users[$row['referrer']]['referrals']++;
+                $users[$row['referrer']]['years'][$creditYear]['referrals']++;
             }
         }
         
@@ -814,8 +824,6 @@ class MaintenanceController extends Controller
         
         // NOTE:  This method updates the $user['badges'] array and the $user['years'][$y]['badges'] array
         // NOTE:  This does NOT handle the bandwagon-related badges, those need to be handled by the _recalcBandwagon() method
-        
-        // KDHTODO for these floating badges, can we do them by WEEK too, so we can record all floating badges a user had at any point in time?
         
         // 12 - monkey on my back
         for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
@@ -1065,7 +1073,6 @@ class MaintenanceController extends Controller
         }
         
         // figure out each user that is on each bandwagon
-        // KDHTODO should the bandwagon stats be "reverse=1"?  Is it good or bad to be on the bandwagon?
         foreach ($this->bandwagons as $bandwagon) {
             $teamId = $bandwagon['teamid'];
             foreach ($this->users as &$user) {
@@ -1138,23 +1145,261 @@ class MaintenanceController extends Controller
             }
         }
     }
+    
+    private function _getPowerPoints($powerData, $userId=0) {
+        $powerPoints = array();
+        $multipliers = param('powerMultipliers');
+        
+        if ($powerData['totalPicks']) {
+            $powerData['winPct'] = ($powerData['numCorrect'] / $powerData['totalPicks']) * 100;
+            $powerData['avgMov'] = $powerData['totalMov']   / $powerData['totalPicks'];
+        } else {
+            $powerData['winPct'] = 0;
+            $powerData['avgMov'] = 0;
+        }
+        
+        // user gets points for every season they've played
+        $powerPoints['seasons'] = $powerData['numSeasons'] * $multipliers['pointsPerSeason'];
+        
+        // user gets points for every correct pick
+        $powerPoints['correct'] = $powerData['numCorrect'] * $multipliers['pointsPerWin'];
+        
+        // user gets their badge points, straight up
+        $powerPoints['badges'] = $powerData['badgePoints'];
+        
+        // user gets points for all the money they've won
+        $powerPoints['money'] = $powerData['money'] * $multipliers['pointsPerDollar'];
+        
+        // user gets points for win percentage, but the points ramp up in effectiveness for the first $r picks.
+        // Once the user has $r picks or more, their winPct is fully effective.
+        // Note:  The user will LOSE power points if they have a win percentage below the threshold
+        $r = $multipliers['winPctRampUp'];
+        $t = $multipliers['winPctThreshold'];
+        $powerPoints['winPct'] = ($powerData['winPct'] - $t) * (min($r, max($powerData['totalPicks'], $powerData['totalPicks']-$r)) / $r) * $multipliers['winPctMultiplier'];
+        
+        // user gets points for margin of defeat
+        $powerPoints['mov'] = ($powerData['avgMov'] * -1) * $multipliers['movPoints'];
+        
+        // user loses points for setbysystem
+        $powerPoints['setBySystem'] = $powerData['numSetBySystem'] * $multipliers['pointsPerSetBySystem'];
+        
+        // user gets points for every post they make
+        $powerPoints['talks'] = $powerData['numPostsBy'] * $multipliers['pointsPerTalk'];
+        
+        // user gets points for every player they referred
+        // for me, points are divided by 10
+        $powerPoints['referrals'] = ($powerData['numReferrals'] * $multipliers['pointsPerReferral']) / ($userId == 1 ? 10 : 1);
+
+        // user gets points for every like they give
+        $powerPoints['likesBy'] = $powerData['numLikesBy'] * $multipliers['pointsPerLikesBy'];
+
+        // user gets points for every like given to them
+        $powerPoints['likesAt'] = $powerData['numLikesAt'] * $multipliers['pointsPerLikesAt'];
+        
+        // user gets points for every first place finish
+        $powerPoints['firstPlace'] = $powerData['numFirstPlace'] * $multipliers['pointsPerFirstPlace'];
+        
+        // user gets points for every second place finish
+        $powerPoints['secondPlace'] = $powerData['numSecondPlace'] * $multipliers['pointsPerSecondPlace'];
+                
+        $powerPoints['points'] = 0;
+        $powerPoints['points'] += $powerPoints['seasons'];
+        $powerPoints['points'] += $powerPoints['correct'];
+        $powerPoints['points'] += $powerPoints['badges'];
+        $powerPoints['points'] += $powerPoints['money'];
+        $powerPoints['points'] += $powerPoints['winPct'];
+        $powerPoints['points'] += $powerPoints['mov'];
+        $powerPoints['points'] += $powerPoints['setBySystem'];
+        $powerPoints['points'] += $powerPoints['talks'];
+        $powerPoints['points'] += $powerPoints['referrals'];
+        $powerPoints['points'] += $powerPoints['likesBy'];
+        $powerPoints['points'] += $powerPoints['likesAt'];
+        $powerPoints['points'] += $powerPoints['firstPlace'];
+        $powerPoints['points'] += $powerPoints['secondPlace'];
+        $powerPoints['points'] = round($powerPoints['points'], 3);
+        
+        return $powerPoints;
+    }
 
     private function _recalcPower() {
-        // KDHTODO should update $user['powerrank']
-        // KDHTODO allow calc of every week of every year so entire power history is available
-        // this would require knowing which/how many badges they had AT THE TIME
-        // No it wouldn't -- we're going to make a rule that points from badges/talks/likes only come at the end of the year
-        foreach ($this->users as &$user) {
-            // KDHTODO figure this out for real
-            $user['powerrank'] = $user['id'];
-        }
-        // KDHTODO strip the user of chief badge before running the power ranking so that we can do bandwagon calculation first (and note the caveat that power ranking does not include chief for bandwagon calculatiosn) and then do final power ranking at the end
         
-        // KDHTODO (later) this should populate $user['powerrank']
-        //<li>Current Power Ranking</li>
-        //<li>Highest Power Ranking</li>
-        //<li>Lowest Power Ranking</li>
-        //<li>Largest One-Week Power Ranking Jump</li>
+        // KDHTODO comment this much better
+        
+        // get the power point values for each badge
+        $badgePoints = array();
+        $sql = 'select id, power_points from badge';
+        $rsBadges = Yii::app()->db->createCommand($sql)->query();
+        foreach ($rsBadges as $badge) {
+            $badgePoints[$badge['id']] = $badge['power_points'];
+        }
+        
+        
+        foreach ($this->users as &$user) {
+            $powerUser = array();
+            $weekIndex = -1;    // the index of our flat power weeks array
+            //reset($user['years']);
+            foreach ($user['years'] as $y=>&$year) {
+                end($year['weeks']);
+                $lastWeekForYear = key($year['weeks']);
+                foreach ($year['weeks'] as $w=>&$week) {
+                    // remember that weeks are CUMULATIVE from the beginning of time when determining power ranking
+                    $previousWeek = (++$weekIndex > 0 ? $powerUser[$weekIndex-1] : null);
+                    $powerWeek = array(
+                        'year'           => $y,
+                        'week'           => $w,
+                        'numSeasons'     => ($previousWeek ? $previousWeek['numSeasons'] : 0),
+                        'totalPicks'     => ($previousWeek ? $previousWeek['totalPicks'] : 0),
+                        'numCorrect'     => ($previousWeek ? $previousWeek['numCorrect'] : 0),
+                        'numSetBySystem' => ($previousWeek ? $previousWeek['numSetBySystem'] : 0),
+                        'totalMov'       => ($previousWeek ? $previousWeek['totalMov'] : 0),
+                        'badgePoints'    => ($previousWeek ? $previousWeek['badgePoints'] : 0),
+                        'money'          => ($previousWeek ? $previousWeek['money'] : 0),
+                        'numPostsBy'     => ($previousWeek ? $previousWeek['numPostsBy'] : 0),
+                        'numLikesBy'     => ($previousWeek ? $previousWeek['numLikesBy'] : 0),
+                        'numLikesAt'     => ($previousWeek ? $previousWeek['numLikesAt'] : 0),
+                        'numReferrals'   => ($previousWeek ? $previousWeek['numReferrals'] : 0),
+                        'numFirstPlace'  => ($previousWeek ? $previousWeek['numFirstPlace'] : 0),
+                        'numSecondPlace' => ($previousWeek ? $previousWeek['numSecondPlace'] : 0),
+                    );
+                    if ($w == 1) {
+                        // this is the first week of the year
+                        // we can include number of seasons and referrals
+                        $powerWeek['numSeasons']++;
+                        $powerWeek['numReferrals'] += $year['referrals'];
+                    }
+                    if ($lastWeekForYear === $w) {
+                        // this is the last week of the year
+                        // we can include wins, money, talks, likes, and badges for this year now
+                        $powerWeek['numFirstPlace']  += $year['firstPlace'];
+                        $powerWeek['numSecondPlace'] += $year['secondPlace'];
+                        $powerWeek['money']          += $year['money'];
+                        $powerWeek['numPostsBy']     += $year['postsBy'];
+                        $powerWeek['numLikesBy']     += $year['likesBy'];
+                        $powerWeek['numLikesAt']     += $year['likesAt'];
+                        foreach ($year['badges'] as $badgeId) {
+                            $powerWeek['badgePoints'] += $badgePoints[$badgeId];
+                        }
+                    }
+                    // include the rest of the stuff that counts every week
+                    $powerWeek['totalPicks']     += 1;
+                    $powerWeek['numCorrect']     += ($week['incorrect'] ? 0 : 1);
+                    $powerWeek['numSetBySystem'] += ($week['setbysystem'] ? 1 : 0);
+                    $powerWeek['totalMov']       += $week['mov'];
+                    // append the week to the array
+                    $powerUser[] = $powerWeek;
+                    $week['powerdata'] = $powerWeek;
+                }
+            }
+            
+        }
+        
+        
+        // figure out every user's power points for every week ever
+        foreach ($this->users as &$user) {
+            $lastPowerPoints = 0;
+            for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
+                for ($w=1; $w<=21; $w++) {
+                    $thisPowerPoints = $lastPowerPoints;
+                    if ($y < getCurrentYear() || ($y == getCurrentYear() && $w <= getCurrentWeek())) {
+                        if (array_key_exists($y, $user['years']) && array_key_exists($w, $user['years'][$y]['weeks'])) {
+                            $thisPowerPointData = $this->_getPowerPoints($user['years'][$y]['weeks'][$w]['powerdata'], $user['id']);
+                            $thisPowerPoints = $thisPowerPointData['points'];
+                            // store this user/year/week
+                            $user['years'][$y]['weeks'][$w]['powerpoints']    = $thisPowerPoints;
+                            $user['years'][$y]['weeks'][$w]['powerpointdata'] = $thisPowerPointData;
+                        }
+                    }
+                    $lastPowerPoints = $thisPowerPoints;
+                }
+            }
+            $user['powerpoints'] = $lastPowerPoints;
+        }
+        
+        
+        // loop over every year/week and rank all users based on power points they have for that week
+        for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
+            for ($w=1; $w<=21; $w++) {
+                if ($y < getCurrentYear() || ($y == getCurrentYear() && $w <= getCurrentWeek())) {
+                    $allValues = array();
+                    $places    = array();
+                    $ties      = array();
+                    foreach ($this->users as $user) {
+                        if (array_key_exists($y, $user['years']) && array_key_exists($w, $user['years'][$y]['weeks'])) {
+                            $allValues[] = $user['years'][$y]['weeks'][$w]['powerpoints'];
+                        }
+                    }
+                    $this->_getPlacesAndTies($allValues, 'powerpoints', $places, $ties);
+                    foreach ($this->users as &$user) {
+                        if (array_key_exists($y, $user['years']) && array_key_exists($w, $user['years'][$y]['weeks'])) {
+                            $user['powerrank'] = array_search($user['years'][$y]['weeks'][$w]['powerpoints'], $places);
+                            $user['years'][$y]['weeks'][$w]['powerrank'] = $user['powerrank'];
+                        }
+                    }
+                }
+            }
+        }
+        
+        
+        // get the known power rankings from the last time this script ran, and only do inserts if something has changed
+        $sql = 'select * from power order by userid, yr, week';
+        $rsExistingPower = Yii::app()->db->createCommand($sql)->query();
+        $existingPowers = array();
+        foreach ($rsExistingPower as $ep) {
+            if (!array_key_exists($ep['userid'], $existingPowers)) {
+                $existingPowers[$ep['userid']] = array();
+            }
+            if (!array_key_exists($ep['yr'], $existingPowers[$ep['userid']])) {
+                $existingPowers[$ep['userid']][$ep['yr']] = array();
+            }
+            $existingPowers[$ep['userid']][$ep['yr']][$ep['week']] = $ep;
+        }
+        foreach ($this->users as $user) {
+            foreach ($user['years'] as $y=>$year) {
+                foreach ($year['weeks'] as $w=>$week) {
+                    // to test:
+                    //if ($y == 2013 && $w == 19 && array_key_exists('powerpoints', $week)) {
+                    if (array_key_exists('powerpoints', $week)) {   // we don't calculate power points for future weeks
+                        // for this user/year/week, try to find the matching existing power record
+                        $needInsert = true;
+                        if (array_key_exists($user['id'], $existingPowers) &&
+                            array_key_exists($y, $existingPowers[$user['id']]) &&
+                            array_key_exists($w, $existingPowers[$user['id']][$y])) {
+                                $existingPower = $existingPowers[$user['id']][$y][$w];
+                                // do we need to insert new data
+                                $needInsert = ($existingPower['powerpoints'] == $user['powerpoints'] && $existingPower['powerrank'] == $user['powerrank']);
+                        }
+                        if ($needInsert) {
+                            $details = addslashes(json_encode($user['years'][$y]['weeks'][$w]['powerpointdata']));
+                            $powerData = $user['years'][$y]['weeks'][$w]['powerpointdata'];
+                            $sql = "replace into power (userid, yr, week,
+                                        powerpoints, powerrank, seasonPts, correctPts, badgePts, moneyPts, winPctPts, movPts, setBySystemPts, talkPts, referralPts, likesByPts, likesAtPts, firstPlacePts, secondPlacePts
+                                    ) values (
+                                        {$user['id']}, $y, $w,
+                                        {$powerData['points']},
+                                        {$user['years'][$y]['weeks'][$w]['powerrank']},
+                                        {$powerData['seasons']},
+                                        {$powerData['correct']},
+                                        {$powerData['badges']},
+                                        {$powerData['money']},
+                                        {$powerData['winPct']},
+                                        {$powerData['mov']},
+                                        {$powerData['setBySystem']},
+                                        {$powerData['talks']},
+                                        {$powerData['referrals']},
+                                        {$powerData['likesBy']},
+                                        {$powerData['likesAt']},
+                                        {$powerData['firstPlace']},
+                                        {$powerData['secondPlace']}
+                                    )";
+                            // to test:
+                            // echo "<b>{$user['username']} (Rank {$user['years'][$y]['weeks'][$w]['powerrank']}):</b><br /> . json_encode($powerData) . '<br />';
+                            // echo "$sql<br />";
+                            Yii::app()->db->createCommand($sql)->query();
+                        }
+                    }
+                }
+            }
+        }
         
     }
     
@@ -1163,6 +1408,7 @@ class MaintenanceController extends Controller
     }
     
     public function actionRecalc() {
+        set_time_limit(300);
         $this->_recalcStats();
         echo 'done.';
     }

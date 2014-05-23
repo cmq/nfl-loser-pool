@@ -97,3 +97,39 @@ update loserpick set incorrect = 1 where userid=136 and yr=2012 and week > 16;
 
 insert into userbadge (badgeid, userid) values (19, 0);
 
+create table power (
+	yr int not null,
+	week int not null,
+	userid int not null,
+	powerpoints decimal(18,3) not null default 0,
+	powerrank int not null default 0,
+	seasonPts decimal(18,3) not null default 0,
+	correctPts decimal(18,3) not null default 0,
+	badgePts decimal(18,3) not null default 0,
+	moneyPts decimal(18,3) not null default 0,
+	winPctPts decimal(18,3) not null default 0,
+	movPts decimal(18,3) not null default 0,
+	setBySystemPts decimal(18,3) not null default 0,
+	talkPts decimal(18,3) not null default 0,
+	referralPts decimal(18,3) not null default 0,
+	likesByPts decimal(18,3) not null default 0,
+	likesAtPts decimal(18,3) not null default 0,
+	firstPlacePts decimal(18,3) not null default 0,
+	secondPlacePts decimal(18,3) not null default 0,
+	primary key (yr, week, userid)
+);
+
+update badge set power_points = 3 where id = 4;
+update badge set power_points = 10 where id = 6;
+update badge set power_points = 4 where id = 7;
+update badge set power_points = 2 where id = 8;
+update badge set power_points = 12 where id = 9;
+update badge set power_points = 5 where id = 10;
+update badge set power_points = 6 where id = 11;
+update badge set power_points = 3 where id = 12;
+update badge set power_points = 3 where id = 13;
+update badge set power_points = 5 where id = 14;
+update badge set power_points = 6 where id = 16;
+update badge set power_points = 5 where id = 17;
+update badge set power_points = 5 where id = 18;
+update badge set power_points = 6 where id = 19;

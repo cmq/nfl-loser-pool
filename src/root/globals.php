@@ -243,3 +243,16 @@ function createOption($id, $name, $compare='') {
 function isEmail($email) {
     return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
+
+/**
+ * Return the ordinal represenation of a number
+ * @param Integer $number the number to format
+ * @return Sting the formatted number
+ */
+function ordinal($number) {
+    $ends = array('th','st','nd','rd','th','th','th','th','th','th');
+    if (($number%100) >= 11 && ($number%100) <= 13) {
+        return $number. 'th';
+    }
+    return $number. $ends[$number % 10];
+}

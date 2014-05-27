@@ -2,6 +2,7 @@
 // KDHTODO clean up this file so these random functions aren't hanging around all over cluttering things up
 // KDHTODO make this page have a layout so the navigation is still present, etc.
 // KDHTODO show output on this screen for timing and whatnot
+// KDHTODO the week-by-week breakdown of power ranking is pointless unless we also want to calculate floating badges week-by-week (sort of the same with talks and likes to a lesser extent)
 
 /*
 <ul>
@@ -23,6 +24,8 @@ class MaintenanceController extends Controller
     private $reverseStats = null;
     private $users        = array();
     private $bandwagons   = array();
+    private $floatingBadges = array();
+    
     
     // map of stat.id to the key we'll use to describe/calculate that stat
     private $STATS = array(
@@ -56,10 +59,10 @@ class MaintenanceController extends Controller
         28 => 'averageIncorrect',
         29 => 'averageWeekIncorrect',
         30 => 'currentStreak',
-        31 => 'postsAt',
-        32 => 'postsBy',
-        33 => 'likesAt',
-        34 => 'likesBy',
+        31 => 'postsBy',
+        32 => 'postsAt',
+        33 => 'likesBy',
+        34 => 'likesAt',
         35 => 'referrals',
         36 => 'firstPlace',
         37 => 'secondPlace',
@@ -825,7 +828,9 @@ class MaintenanceController extends Controller
         // NOTE:  This method updates the $user['badges'] array and the $user['years'][$y]['badges'] array
         // NOTE:  This does NOT handle the bandwagon-related badges, those need to be handled by the _recalcBandwagon() method
         
-        // 12 - monkey on my back
+        $this->floatingBadges[] = 19;   // chief of the bandwagon (which is calculated in another function)
+        
+        $this->floatingBadges[] = 12;   // 12 - monkey on my back
         for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
             $badge = $this->_calculateBadge_monkey($y);
             if ($badge) {
@@ -839,8 +844,8 @@ class MaintenanceController extends Controller
             }
         }
         
-        // 13 - on fire
-        // 14 - all-time on fire
+        $this->floatingBadges[] = 13;   // 13 - on fire
+        $this->floatingBadges[] = 14;   // 14 - all-time on fire
         for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
             $badge = $this->_calculateBadge_onfire($y);
             if ($badge) {
@@ -865,7 +870,7 @@ class MaintenanceController extends Controller
             }
         }
         
-        // 16 - total defeat
+        $this->floatingBadges[] = 16;   // 16 - total defeat
         for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
             $badge = $this->_calculateBadge_defeat($y);
             if ($badge) {
@@ -879,7 +884,7 @@ class MaintenanceController extends Controller
             }
         }
         
-        // 18 - .800 club
+        $this->floatingBadges[] = 18;   // 18 - .800 club
         for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
             $badgeUsers = $this->_calculateBadge_800($y);
             if (count($badgeUsers)) {
@@ -901,15 +906,15 @@ class MaintenanceController extends Controller
         
         
         // do the rest of the normal badges that are awarded manually
-        $sql = 'select ub.userid, b.id, ub.yr, b.unlocked_year from badge b inner join userbadge ub on ub.badgeid = b.id where b.unlocked_year is not null';
+        $sql = 'select ub.userid, b.id, ub.yr from badge b inner join userbadge ub on ub.badgeid = b.id where 1 = 1';
         $rsBadge = Yii::app()->db->createCommand($sql)->query();
         foreach ($rsBadge as $row) {
-            if (array_key_exists($row['userid'], $this->users)) {
+            if (array_search($row['id'], $this->floatingBadges) === false && array_key_exists($row['userid'], $this->users)) {
+                // this is not a floating badge, and we have the user record
                 $this->users[$row['userid']]['badges'][] = $row['id'];
-                $this->users[$row['userid']]['badges'] = array_unique($this->users[$row['userid']]['badges']);
                 if ($row['yr']) {
+                    // the badge was awarded in a specific year
                     $this->users[$row['userid']]['years'][$row['yr']]['badges'][] = $row['id'];
-                    $this->users[$row['userid']]['years'][$row['yr']]['badges'] = array_unique($this->users[$row['userid']]['years'][$row['yr']]['badges']);
                 }
             }
         }
@@ -1235,8 +1240,9 @@ class MaintenanceController extends Controller
         
         
         foreach ($this->users as &$user) {
-            $powerUser = array();
-            $weekIndex = -1;    // the index of our flat power weeks array
+            $powerUser      = array();
+            $weekIndex      = -1;    // the index of our flat power weeks array
+            $lastYearBadges = array();
             //reset($user['years']);
             foreach ($user['years'] as $y=>&$year) {
                 end($year['weeks']);
@@ -1276,8 +1282,20 @@ class MaintenanceController extends Controller
                         $powerWeek['numPostsBy']     += $year['postsBy'];
                         $powerWeek['numLikesBy']     += $year['likesBy'];
                         $powerWeek['numLikesAt']     += $year['likesAt'];
-                        foreach ($year['badges'] as $badgeId) {
-                            $powerWeek['badgePoints'] += $badgePoints[$badgeId];
+                        // add all the badges awarded in all years up to this one, as long as they are not floatable
+                        // this is so that we get a cumulative total of badges up until now, while knowing that floatable
+                        // badges could be lost, and therefore should only count in the current year
+                        $powerWeek['badgePoints'] = 0;
+                        foreach ($user['years'] as $badgeY => $badgeYear) {
+                            if ($badgeY > $y) continue;     // the badge year we're looking at is beyond the current year we're considering
+                            foreach ($badgeYear['badges'] as $badgeId) {
+                                // for each badge awarded in the badge year we're looking at
+                                if ($badgeY == $y || array_search($badgeId, $this->floatingBadges) === false) {
+                                    // if the badge year is the same as the year we're looking at, or if the badge is not floating (aka is permanent),
+                                    // then we add it to our running cumulative total for the year we're looking at
+                                    $powerWeek['badgePoints'] += $badgePoints[$badgeId];
+                                }
+                            }
                         }
                     }
                     // include the rest of the stuff that counts every week
@@ -1290,7 +1308,6 @@ class MaintenanceController extends Controller
                     $week['powerdata'] = $powerWeek;
                 }
             }
-            
         }
         
         
@@ -1366,13 +1383,13 @@ class MaintenanceController extends Controller
                             array_key_exists($w, $existingPowers[$user['id']][$y])) {
                                 $existingPower = $existingPowers[$user['id']][$y][$w];
                                 // do we need to insert new data
-                                $needInsert = ($existingPower['powerpoints'] == $user['powerpoints'] && $existingPower['powerrank'] == $user['powerrank']);
+                                $needInsert = ($existingPower['powerpoints'] != $week['powerpoints'] || $existingPower['powerrank'] != $week['powerrank']);
                         }
                         if ($needInsert) {
                             $details = addslashes(json_encode($user['years'][$y]['weeks'][$w]['powerpointdata']));
                             $powerData = $user['years'][$y]['weeks'][$w]['powerpointdata'];
                             $sql = "replace into power (userid, yr, week,
-                                        powerpoints, powerrank, seasonPts, correctPts, badgePts, moneyPts, winPctPts, movPts, setBySystemPts, talkPts, referralPts, likesByPts, likesAtPts, firstPlacePts, secondPlacePts
+                                        powerpoints, powerrank, seasonPts, correctPts, badgePts, moneyPts, winPctPts, movPts, setBySystemPts, talkPts, referralPts, likesByPts, likesAtPts, firstPlacePts, secondPlacePts, updated
                                     ) values (
                                         {$user['id']}, $y, $w,
                                         {$powerData['points']},
@@ -1389,7 +1406,8 @@ class MaintenanceController extends Controller
                                         {$powerData['likesBy']},
                                         {$powerData['likesAt']},
                                         {$powerData['firstPlace']},
-                                        {$powerData['secondPlace']}
+                                        {$powerData['secondPlace']},
+                                        NOW()
                                     )";
                             // to test:
                             // echo "<b>{$user['username']} (Rank {$user['years'][$y]['weeks'][$w]['powerrank']}):</b><br /> . json_encode($powerData) . '<br />';

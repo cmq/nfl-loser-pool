@@ -33,6 +33,12 @@ update userbadge set yr = 2010 where (badgeid=17 and userid=117);
 update userbadge set yr = 2011 where (badgeid=8 and userid=9) or (badgeid=17 and userid=129);
 update userbadge set yr = 2012 where (badgeid=8 and userid=52) or (badgeid=17 and userid=130);
 update userbadge set yr = 2013 where (badgeid=7 and userid=26) or (badgeid=8 and userid=121) or (badgeid=8 and userid=18) or (badgeid=8 and userid=100) or (badgeid=17 and userid=141);
+update userbadge set yr = 2008 where badgeid=1;
+update userbadge set yr = 2010 where badgeid=2;
+update userbadge set yr = 2011 where badgeid=3;
+update userbadge set yr = 2005 where badgeid=4;
+update userbadge set yr = 2006 where badgeid=5;
+update userbadge set yr = 2012 where badgeid=15;
 
 create table likes (
 	id bigint not null auto_increment,
@@ -116,6 +122,7 @@ create table power (
 	likesAtPts decimal(18,3) not null default 0,
 	firstPlacePts decimal(18,3) not null default 0,
 	secondPlacePts decimal(18,3) not null default 0,
+	updated datetime null,
 	primary key (yr, week, userid)
 );
 

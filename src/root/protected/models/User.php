@@ -32,6 +32,7 @@ class User extends DeepActiveRecord
             'userBadges' => array(self::HAS_MANY, 'UserBadge', 'userid'),
             'badges'     => array(self::HAS_MANY, 'Badge', array('badgeid'=>'id'), 'through'=>'userBadges'),
             'userStats'  => array(self::HAS_MANY, 'UserStat', 'userid'),
+            'powerRanks' => array(self::HAS_MANY, 'PowerRank', 'userid'),
             'stats'      => array(self::HAS_MANY, 'Stat', array('statid'=>'id'), 'through'=>'userStats'),
             'userYears'  => array(self::HAS_MANY, 'UserYear', 'userid'),
             'wins'       => array(self::HAS_MANY, 'Win', 'userid'),

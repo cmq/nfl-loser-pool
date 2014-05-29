@@ -105,7 +105,6 @@ insert into userbadge (badgeid, userid) values (19, 0);
 
 create table power (
 	yr int not null,
-	week int not null,
 	userid int not null,
 	powerpoints decimal(18,3) not null default 0,
 	powerrank int not null default 0,
@@ -123,7 +122,7 @@ create table power (
 	firstPlacePts decimal(18,3) not null default 0,
 	secondPlacePts decimal(18,3) not null default 0,
 	updated datetime null,
-	primary key (yr, week, userid)
+	primary key (yr, userid)
 );
 
 update badge set power_points = 3 where id = 4;

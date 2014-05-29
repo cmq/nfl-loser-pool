@@ -1267,6 +1267,11 @@ class MaintenanceController extends Controller
                         'numFirstPlace'  => ($previousWeek ? $previousWeek['numFirstPlace'] : 0),
                         'numSecondPlace' => ($previousWeek ? $previousWeek['numSecondPlace'] : 0),
                     );
+                    // include the stuff that counts every week
+                    $powerWeek['totalPicks']     += 1;
+                    $powerWeek['numCorrect']     += ($week['incorrect'] ? 0 : 1);
+                    $powerWeek['numSetBySystem'] += ($week['setbysystem'] ? 1 : 0);
+                    $powerWeek['totalMov']       += $week['mov'];
                     if ($w == 1) {
                         // this is the first week of the year
                         // we can include number of seasons and referrals
@@ -1297,12 +1302,8 @@ class MaintenanceController extends Controller
                                 }
                             }
                         }
+                        $year['powerdata'] = $powerWeek;
                     }
-                    // include the rest of the stuff that counts every week
-                    $powerWeek['totalPicks']     += 1;
-                    $powerWeek['numCorrect']     += ($week['incorrect'] ? 0 : 1);
-                    $powerWeek['numSetBySystem'] += ($week['setbysystem'] ? 1 : 0);
-                    $powerWeek['totalMov']       += $week['mov'];
                     // append the week to the array
                     $powerUser[] = $powerWeek;
                     $week['powerdata'] = $powerWeek;
@@ -1311,109 +1312,91 @@ class MaintenanceController extends Controller
         }
         
         
-        // figure out every user's power points for every week ever
+        // figure out every user's power points for every year
         foreach ($this->users as &$user) {
             $lastPowerPoints = 0;
             for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
-                for ($w=1; $w<=21; $w++) {
-                    $thisPowerPoints = $lastPowerPoints;
-                    if ($y < getCurrentYear() || ($y == getCurrentYear() && $w <= getCurrentWeek())) {
-                        if (array_key_exists($y, $user['years']) && array_key_exists($w, $user['years'][$y]['weeks'])) {
-                            $thisPowerPointData = $this->_getPowerPoints($user['years'][$y]['weeks'][$w]['powerdata'], $user['id']);
-                            $thisPowerPoints = $thisPowerPointData['points'];
-                            // store this user/year/week
-                            $user['years'][$y]['weeks'][$w]['powerpoints']    = $thisPowerPoints;
-                            $user['years'][$y]['weeks'][$w]['powerpointdata'] = $thisPowerPointData;
-                        }
-                    }
-                    $lastPowerPoints = $thisPowerPoints;
+                $thisPowerPoints = $lastPowerPoints;
+                if (array_key_exists($y, $user['years'])) {
+                    $thisPowerPointData = $this->_getPowerPoints($user['years'][$y]['powerdata'], $user['id']);
+                    $thisPowerPoints = $thisPowerPointData['points'];
+                    // store this user/year
+                    $user['years'][$y]['powerpoints']    = $thisPowerPoints;
+                    $user['years'][$y]['powerpointdata'] = $thisPowerPointData;
                 }
+                $lastPowerPoints = $thisPowerPoints;
             }
             $user['powerpoints'] = $lastPowerPoints;
         }
         
         
-        // loop over every year/week and rank all users based on power points they have for that week
+        // loop over every year and rank all users based on power points they have for that year
         for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
-            for ($w=1; $w<=21; $w++) {
-                if ($y < getCurrentYear() || ($y == getCurrentYear() && $w <= getCurrentWeek())) {
-                    $allValues = array();
-                    $places    = array();
-                    $ties      = array();
-                    foreach ($this->users as $user) {
-                        if (array_key_exists($y, $user['years']) && array_key_exists($w, $user['years'][$y]['weeks'])) {
-                            $allValues[] = $user['years'][$y]['weeks'][$w]['powerpoints'];
-                        }
-                    }
-                    $this->_getPlacesAndTies($allValues, 'powerpoints', $places, $ties);
-                    foreach ($this->users as &$user) {
-                        if (array_key_exists($y, $user['years']) && array_key_exists($w, $user['years'][$y]['weeks'])) {
-                            $user['powerrank'] = array_search($user['years'][$y]['weeks'][$w]['powerpoints'], $places);
-                            $user['years'][$y]['weeks'][$w]['powerrank'] = $user['powerrank'];
-                        }
-                    }
+            $allValues = array();
+            $places    = array();
+            $ties      = array();
+            foreach ($this->users as $user) {
+                if (array_key_exists($y, $user['years'])) {
+                    $allValues[] = $user['years'][$y]['powerpoints'];
+                }
+            }
+            $this->_getPlacesAndTies($allValues, 'powerpoints', $places, $ties);
+            foreach ($this->users as &$user) {
+                if (array_key_exists($y, $user['years'])) {
+                    $user['powerrank'] = array_search($user['years'][$y]['powerpoints'], $places);
+                    $user['years'][$y]['powerrank'] = $user['powerrank'];
                 }
             }
         }
         
         
         // get the known power rankings from the last time this script ran, and only do inserts if something has changed
-        $sql = 'select * from power order by userid, yr, week';
+        $sql = 'select * from power order by userid, yr';
         $rsExistingPower = Yii::app()->db->createCommand($sql)->query();
         $existingPowers = array();
         foreach ($rsExistingPower as $ep) {
             if (!array_key_exists($ep['userid'], $existingPowers)) {
                 $existingPowers[$ep['userid']] = array();
             }
-            if (!array_key_exists($ep['yr'], $existingPowers[$ep['userid']])) {
-                $existingPowers[$ep['userid']][$ep['yr']] = array();
-            }
-            $existingPowers[$ep['userid']][$ep['yr']][$ep['week']] = $ep;
+            $existingPowers[$ep['userid']][$ep['yr']] = $ep;
         }
         foreach ($this->users as $user) {
             foreach ($user['years'] as $y=>$year) {
-                foreach ($year['weeks'] as $w=>$week) {
-                    // to test:
-                    //if ($y == 2013 && $w == 19 && array_key_exists('powerpoints', $week)) {
-                    if (array_key_exists('powerpoints', $week)) {   // we don't calculate power points for future weeks
-                        // for this user/year/week, try to find the matching existing power record
-                        $needInsert = true;
-                        if (array_key_exists($user['id'], $existingPowers) &&
-                            array_key_exists($y, $existingPowers[$user['id']]) &&
-                            array_key_exists($w, $existingPowers[$user['id']][$y])) {
-                                $existingPower = $existingPowers[$user['id']][$y][$w];
-                                // do we need to insert new data
-                                $needInsert = ($existingPower['powerpoints'] != $week['powerpoints'] || $existingPower['powerrank'] != $week['powerrank']);
-                        }
-                        if ($needInsert) {
-                            $details = addslashes(json_encode($user['years'][$y]['weeks'][$w]['powerpointdata']));
-                            $powerData = $user['years'][$y]['weeks'][$w]['powerpointdata'];
-                            $sql = "replace into power (userid, yr, week,
-                                        powerpoints, powerrank, seasonPts, correctPts, badgePts, moneyPts, winPctPts, movPts, setBySystemPts, talkPts, referralPts, likesByPts, likesAtPts, firstPlacePts, secondPlacePts, updated
-                                    ) values (
-                                        {$user['id']}, $y, $w,
-                                        {$powerData['points']},
-                                        {$user['years'][$y]['weeks'][$w]['powerrank']},
-                                        {$powerData['seasons']},
-                                        {$powerData['correct']},
-                                        {$powerData['badges']},
-                                        {$powerData['money']},
-                                        {$powerData['winPct']},
-                                        {$powerData['mov']},
-                                        {$powerData['setBySystem']},
-                                        {$powerData['talks']},
-                                        {$powerData['referrals']},
-                                        {$powerData['likesBy']},
-                                        {$powerData['likesAt']},
-                                        {$powerData['firstPlace']},
-                                        {$powerData['secondPlace']},
-                                        NOW()
-                                    )";
-                            // to test:
-                            // echo "<b>{$user['username']} (Rank {$user['years'][$y]['weeks'][$w]['powerrank']}):</b><br /> . json_encode($powerData) . '<br />';
-                            // echo "$sql<br />";
-                            Yii::app()->db->createCommand($sql)->query();
-                        }
+                if (array_key_exists('powerpoints', $year)) {
+                    // for this user/year, try to find the matching existing power record
+                    $needInsert = true;
+                    if (array_key_exists($user['id'], $existingPowers) &&
+                        array_key_exists($y, $existingPowers[$user['id']])) {
+                            $existingPower = $existingPowers[$user['id']][$y];
+                            // do we need to insert new data
+                            $needInsert = ($existingPower['powerpoints'] != $year['powerpoints'] || $existingPower['powerrank'] != $year['powerrank']);
+                    }
+                    if ($needInsert) {
+                        $details = addslashes(json_encode($user['years'][$y]['powerpointdata']));
+                        $powerData = $user['years'][$y]['powerpointdata'];
+                        $sql = "replace into power (userid, yr,
+                                    powerpoints, powerrank, seasonPts, correctPts, badgePts, moneyPts, winPctPts, movPts, setBySystemPts, talkPts, referralPts, likesByPts, likesAtPts, firstPlacePts, secondPlacePts, updated
+                                ) values (
+                                    {$user['id']}, $y,
+                                    {$powerData['points']},
+                                    {$user['years'][$y]['powerrank']},
+                                    {$powerData['seasons']},
+                                    {$powerData['correct']},
+                                    {$powerData['badges']},
+                                    {$powerData['money']},
+                                    {$powerData['winPct']},
+                                    {$powerData['mov']},
+                                    {$powerData['setBySystem']},
+                                    {$powerData['talks']},
+                                    {$powerData['referrals']},
+                                    {$powerData['likesBy']},
+                                    {$powerData['likesAt']},
+                                    {$powerData['firstPlace']},
+                                    {$powerData['secondPlace']},
+                                    NOW()
+                                )";
+                        // echo "$sql<br />";
+                        Yii::app()->db->createCommand($sql)->query();
                     }
                 }
             }

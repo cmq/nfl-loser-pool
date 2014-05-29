@@ -71,8 +71,6 @@ if ($user) {
             $numPowers    = 0;
             $totalPower   = 0;
             $currentPower = null;
-            $lastPowerYear = 0;
-            $lastPowerWeek = 0;
             $highestRank   = null;
             $lowestRank    = null;
             foreach ($user->powerRanks as $powerRank) {
@@ -84,10 +82,8 @@ if ($user) {
                 if (is_null($lowestRank) || $powerRank['powerrank'] > $lowestRank) {
                     $lowestRank = $powerRank['powerrank'];
                 }
-                if ($powerRank['yr'] > $lastPowerYear || ($powerRank['yr'] == $lastPowerYear && $powerRank['week'] > $lastPowerWeek)) {
+                if ($powerRank['yr'] == getCurrentYear()) {
                     $currentPower  = $powerRank;
-                    $lastPowerYear = $powerRank['yr'];
-                    $lastPowerWeek = $powerRank['week'];
                 }
             }
             echo 'Highest Power Rank: ' . ($highestRank ? $highestRank : 'N/A') . '<br />';

@@ -99,25 +99,23 @@ if ($user) {
                 $multipliers = param('powerMultipliers');
                 // KDHTODO break this down into a bar chart with each color representing the percentage
                 echo 'Power Point Breakdown:<br />';
-                echo 'Points for Seasons Played: ' . $currentPower['seasonPts'] . ' (' . ($currentPower['seasonPts']/$multipliers['pointsPerSeason']) . ')<br />';
-                echo 'Points for Correct Picks: ' . $currentPower['correctPts'] . ' (' . ($currentPower['correctPts']/$multipliers['pointsPerWin']) . ')<br />';
-                // KDHTODO get the number of badges the user has for the area in parens
-                echo 'Points for Badges Held: ' . $currentPower['badgePts'] . ' (' . count($user->badges) . ' Badge' . (count($user->badges) != 1 ? 's' : '') . ')<br />';
-                echo 'Points for Money Won: ' . $currentPower['moneyPts'] . ' (' . round($currentPower['moneyPts']/$multipliers['pointsPerDollar'], 2) . ')<br />';
-                echo 'Points for Win Percentage: ' . $currentPower['winPctPts'] . ' (' . round($currentPower['winPctPts']/$multipliers['winPctMultiplier'], 2) . ')<br />';
-                echo 'Points for Margin of Defeat: ' . $currentPower['movPts'] . ' (' . round($currentPower['movPts']/$multipliers['movPoints'], 2) . ')<br />';
-                echo 'Points for Picks Set by System: ' . $currentPower['setBySystemPts'] . ' (' . (-1*$currentPower['setBySystemPts']/$multipliers['pointsPerSetBySystem']) . ')<br />';
-                echo 'Points for Messages Posted: ' . $currentPower['talkPts'] . ' (' . ($currentPower['talkPts']/$multipliers['pointsPerTalk']) . ')<br />';
-                echo 'Points for Players Referred: ' . $currentPower['referralPts'] . ' (' . (($currentPower['referralPts'] * ($user->id == 1 ? 10 : 1))/$multipliers['pointsPerReferral']) . ')<br />';
-                echo 'Points for "Likes" Given: ' . $currentPower['likesByPts'] . ' (' . ($currentPower['likesByPts']/$multipliers['pointsPerLikesBy']) . ')<br />';
-                echo 'Points for "Likes" Received: ' . $currentPower['likesAtPts'] . ' (' . ($currentPower['likesAtPts']/$multipliers['pointsPerLikesAt']) . ')<br />';
-                echo 'Points for First Place Trophies: ' . $currentPower['firstPlacePts'] . ' (' . ($currentPower['firstPlacePts']/$multipliers['pointsPerFirstPlace']) . ')<br />';
-                echo 'Points for Second Place Trophies: ' . $currentPower['secondPlacePts'] . ' (' . ($currentPower['secondPlacePts']/$multipliers['pointsPerSecondPlace']) . ')<br />';
+                echo 'Points for Seasons Played: ' . $currentPower['seasonPts'] . '<br />';
+                echo 'Points for Correct Picks: ' . $currentPower['correctPts'] . '<br />';
+                echo 'Points for Badges Held: ' . $currentPower['badgePts'] . '<br />';
+                echo 'Points for Money Won: ' . $currentPower['moneyPts'] . '<br />';
+                echo 'Points for Win Percentage: ' . $currentPower['winPctPts'] . '<br />';
+                echo 'Points for Margin of Defeat: ' . $currentPower['movPts'] . '<br />';
+                echo 'Points for Picks Set by System: ' . $currentPower['setBySystemPts'] . '<br />';
+                echo 'Points for Messages Posted: ' . $currentPower['talkPts'] . '<br />';
+                echo 'Points for Players Referred: ' . $currentPower['referralPts'] . '<br />';
+                echo 'Points for "Likes" Given: ' . $currentPower['likesByPts'] . '<br />';
+                echo 'Points for "Likes" Received: ' . $currentPower['likesAtPts'] . '<br />';
+                echo 'Points for First Place Trophies: ' . $currentPower['firstPlacePts'] . '<br />';
+                echo 'Points for Second Place Trophies: ' . $currentPower['secondPlacePts'] . '<br />';
             }
             ?>
             <ul>
                 <li>Record per Year (show as bar graph?)</li>
-                <li>Times Dodging a Bandwagon Crash</li>
                 <li>Number of Times Picking Each Team</li>
                 <li>Power-Ranking Calculation Details</li>
                 <li>Year-by-year Stat Breakdown?</li>

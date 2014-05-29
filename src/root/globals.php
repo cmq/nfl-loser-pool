@@ -256,3 +256,14 @@ function ordinal($number) {
     }
     return $number. $ends[$number % 10];
 }
+
+/**
+ * Pluralize the word with a suffix if the count is not 1
+ * @param Integer $num    the number of items being displayed
+ * @param String  $word   the base word to display
+ * @param String  $suffix the suffix to add when plural
+ * @return String
+ */
+function plural($num, $word, $suffix='s') {
+    return $num . ' ' . $word . ($num != 1 ? $suffix : '');
+}

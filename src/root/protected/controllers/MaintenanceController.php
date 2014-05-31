@@ -462,6 +462,8 @@ class MaintenanceController extends Controller
                     'id'              => $u,
                     'username'        => $row['username'],
                     'active'          => (bool) $row['active'],
+                    'firstYear'       => 9999,
+                    'lastYear'        => 0,
                     'entryFee'        => 0,
                     'money'           => 0,
                     'firstPlace'      => 0,
@@ -488,6 +490,8 @@ class MaintenanceController extends Controller
             
             // on a new year?
             if ($y != $lastYear) {
+                $user['firstYear'] = min($user['firstYear'], $y);
+                $user['lastYear']  = max($user['lastYear'],  $y);
                 $user['years'][$y] = array(
                     'weeks'           => array(),
                     'pendingPicks'    => array(),    // key = week#, value = teamid
@@ -1335,9 +1339,18 @@ class MaintenanceController extends Controller
             $allValues = array();
             $places    = array();
             $ties      = array();
+            // KDHTODO examine user's first year here
             foreach ($this->users as $user) {
                 if (array_key_exists($y, $user['years'])) {
                     $allValues[] = $user['years'][$y]['powerpoints'];
+                } else if ($user['firstYear'] < $y) {
+                    // the user didn't play in the year we're looking at, but they played before that, so we should count their last known power points
+                    for ($yf=$y; $yf>=param('earliestYear'); $yf--) {
+                        if (array_key_exists($yf, $user['years'])) {
+                            $allValues[] = $user['years'][$yf]['powerpoints'];
+                            break;
+                        }
+                    }
                 }
             }
             $this->_getPlacesAndTies($allValues, 'powerpoints', $places, $ties);
@@ -1345,6 +1358,14 @@ class MaintenanceController extends Controller
                 if (array_key_exists($y, $user['years'])) {
                     $user['powerrank'] = array_search($user['years'][$y]['powerpoints'], $places);
                     $user['years'][$y]['powerrank'] = $user['powerrank'];
+                } else if ($user['firstYear'] < $y) {
+                    for ($yf=$y; $yf>=param('earliestYear'); $yf--) {
+                        if (array_key_exists($yf, $user['years'])) {
+                            $user['powerrank'] = array_search($user['years'][$yf]['powerpoints'], $places);
+                            $user['years'][$yf]['powerrank'] = $user['powerrank'];
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -1365,6 +1386,8 @@ class MaintenanceController extends Controller
                 if (array_key_exists('powerpoints', $year)) {
                     // for this user/year, try to find the matching existing power record
                     $needInsert = true;
+                    $powerData = $user['years'][$y]['powerpointdata'];
+                    $powerRank = $user['years'][$y]['powerrank'];
                     if (array_key_exists($user['id'], $existingPowers) &&
                         array_key_exists($y, $existingPowers[$user['id']])) {
                             $existingPower = $existingPowers[$user['id']][$y];
@@ -1373,13 +1396,12 @@ class MaintenanceController extends Controller
                     }
                     if ($needInsert) {
                         $details = addslashes(json_encode($user['years'][$y]['powerpointdata']));
-                        $powerData = $user['years'][$y]['powerpointdata'];
                         $sql = "replace into power (userid, yr,
                                     powerpoints, powerrank, seasonPts, correctPts, badgePts, moneyPts, winPctPts, movPts, setBySystemPts, talkPts, referralPts, likesByPts, likesAtPts, firstPlacePts, secondPlacePts, updated
                                 ) values (
                                     {$user['id']}, $y,
                                     {$powerData['points']},
-                                    {$user['years'][$y]['powerrank']},
+                                    {$powerRank},
                                     {$powerData['seasons']},
                                     {$powerData['correct']},
                                     {$powerData['badges']},
@@ -1400,6 +1422,8 @@ class MaintenanceController extends Controller
                     }
                 }
             }
+            $sql = "update user set power_points = {$powerData['points']}, power_ranking = {$powerRank} where id = {$user['id']}";
+            Yii::app()->db->createCommand($sql)->query();
         }
         
     }

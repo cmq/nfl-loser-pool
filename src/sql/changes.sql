@@ -139,3 +139,8 @@ update badge set power_points = 6 where id = 16;
 update badge set power_points = 5 where id = 17;
 update badge set power_points = 5 where id = 18;
 update badge set power_points = 6 where id = 19;
+
+alter table user drop previous_power_ranking;
+alter table user drop previous_power_points;
+alter table user drop last_week_set;
+alter table user drop best_power_ranking;

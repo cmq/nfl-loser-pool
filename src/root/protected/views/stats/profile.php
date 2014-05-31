@@ -48,7 +48,7 @@ if ($user) {
         <div class="panel-heading">
             <?php
             echo getUserAvatar($user);
-            echo '<span class="username">' . $user->username . '</span>';
+            echo '<span class="username">#' . $user->power_ranking . ' ' . $user->username . '</span>';
             ?>
         </div>
         <div class="panel-body">

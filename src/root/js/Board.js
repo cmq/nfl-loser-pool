@@ -207,7 +207,8 @@ function Board(options) {
                     .append('<img class="avatar" src="' + globals.getUserAvatar(user) + '"/>')
                 )
                 .append($userDisplay = $('<div/>')
-                    .append(user.username + (CONF.isSuperadmin ? ' (' + user.id + ')' : '') + '<br />')
+                    // KDHTODO do not hardcode this link, get it from PHP
+                    .append('<a href="/index.php/stats/profile/' + user.id + '">' + user.username + (CONF.isSuperadmin ? ' (' + user.id + ')' : '') + '</a><br />')
                 )
             );
 

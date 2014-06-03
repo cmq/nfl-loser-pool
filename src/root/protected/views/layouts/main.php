@@ -160,6 +160,7 @@ html, body {
         <script src="<?php echo baseUrl('/js/lib/moment.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/oo.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/types.js'); ?>"></script>
+        <script src="<?php echo baseUrl('/js/badges.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/globals.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/init.js'); ?>"></script>
     </head>

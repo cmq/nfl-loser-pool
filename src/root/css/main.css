@@ -290,6 +290,13 @@ img.user-badge {
     background-color: transparent;
     color: #999;
 }
+#trophycase {
+    margin-left: 50px;
+}
+.trophycase .popover, .trophycase .popover td, .trophycase .popover th {
+    color: #666;
+}
+
 
 
 

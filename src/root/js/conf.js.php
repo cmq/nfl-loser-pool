@@ -14,7 +14,10 @@ var CONF = {
     url: {
         poll:           '<?php echo $this->createAbsoluteUrl('site/poll')?>',
         showCorrect:    '<?php echo $this->createAbsoluteUrl('admin/showCorrect')?>',
-        like:           '<?php echo $this->createAbsoluteUrl('talk/like')?>'
+        like:           '<?php echo $this->createAbsoluteUrl('talk/like')?>',
+        profile:        function(id) {
+            return '<?php echo $this->createAbsoluteUrl('stats/profile', array('id'=>0))?>'.replace('0', id);
+        }
     }
 };
 </script>

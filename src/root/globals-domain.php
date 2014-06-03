@@ -322,3 +322,29 @@ function getProfileLink($userOrId, $username='') {
 function getAvatarProfileLink($user) {
     return getProfileLink($user->id, getUserAvatar($user->id, $user->avatar_ext, false));
 }
+
+function formatStat($value, $type, $meta1='', $meta2='') {
+    $ret = $value;
+    switch ($type) {
+        case 'money':
+            $ret = '$' . number_format((float) $value, 2);
+            break;
+        case 'int':
+            $ret = (int) $value;
+            break;
+        case 'decimal':
+            $ret = number_format((float) $value, 3);
+            break;
+        case 'percent':
+            $ret = number_format((float) $value * 100, 2) . '%';
+            break;
+    }
+    if ($meta1) {
+        $ret .= " ($meta1";
+        if ($meta2) {
+            $ret .= " - $meta2";
+        }
+        $ret .= ')';
+    }
+    return $ret;
+}

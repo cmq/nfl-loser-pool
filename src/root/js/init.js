@@ -76,9 +76,8 @@ $(function() {
 
             content = '';
             for (i in likes) {
-                // KDHTODO turn these into profile links
                 if (likes.hasOwnProperty(i)) {
-                    content += (content == '' ? '' : ', ') + '<a href="#">' + likes[i] + '</a>';
+                    content += (content == '' ? '' : ', ') + '<a href="' + CONF.url.profile(i) + '">' + likes[i] + '</a>';
                 }
             }
             return content;

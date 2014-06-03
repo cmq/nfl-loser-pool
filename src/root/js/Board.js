@@ -207,38 +207,12 @@ function Board(options) {
                     .append('<img class="avatar" src="' + globals.getUserAvatar(user) + '"/>')
                 )
                 .append($userDisplay = $('<div/>')
-                    // KDHTODO do not hardcode this link, get it from PHP
-                    .append('<a href="/index.php/stats/profile/' + user.id + '">' + user.username + (CONF.isSuperadmin ? ' (' + user.id + ')' : '') + '</a><br />')
+                    .append('<a href="' + CONF.url.profile(user.id) + '">' + user.username + (CONF.isSuperadmin ? ' (' + user.id + ')' : '') + '</a><br />')
                 )
             );
 
             if (settings.viewOptions.showBadges) {
-                // KDHTODO extract this logic to something outside the Board class
-                // add trophies to the username display area
-                if (user.wins) {
-                    for (j=0; j<user.wins.length; j++) {
-                        $userDisplay.append($('<div/>')
-                            .addClass('winnertrophy-wrapper')
-                            .data('win', user.wins[j])
-                            .append('<img src="' + CONF.winnerTrophyUrlPrefix + user.wins[j].pot + user.wins[j].place + '.png" />')
-                            .append($('<div/>')
-                                .addClass('year pot' + user.wins[j].pot + ' place' + user.wins[j].place)
-                                .append(globals.shortenYear(user.wins[j].yr))
-                            )
-                        );
-                    }
-                }
-                // add badges to the username display area
-                if (user.userBadges) {
-                    for (j=0; j<user.userBadges.length; j++) {
-                        $userDisplay.append($('<img />')
-                            .addClass('user-badge')
-                            .attr('src', user.userBadges[j].badge.img)
-                            .attr('alt', user.userBadges[j].display)
-                            .data('userBadge', user.userBadges[j])
-                        );
-                    }
-                }
+                buildTrophyCase(user, $userDisplay);
             }
             
             // show picks for this user
@@ -276,84 +250,7 @@ function Board(options) {
         
         $table = self.getTable();
         $table.empty().append($thead).append($tbody);
-        self.buildPopovers();
         drawn = true;
-    };
-
-    this.buildPopovers = function() {
-        // KDHTODO move this popover stuff somewhere else?
-        // KDHTODO draw the popups using Yii partials
-        var fnHideAll;
-
-        fnHideAll = function() {
-            $('.winnertrophy-wrapper', self.getTable()).add('.user-badge', self.getTable()).not(this).popover('hide');
-        };
-
-        // popovers for winner trophies
-        $('.winnertrophy-wrapper', self.getTable()).on('click', function() {
-            fnHideAll.call(this);
-        }).popover({
-            html: true,
-            title: function() {
-                var win = $(this).data('win'),
-                    content;
-                // KDHTODO see if the icon's negative margin still works on other devices
-                content = '<div class="icon"><img src="/images/badges/winnerbadge-' + win.pot + win.place + '.png" /></div>';
-                content += (win.place == 1 ? 'First' : 'Second') + ' Place';
-                return content;
-            },
-            content: function() {
-                var win = $(this).data('win'),
-                    content;
-
-                content = '';
-                content += '<div class="type-label">Winner Trophy</div>';
-                content += '<table class="table table-condensed small popover-table">';
-                content += '<tr><td>Year</td><td>' + win.yr + '</td></tr>';
-                content += '<tr><td>Place</td><td>' + (win.place == 1 ? '1st' : '2nd') + '</td></tr>';
-                content += '<tr><td>Pot</td><td>' + globals.getPotName(win.pot) + '</td></tr>';
-                content += '<tr><td>Won</td><td>' + globals.dollarFormat(win.winnings) + '</td></tr>';
-                content += '</table>';
-                // KDHTODO show the number of power points it's worth
-                // KDHTODO also get the record (pot2) or week of incorrect (pot1), or sum of MOV (pot3) for additional detail?
-                return content;
-            },
-            placement: 'auto top'
-        });
-
-        // popovers for user badges
-        $('.user-badge', self.getTable()).on('click', function() {
-            fnHideAll.call(this);
-        }).popover({
-            html: true,
-            title: function() {
-                var userBadge = $(this).data('userBadge'),
-                    content;
-                // KDHTODO see if the icon's negative margin still works on other devices
-                content = '<div class="icon"><img src="' + userBadge.badge.img + '" /></div>' + userBadge.badge.name;
-                return content;
-            },
-            content: function() {
-                var userBadge = $(this).data('userBadge'),
-                    unlockedUser = (userBadge.badge.unlockedBy && userBadge.badge.unlockedBy.username ? userBadge.badge.unlockedBy.username : null),
-                    content;
-
-                content = '';
-                content += '<div class="type-label">User Badge</div>';
-                content += (userBadge.badge.display && userBadge.badge.name != userBadge.badge.display ? '<small><em>' + userBadge.badge.display + '</em></small>' : '');
-                content += '<table class="table table-condensed small popover-table">';
-                content += (userBadge.yr ? '<tr><td>Awarded</td><td>' + userBadge.yr + '</td></tr>' : '');
-                content += (userBadge.display ? '<tr><td>Detail</td><td>' + userBadge.display + '</td></tr>' : '');
-                content += '<tr class="separator"><td>Type</td><td>' + userBadge.badge.type + '</td></tr>';
-                // KDHTODO turn unlocked user into a link to their profile page
-                content += (userBadge.badge.unlocked_year || unlockedUser ? '<tr><td>Unlocked</td><td>' + (userBadge.badge.unlocked_year ? userBadge.badge.unlocked_year : '') + (unlockedUser ? ' by <a href="#">' + unlockedUser + '</a>' : '') + '</td></tr>' : '');
-                content += '<tr><td>Power&nbsp;Points</td><td>' + userBadge.badge.power_points + '</td></tr>';
-                content += '<tr><td>Description</td><td>' + userBadge.badge.description + '</td></tr>';
-                content += '</table>';
-                return content;
-            },
-            placement: 'auto top'
-        });
     };
 
     this.poll = function() {

@@ -104,6 +104,7 @@ class User extends DeepActiveRecord
                                         'select' => array('username'),
                                     ),
                                 ),
+                                'order' => 'badge.zindex',
                             ),
                         ),
                     ),
@@ -113,15 +114,19 @@ class User extends DeepActiveRecord
                 'with' => array(
                     'wins' => array(
             			'select' => array('yr', 'pot', 'place', 'winnings'),
+                        'order' => 'wins.yr, wins.place, wins.pot',
                     ),
                 ),
             ),
             'withStats' => array(
                 'with' => array(
                     'userStats' => array(
-                        'with' => array('stat' => array(
-                            'order' => 'stat.zindex',
-                        )),
+                        'with' => array(
+                            'stat' => array(
+                                'with' => array('statGroup'),
+                                'order' => 'statGroup.zindex, stat.zindex'
+                            ),
+                        ),
                     ),
                 ),
             ),

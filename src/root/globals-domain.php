@@ -323,7 +323,7 @@ function getAvatarProfileLink($user) {
     return getProfileLink($user->id, getUserAvatar($user->id, $user->avatar_ext, false));
 }
 
-function formatStat($value, $type, $meta1='', $meta2='') {
+function formatStat($value, $type) {
     $ret = $value;
     switch ($type) {
         case 'money':
@@ -338,13 +338,6 @@ function formatStat($value, $type, $meta1='', $meta2='') {
         case 'percent':
             $ret = number_format((float) $value * 100, 2) . '%';
             break;
-    }
-    if ($meta1) {
-        $ret .= " ($meta1";
-        if ($meta2) {
-            $ret .= " - $meta2";
-        }
-        $ret .= ')';
     }
     return $ret;
 }

@@ -38,6 +38,31 @@ return array(
         20 => mktime(14, 0, 0, 1, 19, 2014),	// Conference Championship
         21 => mktime(17, 30, 0, 2, 2, 2014),	// Superbowl
     ),
+    'id'                    => array(
+        'statGroup' => array(
+            'season' => 1,
+            'picks'  => 3,
+        ),
+        'stat'      => array(
+            'picksTotal'                => 5,
+            'picksCorrect'              => 8,
+            'picksIncorrect'            => 9,
+            'picksManual'               => 6,
+            'picksSetBySystem'          => 7,
+            'picksCorrectManual'        => 10,
+            'picksIncorrectManual'      => 11,
+            'picksCorrectSetBySystem'   => 12,
+            'picksIncorrectSetBySystem' => 13,
+            'rateCorrect'               => 16,
+            'rateIncorrect'             => 17,
+            'rateManual'                => 14,
+            'rateSetBySystem'           => 15,
+            'rateCorrectManual'         => 18,
+            'rateIncorrectManual'       => 19,
+            'rateCorrectSetBySystem'    => 20,
+            'rateIncorrectSetBySystem'  => 21,
+        ),
+    ),
     'avatarExtensions'      => array('jpg', 'jpeg', 'gif', 'png'),
     'avatarSizeLimit'       => 1024 * 1024,    // 1MB limit
     'avatarMaxWidth'        => 40,

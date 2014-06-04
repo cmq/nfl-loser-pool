@@ -144,3 +144,30 @@ alter table user drop previous_power_ranking;
 alter table user drop previous_power_points;
 alter table user drop last_week_set;
 alter table user drop best_power_ranking;
+
+
+create table statgroup (
+	id int not null auto_increment,
+	name varchar(50) not null,
+	description text null,
+	zindex int not null,
+	primary key (id)
+);
+insert into statgroup (name, zindex) values ('Season Stats', 10);
+insert into statgroup (name, zindex) values ('Money/Reward Stats', 20);
+insert into statgroup (name, zindex) values ('Pick Stats', 30);
+insert into statgroup (name, zindex) values ('Margin of Defeat Stats', 40);
+insert into statgroup (name, zindex) values ('Streaks/Averages Stats', 50);
+insert into statgroup (name, zindex) values ('Social Stats', 60);
+insert into statgroup (name, zindex) values ('Bandwagon Stats', 70);
+insert into statgroup (name, zindex) values ('Power Rank Stats', 80);
+
+alter table stat add statgroupid int;
+update stat set statgroupid = 1 where id in (1);
+update stat set statgroupid = 2 where id in (2,3,4,22,36,37,38,39);
+update stat set statgroupid = 3 where id in (5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21);
+update stat set statgroupid = 4 where id in (23,24);
+update stat set statgroupid = 5 where id in (25,26,27,28,29,30);
+update stat set statgroupid = 6 where id in (31,32,33,34,35);
+update stat set statgroupid = 7 where id in (40,41,42,43,44);
+

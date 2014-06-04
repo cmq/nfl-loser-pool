@@ -1,5 +1,5 @@
 <?php
-class Stat extends DeepActiveRecord
+class StatGroup extends DeepActiveRecord
 {
     
     /**
@@ -17,7 +17,7 @@ class Stat extends DeepActiveRecord
      */
     public function tableName()
     {
-        return 'stat';
+        return 'statgroup';
     }
     
     /**
@@ -28,8 +28,7 @@ class Stat extends DeepActiveRecord
     public function relations()
     {
         return array(
-            'unlockedBy' => array(self::BELONGS_TO, 'User', 'userid'),
-            'statGroup'  => array(self::BELONGS_TO, 'StatGroup', 'statgroupid'),
+            'stats' => array(self::HAS_MANY, 'Stat', 'statgroupid'),
         );
     }
 }

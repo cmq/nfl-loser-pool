@@ -296,6 +296,19 @@ img.user-badge {
 .trophycase .popover, .trophycase .popover td, .trophycase .popover th {
     color: #666;
 }
+.referral-display {
+    display: inline-block;
+    border: #ddd 1px solid;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    margin: 2px;
+    padding: 2px;
+    background-color: #f3f3f3;
+}
+.referral-display.parent {
+    background-color: #fffff3;
+    padding: 4px;
+}
 
 
 

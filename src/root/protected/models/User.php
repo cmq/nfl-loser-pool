@@ -42,6 +42,8 @@ class User extends DeepActiveRecord
             'likes'      => array(self::HAS_MANY, 'Like', 'userid'),
             'chiefs'     => array(self::HAS_MANY, 'Bandwagon', 'chiefid'),
             'jumps'      => array(self::HAS_MANY, 'BandwagonJump', 'userid'),
+            'referrals'  => array(self::HAS_MANY, 'User', 'referrer'),
+            'referredBy' => array(self::BELONGS_TO, 'User', 'referrer'),
         );
     }
     

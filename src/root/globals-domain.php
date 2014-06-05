@@ -232,7 +232,7 @@ function createThumbnail($source, $destination, $maxWidth, $maxHeight) {
 }
 
 
-function getUserAvatar($userid, $ext='png', $linkToFull=true) {
+function getUserAvatar($userid, $ext='png', $linkToFull=true, $extraMarkup='') {
     if ($userid instanceof User) {
         $ext    = $userid->avatar_ext;
         $userid = $userid->id;
@@ -240,9 +240,9 @@ function getUserAvatar($userid, $ext='png', $linkToFull=true) {
     $url  = getUserAvatarUrl($userid, $ext);
     $turl = getUserAvatarUrl($userid, $ext, true);
     if ($linkToFull) {
-        return "<a href=\"$url?x=" . time() . "\" class=\"avatar\" id=\"avatar$userid\"><img src=\"$turl\" /></a>";
+        return "<a href=\"$url?x=" . time() . "\" class=\"avatar\" id=\"avatar$userid\"><img src=\"$turl\" $extraMarkup /></a>";
     } else {
-        return "<img class=\"avatar\" src=\"$turl\" />";
+        return "<img class=\"avatar\" src=\"$turl\" $extraMarkup />";
     }
 }
 
@@ -319,8 +319,8 @@ function getProfileLink($userOrId, $username='') {
     return CHtml::link($username, array('stats/profile', 'id'=>$userId));
 }
 
-function getAvatarProfileLink($user) {
-    return getProfileLink($user->id, getUserAvatar($user->id, $user->avatar_ext, false));
+function getAvatarProfileLink($user, $withName=false, $small=false) {
+    return getProfileLink($user->id, getUserAvatar($user->id, $user->avatar_ext, false, $small ? 'style="height:16px;"' : '') . ($withName ? $user->username : ''));
 }
 
 function formatStat($value, $type) {

@@ -84,4 +84,10 @@ $(function() {
         },
         placement: 'auto top'
     });
+    
+    // hide popovers if a click event propagates all the way to the body without being handled
+    $('body').on('click', function() {
+        $('.popover').hide().detach();
+    });
+    
 });

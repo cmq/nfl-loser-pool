@@ -42,6 +42,7 @@ return array(
         'statGroup' => array(
             'season' => 1,
             'picks'  => 3,
+            'social' => 6,
         ),
         'stat'      => array(
             'picksTotal'                => 5,
@@ -61,6 +62,7 @@ return array(
             'rateIncorrectManual'       => 19,
             'rateCorrectSetBySystem'    => 20,
             'rateIncorrectSetBySystem'  => 21,
+            'currentStreak'             => 30,
         ),
     ),
     'avatarExtensions'      => array('jpg', 'jpeg', 'gif', 'png'),

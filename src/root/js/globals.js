@@ -136,3 +136,26 @@ globals.getOldRecord = function(user, currentWeek) {
     }
     return wins + '-' + losses;
 };
+
+globals.getModal = function(id, title, body, footer) {
+    // based off the markup examples from twitter bootstrap:  @see http://getbootstrap.com/javascript/#modals
+    var $div;
+    $div = $('<div class="modal fade" id="' + id + '" tabindex="-1" role="dialog" aria-labelledby="' + id + '-title" aria-hidden="true"/>')
+        .append($('<div class="modal-dialog"/>')
+            .append($('<div class="modal-content"/>')
+                .append($('<div class="modal-header bg-info"/>')
+                    .append('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>')
+                    .append($('<h4 class="modal-title" id="' + id + '-title"/>')
+                        .append(title)
+                    )
+                )
+                .append($('<div class="modal-body"/>')
+                    .append(body)
+                )
+                .append(typeof footer === 'undefined' ? '' : $('<div class="modal-footer"/>')
+                    .append(footer)
+                )
+            )
+        );
+    return $div;
+};

@@ -309,6 +309,11 @@ img.user-badge {
     background-color: #fffff3;
     padding: 4px;
 }
+.stat-description {
+    margin: 0 10px 20px;
+    font-style: italic;
+    text-align: center;
+}
 
 
 

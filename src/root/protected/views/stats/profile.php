@@ -143,8 +143,10 @@ function drawReferrals($user) {
 
 ?>
 <script>
+var modals = [];
 $(function() {
     buildTrophyCase(<?php echo CJSON::encode($user);?>, $('#trophycase'));
+    
     $('.stat-help-link').popover({
         placement: 'auto top'
     }).click(function(e) {
@@ -154,6 +156,47 @@ $(function() {
         $('.popover:not(.in)').hide().detach();
         return false;
     });
+
+    $('.see-all-link').click(function(e) {
+        var statid = $(this).data('statid');
+        e.preventDefault();
+        if (modals.hasOwnProperty(statid)) {
+            modals[statid].modal('show');
+        }
+        return false;
+    });
+
+    // set up a modal to show the full user stat list for each stat
+    <?php
+    $lastStatId   = 0;
+    $lastStat     = null;
+    $tablePattern = '<div class="stat-description">%s</div><table class="table table-striped table-condensed"><thead><tr><th class="text-right">Place</th><th class="text-center">User</th><th class="text-right">Value</th></tr></thead><tbody>%s</tbody></table>';
+    foreach ($allStats as $userStat) {
+        if ($userStat->statid != $lastStatId) {
+            if ($lastStatId) {
+                ?>
+                modals[<?php echo $lastStatId?>] = globals.getModal('stat-full-<?php echo $lastStatId;?>', '<?php echo addslashes($lastStat->name);?>', '<?php echo addslashes(sprintf($tablePattern, $lastStat->description, $tableRows));?>');
+                <?php
+            }
+            $lastStatId = $userStat->statid;
+            $lastStat   = $userStat->stat;
+            $tableRows  = '';
+        }
+        $tableRows .= '<tr' . ($userStat->user->id == userId() ? ' class="success"' : '') . '><td class="text-right">' . ordinal($userStat->place) . '</td><td class="text-center">' . ($userStat->user->active ? '<strong>' . $userStat->user->username . '</strong>' : $userStat->user->username) . '</td><td class="text-right">' . formatStat($userStat->value, $userStat->stat->type) . '</td></tr>';
+    }
+    if ($lastStatId) {
+        ?>
+        modals.push(globals.getModal('stat-full-<?php echo $lastStatId;?>', '<?php echo addslashes($lastStat->name);?>', '<?php echo addslashes(sprintf($tablePattern, $lastStat->description, $tableRows));?>'));
+        <?php
+    }
+    ?>
+    for (var i in modals) {
+        if (modals.hasOwnProperty(i)) {
+            modals[i].modal({
+                show: false
+            });
+        }
+    }
 });
 </script>
 <div class="container">
@@ -243,8 +286,7 @@ if ($user) {
                         }
                         ?>
                     </div>
-                    <!-- KDHTODO build this as a link to see the full list of users with this stat -->
-                    <div class="col-xs-1 text-right"><a href="#">See All</a></div>
+                    <div class="col-xs-1 text-right"><a href="#" class="see-all-link" data-statid="<?php echo $userStat->statid;?>">See All</a></div>
                 </div>
                 <?php
             }

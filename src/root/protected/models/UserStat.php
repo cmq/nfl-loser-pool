@@ -33,4 +33,18 @@ class UserStat extends DeepActiveRecord
         );
     }
     
+    public function scopes()
+    {
+        return array(
+            'withUser' => array(
+                'with' => array(
+                    'user' => array(
+                        'select'   => 'user.username, user.avatar_ext, user.active',
+                        'joinType' => 'INNER JOIN'
+                    ),
+                    'stat',
+                ),
+            ),
+        );
+    }
 }

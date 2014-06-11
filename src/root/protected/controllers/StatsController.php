@@ -25,7 +25,10 @@ class StatsController extends Controller
         // KDHTODO get all stats, badges, trophies, etc
         $userId  = (int) getRequestParameter('id', 0);
         $user = User::model()->withYears()->withStats()->withBadges()->withWins()->findByPk($userId);
-        $this->render('profile', array('user'=>$user));
+        $allStats = UserStat::model()->withUser()->findAll(array(
+            'order' => 't.statid, t.place, user.username'
+        ));
+        $this->render('profile', array('user'=>$user, 'allStats'=>$allStats));
     }
 
     public function actionRankings()

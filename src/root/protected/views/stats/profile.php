@@ -1,5 +1,31 @@
+<script src="<?php echo baseUrl('/js/lib/highcharts.js'); ?>"></script>
 <?php
 // KDHTODO show floating or losable badges that were owned at one point? (And at which point they were owned)?
+
+
+// do the power ranking "stat group" which isn't really stats in the normal way, but just collections of details about the power ranking
+$numPowers    = 0;
+$totalPower   = 0;
+$currentPower = null;
+$highestRank  = null;
+$lowestRank   = null;
+$highestYear  = '';
+$lowestYear   = '';
+foreach ($user->powerRanks as $powerRank) {
+    $numPowers++;
+    $totalPower += $powerRank['powerrank'];
+    if (is_null($highestRank) || $powerRank['powerrank'] < $highestRank) {
+        $highestRank = $powerRank['powerrank'];
+        $highestYear = $powerRank['yr'];
+    }
+    if (is_null($lowestRank) || $powerRank['powerrank'] > $lowestRank) {
+        $lowestRank = $powerRank['powerrank'];
+        $lowestYear = $powerRank['yr'];
+    }
+    if ($powerRank['yr'] == getCurrentYear()) {
+        $currentPower  = $powerRank;
+    }
+}
 
 
 function drawActiveYears($user) {
@@ -19,6 +45,19 @@ function drawActiveYears($user) {
         </div>
     </div>
     <?php
+}
+
+function drawPieChartDataPiece($title, $stat, $isFirst=false) {
+    $title = addslashes($title);
+    if ($stat != 0) {
+        if ($stat < 0) {
+            $stat  = abs($stat);
+            return ($isFirst ? '' : ', ') . "{name: '$title', y: $stat, color: '#f6f6f6'}";
+        } else {
+            return ($isFirst ? '' : ', ') . "['$title', $stat]";
+        }
+    }
+    return '';
 }
 
 function drawPickStatsTableStat($stats, $key) {
@@ -182,7 +221,7 @@ $(function() {
             $lastStat   = $userStat->stat;
             $tableRows  = '';
         }
-        $tableRows .= '<tr' . ($userStat->user->id == userId() ? ' class="success"' : '') . '><td class="text-right">' . ordinal($userStat->place) . '</td><td class="text-center">' . ($userStat->user->active ? '<strong>' . $userStat->user->username . '</strong>' : $userStat->user->username) . '</td><td class="text-right">' . formatStat($userStat->value, $userStat->stat->type) . '</td></tr>';
+        $tableRows .= '<tr' . ($userStat->user->id == userId() ? ' class="success"' : '') . '><td class="text-right">' . ordinal($userStat->place) . '</td><td class="text-center">' . ($userStat->user->active ? '<strong>' . getProfileLink($userStat->user) . '</strong>' : getProfileLink($userStat->user)) . '</td><td class="text-right">' . formatStat($userStat->value, $userStat->stat->type) . '</td></tr>';
     }
     if ($lastStatId) {
         ?>
@@ -197,6 +236,60 @@ $(function() {
             });
         }
     }
+
+    <?php
+    // set up the pie chart
+    if ($currentPower) {
+        ?>
+        $('#power-breakdown').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            title: {
+                text: 'Power Point Sources'
+            },
+            tooltip: {
+        	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'Point Source',
+                data: [
+                    <?php echo drawPieChartDataPiece('Seasons Played', $currentPower['seasonPts'], true);?>
+                    <?php echo drawPieChartDataPiece('1st Place Finishes', $currentPower['firstPlacePts']);?>
+                    <?php echo drawPieChartDataPiece('2nd Place Finishes', $currentPower['secondPlacePts']);?>
+                    <?php echo drawPieChartDataPiece('Money Won', $currentPower['moneyPts']);?>
+                    <?php echo drawPieChartDataPiece('Correct Picks', $currentPower['correctPts']);?>
+                    <?php echo drawPieChartDataPiece('Win Percentage', $currentPower['winPctPts']);?>
+                    <?php echo drawPieChartDataPiece('Margin of Defeat', $currentPower['movPts']);?>
+                    <?php echo drawPieChartDataPiece('Messages Posted', $currentPower['talkPts']);?>
+                    <?php echo drawPieChartDataPiece('"Likes" Given', $currentPower['likesByPts']);?>
+                    <?php echo drawPieChartDataPiece('"Likes" Received', $currentPower['likesAtPts']);?>
+                    <?php echo drawPieChartDataPiece('Players Referred', $currentPower['referralPts']);?>
+                    <?php echo drawPieChartDataPiece('Badges Held', $currentPower['badgePts']);?>
+                    <?php echo drawPieChartDataPiece('Set by System (forfeited)', $currentPower['setBySystemPts']);?>
+                ]
+            }]
+        });        
+        <?php
+    }
+    ?>
+    
 });
 </script>
 <div class="container">
@@ -294,119 +387,66 @@ if ($user) {
             </div></div>    <!-- end the panel body and panel of the last stat group -->
             
             
-            <!-- do the power ranking "stat group" which isn't really stats in the normal way, but just collections of details about the power ranking -->
-            <?php
-            $numPowers    = 0;
-            $totalPower   = 0;
-            $currentPower = null;
-            $highestRank  = null;
-            $lowestRank   = null;
-            $highestYear  = '';
-            $lowestYear   = '';
-            foreach ($user->powerRanks as $powerRank) {
-                $numPowers++;
-                $totalPower += $powerRank['powerrank'];
-                if (is_null($highestRank) || $powerRank['powerrank'] < $highestRank) {
-                    $highestRank = $powerRank['powerrank'];
-                    $highestYear = $powerRank['yr'];
-                }
-                if (is_null($lowestRank) || $powerRank['powerrank'] > $lowestRank) {
-                    $lowestRank = $powerRank['powerrank'];
-                    $lowestYear = $powerRank['yr'];
-                }
-                if ($powerRank['yr'] == getCurrentYear()) {
-                    $currentPower  = $powerRank;
-                }
-            }
-            ?>
             <div class="panel panel-info">
                 <div class="panel-heading">Power Rank Details</div>
                 <div class="panel-body">
+                
+                    <!-- KDHTODO use @media query to adjust how pie chart appears (or hide it completely?) for small screens (http://stackoverflow.com/questions/21241862/twitter-bootstrap-3-rowspan-and-reorder) -->
+                    
                     <div class="row">
                         <div class="col-xs-12 col-md-4"><strong>Stat</strong></div>
                         <div class="col-xs-1 text-right"><strong>Value</strong></div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-md-4">Current Power Rank (<a title="Current Power Rank" data-content="The player's current power rank" href="#" class="stat-help-link">?</a>)</div>
-                        <div class="col-xs-1 text-right"><strong><?php echo ($currentPower ? ordinal($currentPower['powerrank']) : 'N/A');?></strong></div>
-                    </div>
-                    <div class="row">
+                        <div class="col-xs-1 col-md-1 text-right"><strong><?php echo ($currentPower ? ordinal($currentPower['powerrank']) : 'N/A');?></strong></div>
+                        <div class="col-xs-12 col-md-6" style="float:right;">
+                            <div id="power-breakdown"></div>
+                        </div>
                         <div class="col-xs-12 col-md-4">Current Power Points (<a title="Current Power Points" data-content="The total &quot;score&quot;, or number of points, which is used to calculate the Power Rank of each player" href="#" class="stat-help-link">?</a>)</div>
                         <div class="col-xs-1 text-right"><strong><?php echo ($currentPower ? number_format($currentPower['powerpoints'], 3) : 'N/A');?></strong></div>
-                    </div>
-                    <?php
-                    if ($currentPower) {
-                        // KDHTODO break this down into a bar chart with each color representing the percentage
-                        ?>
-                        <div class="row">
+                        <?php
+                        if ($currentPower) {
+                            ?>
                             <div class="col-xs-11 col-xs-offset-1 col-md-3">Points for Seasons Played (<a title="Points for Seasons Played" data-content="Points earned for each season in which the player participated" href="#" class="stat-help-link">?</a>)</div>
                             <div class="col-xs-1 text-right"><?php echo $currentPower['seasonPts'];?></div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-11 col-xs-offset-1 col-md-3">Points for First Place Trophies (<a title="Points for First Place Trophies" data-content="Points earned for finishing in First Place in any of the pots" href="#" class="stat-help-link">?</a>)</div>
                             <div class="col-xs-1 text-right"><?php echo $currentPower['firstPlacePts'];?></div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-11 col-xs-offset-1 col-md-3">Points for Second Place Trophies (<a title="Points for Second Place Trophies" data-content="Points earned for finishing in Second Place in any of the pots" href="#" class="stat-help-link">?</a>)</div>
                             <div class="col-xs-1 text-right"><?php echo $currentPower['secondPlacePts'];?></div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-11 col-xs-offset-1 col-md-3">Points for Money Won (<a title="Points for Money Won" data-content="Points earned for the amount of cash won by playing" href="#" class="stat-help-link">?</a>)</div>
                             <div class="col-xs-1 text-right"><?php echo $currentPower['moneyPts'];?></div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-11 col-xs-offset-1 col-md-3">Points for Correct Picks (<a title="Points for Correct Picks" data-content="Points earned simply for getting picks correct" href="#" class="stat-help-link">?</a>)</div>
                             <div class="col-xs-1 text-right"><?php echo $currentPower['correctPts'];?></div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-11 col-xs-offset-1 col-md-3">Points for Win Percentage (<a title="Points for Win Percentage" data-content="Points earned based on winning percentage.  This is modified off a baseline expectation of 50% correct.  This effectivity of this value ramps up over the player's first 50 picks so that the impact of wild swings early in a player's career are dampened." href="#" class="stat-help-link">?</a>)</div>
                             <div class="col-xs-1 text-right"><?php echo $currentPower['winPctPts'];?></div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-11 col-xs-offset-1 col-md-3">Points for Margin of Defeat (<a title="Points for Margin of Defeat" data-content="Points earned based on the player's average Margin of Defeat for all picks" href="#" class="stat-help-link">?</a>)</div>
                             <div class="col-xs-1 text-right"><?php echo $currentPower['movPts'];?></div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-11 col-xs-offset-1 col-md-3">Points for Picks Set by System (<a title="Points for Picks Set by System" data-content="Points lost when the player fails to make a pick before the lock time, and lets the system pick for them." href="#" class="stat-help-link">?</a>)</div>
                             <div class="col-xs-1 text-right"><?php echo $currentPower['setBySystemPts'];?></div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-11 col-xs-offset-1 col-md-3">Points for Messages Posted (<a title="Points for Messages Posted" data-content="Points earned by simply posting chat messages" href="#" class="stat-help-link">?</a>)</div>
                             <div class="col-xs-1 text-right"><?php echo $currentPower['talkPts'];?></div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-11 col-xs-offset-1 col-md-3">Points for "Likes" Given (<a title="Points for &quot;Likes&quot; Given" data-content="Points earned by &quot;Liking&quot; other players' messages" href="#" class="stat-help-link">?</a>)</div>
                             <div class="col-xs-1 text-right"><?php echo $currentPower['likesByPts'];?></div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-11 col-xs-offset-1 col-md-3">Points for "Likes" Received (<a title="Points for &quot;Likes&quot; Received" data-content="Points earned by having other players &quot;Like&quot; this player's messages" href="#" class="stat-help-link">?</a>)</div>
                             <div class="col-xs-1 text-right"><?php echo $currentPower['likesAtPts'];?></div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-11 col-xs-offset-1 col-md-3">Points for Players Referred (<a title="Points for Players Referred" data-content="Points earned by referring other players to the Loser Pool.  NOTE:  Kirk receives referral points at 10% of the normal value due to the large disparity in players referred by the creator of the Loser Pool." href="#" class="stat-help-link">?</a>)</div>
                             <div class="col-xs-1 text-right"><?php echo $currentPower['referralPts'];?></div>
-                        </div>
-                        <div class="row">
                             <div class="col-xs-11 col-xs-offset-1 col-md-3">Points for Badges Held (<a title="Points for Badges Held" data-content="Points earned for badges the user currently posseses.  Not all badges are worth points, but many are.  See the about page for more information." href="#" class="stat-help-link">?</a>)</div>
                             <div class="col-xs-1 text-right"><?php echo $currentPower['badgePts'];?></div>
-                        </div>
-                        <?php
-                    }
-                    ?>
-                    <div class="row">
+                            <?php
+                        }
+                        ?>
                         <div class="col-xs-12 col-md-4">Highest Power Rank (<a title="Highest Power Rank" data-content="The highest (best) Power Rank ever achieved by the player at the end of any season (or the current spot in the current season)" href="#" class="stat-help-link">?</a>)</div>
                         <div class="col-xs-1 text-right"><?php echo ($highestRank ? ordinal($highestRank) : 'N/A');?></div>
                         <div class="col-xs-1 text-left"><?php echo ($highestRank ? "($highestYear)" : '');?></div>
-                    </div>
-                    <div class="row">
                         <div class="col-xs-12 col-md-4">Lowest Power Rank (<a title="Lowest Power Rank" data-content="The lowest (worst) Power Rank ever achieved by the player at the end of any season (or the current spot in the current season)" href="#" class="stat-help-link">?</a>)</div>
                         <div class="col-xs-1 text-right"><?php echo ($lowestRank ? ordinal($lowestRank) : 'N/A');?></div>
                         <div class="col-xs-1 text-left"><?php echo ($lowestRank ? "($lowestYear)" : '');?></div>
-                    </div>
-                    <div class="row">
                         <div class="col-xs-12 col-md-4">Average Power Rank (<a title="Average Power Rank" data-content="The average Power Rank of the player at the end of all seasons since their first" href="#" class="stat-help-link">?</a>)</div>
                         <div class="col-xs-1 text-right"><?php echo ($numPowers > 0 ? number_format($totalPower / $numPowers, 1) : 'N/A');?></div>
                     </div>
+                        
                 </div>
             </div>
         </div>

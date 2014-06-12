@@ -220,6 +220,9 @@ img.user-badge {
 .table.popover-table > tbody > tr.separator > th, .table.popover-table > tbody > tr.separator > td {
     border-top: 1px solid #999;
 }
+.help-link {
+    cursor: pointer;
+}
 
 
 /*

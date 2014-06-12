@@ -18,6 +18,16 @@ var uploader,
 
 $(function() {
 
+    $('.help-link').popover({
+        placement: 'auto top'
+    }).click(function(e) {
+        e.preventDefault();
+        $('.help-link').not(this).popover('hide');
+        // next line is to fix a bug with the popover plugin (@see https://github.com/twbs/bootstrap/issues/10568)
+        $('.popover:not(.in)').hide().detach();
+        return false;
+    });
+    
     (function() {
         var fnDynamicSave,
             fnInputChanged;
@@ -476,21 +486,25 @@ $(function() {
                     <label>
                         <input type="checkbox" id="collapse_history"<?php echo userField('collapse_history') ? ' checked="checked"' : ''?> /> Collapse History
                     </label>
+                    (<a class="help-link" title="Collapse History" data-content="If this option is enabled, the pick board on the home screen will collapse all weeks prior to the current week into a single column showing each user's record for those collapsed week.  For example, if the current week were Week 15, there would be one column for &quot;Week 1 - Week 14&quot;, and then another column for &quot;Week 15&quot; (the current week).  This prevents you from seeing each pick for each user for each week, but can greatly reduce the width of the board making it easier to see everything.">?</a>)
                 </div>
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" id="show_badges"<?php echo userField('show_badges') ? ' checked="checked"' : ''?> /> Show User Badges
+                        <input type="checkbox" id="show_badges"<?php echo userField('show_badges') ? ' checked="checked"' : ''?> /> Show User Badges and Trophies
                     </label>
+                    (<a class="help-link" title="Show User Badges and Trophies" data-content="If this option is enabled, the badges and trophies earned by each user will be displayed next to their name.">?</a>)
                 </div>
                 <div class="checkbox">
                     <label>
                         <input type="checkbox" id="show_logos"<?php echo userField('show_logos') ? ' checked="checked"' : ''?> /> Show Team Logos
                     </label>
+                    (<a class="help-link" title="Show Team Logos" data-content="If this option is enabled, a small logo of each team will be shown on the pick board.  If this is disabled, the logo will be replaced with the team's name or abbreviation.">?</a>)
                 </div>
                 <div class="checkbox">
                     <label>
                         <input type="checkbox" id="show_mov"<?php echo userField('show_mov') ? ' checked="checked"' : ''?> /> Show Margin of Defeat
                     </label>
+                    (<a class="help-link" title="Show Margin of Defeat" data-content="If this option is enabled, each finished pick will show the Margin of Defeat for that game.">?</a>)
                 </div>
                 <span class="help-block"></span>
                 <div id="viewsetting-saved" style="display:none;">Saved</div>   <!-- KDHTODO use help-block instead -->

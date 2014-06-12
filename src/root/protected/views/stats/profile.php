@@ -184,6 +184,9 @@ function drawReferrals($user) {
 <script>
 var modals = [];
 $(function() {
+
+    document.title = 'Player Profile: #<?php echo addslashes($user->power_ranking . ' ' . $user->username);?>';
+    
     buildTrophyCase(<?php echo CJSON::encode($user);?>, $('#trophycase'));
     
     $('.stat-help-link').popover({

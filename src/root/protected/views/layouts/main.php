@@ -132,7 +132,7 @@ html, body {
 ?><!DOCTYPE html>
 <html>
     <head>
-        <!-- KDHTODO change the title -->
+        <!-- KDHTODO change the title per page -->
         <title><?php echo CHtml::encode($this->pageTitle); ?></title>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />

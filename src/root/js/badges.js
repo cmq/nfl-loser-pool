@@ -7,7 +7,7 @@ function buildTrophyCase(user, $container) {
             var fnHideAll;
 
             fnHideAll = function() {
-                $('.winnertrophy-wrapper').add('.user-badge').not(this).popover('hide');
+                $('.spawns-popover').not(this).popover('hide');
                 // next line is to fix a bug with the popover plugin (@see https://github.com/twbs/bootstrap/issues/10568)
                 $('.popover:not(.in)').hide().detach();
             };
@@ -86,7 +86,7 @@ function buildTrophyCase(user, $container) {
     if (user.wins) {
         for (j=0; j<user.wins.length; j++) {
             $container.append($('<div/>')
-                .addClass('winnertrophy-wrapper')
+                .addClass('winnertrophy-wrapper spawns-popover')
                 .data('win', user.wins[j])
                 .append('<img src="' + CONF.winnerTrophyUrlPrefix + user.wins[j].pot + user.wins[j].place + '.png" />')
                 .append($('<div/>')
@@ -100,7 +100,7 @@ function buildTrophyCase(user, $container) {
     if (user.userBadges) {
         for (j=0; j<user.userBadges.length; j++) {
             $container.append($('<img />')
-                .addClass('user-badge')
+                .addClass('user-badge spawns-popover')
                 .attr('src', user.userBadges[j].badge.img)
                 .attr('alt', user.userBadges[j].display)
                 .data('userBadge', user.userBadges[j])

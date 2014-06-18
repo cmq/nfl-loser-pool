@@ -38,7 +38,7 @@ foreach ($talk->likes as $like) {
     <div class="panel-footer">
         <div>
             <div class="like-button<?php echo ($thisUserLiked ? ' active' : '')?>" data-talkid="<?php echo $talk->id;?>"></div>
-            <div class="likes small<?php echo ($numLikes ? '' : ' hidden');?>" data-talkid="<?php echo $talk->id;?>" data-likes="<?php echo htmlentities(CJSON::encode($userLikes));?>">
+            <div class="spawns-popover likes small<?php echo ($numLikes ? '' : ' hidden');?>" data-talkid="<?php echo $talk->id;?>" data-likes="<?php echo htmlentities(CJSON::encode($userLikes));?>">
                 Liked by <?php echo $numLikes;?> User<?php echo ($numLikes == 1 ? '' : 's');?>
             </div>
             <br />

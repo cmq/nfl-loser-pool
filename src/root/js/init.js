@@ -64,7 +64,7 @@ $(function() {
     });
     
     $('.likes').on('click', function() {
-        $('.likes').not(this).popover('hide');
+        $('.spawns-popover').not(this).popover('hide');
     }).popover({
         html: true,
         title: 'Message Liked By',
@@ -86,8 +86,15 @@ $(function() {
     });
     
     // hide popovers if a click event propagates all the way to the body without being handled
-    $('body').on('click', function() {
-        $('.popover').hide().detach();
-    });
-    
+    // @see http://mattlockyer.com/2013/04/08/close-a-twitter-bootstrap-popover-when-clicking-outside/
+    // (Modify for this site, since we don't use data-toggle but instead initialize our popovers with JS
+    $('body').on('click', function (e) {
+        $('.spawns-popover').each(function () {
+            //the 'is' for buttons that trigger popups
+            //the 'has' for icons within a button that triggers a popup
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                $(this).popover('hide');
+            }
+        });
+    });    
 });

@@ -61,6 +61,14 @@ body {
 }
 img.avatar {
     margin: 0 5px;
+    cursor: pointer;
+}
+.avatar-zoom {
+    display: inline-block;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
 }
 
 /*

@@ -250,6 +250,7 @@ function Board(options) {
         
         $table = self.getTable();
         $table.empty().append($thead).append($tbody);
+        globals.lightboxAvatars();  // re-activate the newly-drawn avatars as lightboxes
         drawn = true;
     };
 

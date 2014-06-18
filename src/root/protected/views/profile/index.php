@@ -2,7 +2,6 @@
 
 <?php
 
-// KDHTODO re-enable lightbox
 // KDHTODO make save routines have consistent ways to show completion and errors (errors above the field in a div that takes up space whether or not it's empty, and successes as little save checkmarks to the left of each field that fade away)
     // the checkmark should default to being present, and then should disappear when the user changes the field value or while an AJAX request is pending.  Once successful, it will reappear next to the field.
 // KDHTODO clean up avatar upload section (general look, as well as error block)
@@ -280,7 +279,7 @@ $(function() {
                 $avatar.fadeOut('fast', function() {
                     $avatar.replaceWith($(globals.htmlDecode(responseJSON.thumbnail)).hide());
                     $('#avatar<?php echo $user->id?> img').attr('src', responseJSON.thumbnailurl + '?x=' + new Date().getTime());
-                    $('#avatar<?php echo $user->id?>').fadeIn('fast');//.lightBox();
+                    $('#avatar<?php echo $user->id?>').fadeIn('fast');
                 });
                 uploadTimeout = setTimeout(function() {
                     $('ul.qq-upload-list li').fadeOut(400, function() {

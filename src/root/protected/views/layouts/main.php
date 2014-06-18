@@ -17,7 +17,6 @@
  *  - For trash talk by me, have a flag I can set so it shows up as just a regular talk versus the yellow highlighted "admin" talk
  *  - Is there a way to not have to keep deactivating users every year?  Maybe allow logins forever, but they can only see the current board if they're playing this year?
  *  - Make badges clickable to show the hover text in a tiny modal (since on tablets/phones, there's no such thing as hovering)
- *  - Re-add lightbox (I removed it so I could work on testing the profile page)
  *  - On past-year pages, show all talk messages from that year
  *  - Create a profile page for others to view, so I can click on a user's name and see their page which shows their history (seasons played, badges, wins, stats, rankings, etc)
  *  - Allow talk messages to be flagged by superadmin as "admin" to show up in a different color
@@ -157,6 +156,7 @@ html, body {
         <link href="<?php echo baseUrl('/css/fileuploader.css'); ?>" rel="stylesheet" />
         <?php require(__DIR__ . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array('..', '..', '..', 'js', 'conf.js.php')))?>
         <script src="<?php echo baseUrl('/js/lib/jquery.ba-getobject.min.js'); ?>"></script>
+        <script src="<?php echo baseUrl('/js/lib/jquery.lightbox_me.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/moment.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/oo.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/types.js'); ?>"></script>

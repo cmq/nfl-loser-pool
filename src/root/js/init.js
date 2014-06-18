@@ -85,6 +85,9 @@ $(function() {
         placement: 'auto top'
     });
     
+    // make avatars clickable for a lightbox
+    globals.lightboxAvatars();
+    
     // hide popovers if a click event propagates all the way to the body without being handled
     // @see http://mattlockyer.com/2013/04/08/close-a-twitter-bootstrap-popover-when-clicking-outside/
     // (Modify for this site, since we don't use data-toggle but instead initialize our popovers with JS

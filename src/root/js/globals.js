@@ -159,3 +159,21 @@ globals.getModal = function(id, title, body, footer) {
         );
     return $div;
 };
+
+globals.lightboxAvatars = function() {
+    $('img.avatar').unbind('click').on('click', function(e) {
+        var $lightbox,
+            fullImageUrl = $(this).attr('src').replace(CONF.avatarWebDirectory + '/t', CONF.avatarWebDirectory);
+        //$('<div class="avatar-zoom"><img src="' + fullImageUrl + '" /></div>').lightbox_me({centered:true});
+        $lightbox = $('<div class="avatar-zoom"><img src="' + fullImageUrl + '" /></div>');
+        $lightbox.on('click', function(e) {
+            // make it so even clicking on the lightbox itself (not just the lightbox's overlay) closes it
+            $lightbox.trigger('close');
+        }).lightbox_me({
+            centered: true,
+            destroyOnClose: true
+        });
+        e.preventDefault();
+        return false;
+    });
+};

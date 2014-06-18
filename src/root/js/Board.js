@@ -254,7 +254,7 @@ function Board(options) {
     };
 
     this.poll = function() {
-        if (settings.poll && !polling) {
+        if (!polling) {
             polling = true;
             if (!drawn) {
                 $table = self.getTable();
@@ -278,13 +278,17 @@ function Board(options) {
                                         self.redraw();
                                     }
                                 }
-                                setTimeout(self.poll, CONF.boardPollerInterval);
+                                if (settings.poll) {
+                                    setTimeout(self.poll, CONF.boardPollerInterval);
+                                }
                             },
                 complete:   function() {
                                 polling = false;
                             },
                 dataType:   'json'
             });
+        } else {
+            setTimeout(self.poll, 1000);
         }
     };
 
@@ -298,7 +302,5 @@ function Board(options) {
         $.error('Invalid table specified');
     }
 
-    if (settings.poll) {
-        self.poll();
-    }
+    self.poll();
 };

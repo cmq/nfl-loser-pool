@@ -97,6 +97,8 @@ $(function() {
             //the 'has' for icons within a button that triggers a popup
             if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
                 $(this).popover('hide');
+                // next line is to fix a bug with the popover plugin (@see https://github.com/twbs/bootstrap/issues/10568)
+                $('.popover:not(.in)').hide().detach();
             }
         });
     });    

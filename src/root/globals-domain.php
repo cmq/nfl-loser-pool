@@ -232,7 +232,7 @@ function createThumbnail($source, $destination, $maxWidth, $maxHeight) {
 }
 
 
-function getUserAvatar($userid, $ext='png', $linkToFull=true, $extraMarkup='') {
+function getUserAvatar($userid, $ext='png', $linkToFull=true, $extraClasses='') {
     if ($userid instanceof User) {
         $ext    = $userid->avatar_ext;
         $userid = $userid->id;
@@ -240,9 +240,9 @@ function getUserAvatar($userid, $ext='png', $linkToFull=true, $extraMarkup='') {
     $url  = getUserAvatarUrl($userid, $ext);
     $turl = getUserAvatarUrl($userid, $ext, true);
     if ($linkToFull) {
-        return "<a href=\"$url?x=" . time() . "\" class=\"avatar\" id=\"avatar$userid\"><img class=\"avatar\" src=\"$turl\" $extraMarkup /></a>";
+        return "<a href=\"$url?x=" . time() . "\" class=\"avatar $extraClasses\" id=\"avatar$userid\"><img class=\"avatar\" src=\"$turl\" /></a>";
     } else {
-        return "<img class=\"avatar\" src=\"$turl\" $extraMarkup />";
+        return "<img class=\"avatar $extraClasses\" src=\"$turl\" />";
     }
 }
 
@@ -320,7 +320,7 @@ function getProfileLink($userOrId, $username='') {
 }
 
 function getAvatarProfileLink($user, $withName=false, $small=false) {
-    return getProfileLink($user->id, getUserAvatar($user->id, $user->avatar_ext, false, $small ? 'style="height:16px;"' : '') . ($withName ? $user->username : ''));
+    return getProfileLink($user->id, getUserAvatar($user->id, $user->avatar_ext, false, $small ? 'tiny-avatar' : '') . ($withName ? $user->username : ''));
 }
 
 function formatStat($value, $type) {

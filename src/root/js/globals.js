@@ -110,6 +110,10 @@ globals.getUserAvatar = function(user, fullsize) {
     return CONF.avatarWebDirectory + '/' + img;
 };
 
+globals.avatarBubble = function(user) {
+    return '<div class="profile-bubble"><a href="' + CONF.url.profile(user.id) + '"><img src="' + globals.getUserAvatar(user) + '" class="avatar tiny-avatar" />' + user.username + '</a></div>';
+};
+
 globals.getTeamLogoOffset = function(team, size) {
     var multiplier = 50;
     var offset     = (team && team.hasOwnProperty('image_offset') ? parseInt(team.image_offset, 10) : 0);
@@ -171,7 +175,7 @@ globals.getModal = function(id, title, body, footer) {
 globals.lightboxAvatars = function() {
     $('img.avatar').unbind('click').on('click', function(e) {
         var $lightbox,
-            fullImageUrl = $(this).attr('src').replace(CONF.avatarWebDirectory + '/t', CONF.avatarWebDirectory);
+            fullImageUrl = $(this).attr('src').replace(CONF.avatarWebDirectory + '/t', CONF.avatarWebDirectory + '/');
         //$('<div class="avatar-zoom"><img src="' + fullImageUrl + '" /></div>').lightbox_me({centered:true});
         $lightbox = $('<div class="avatar-zoom"><img src="' + fullImageUrl + '" /></div>');
         $lightbox.on('click', function(e) {

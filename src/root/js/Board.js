@@ -3,6 +3,7 @@ function Board(options) {
         settings = $.extend(true, {
             container:   null,
             order:       'money',
+            collapsable: false,
             poll:        false,
             currentUser: CONF.userId,
             currentWeek: CONF.currentWeek,
@@ -121,6 +122,61 @@ function Board(options) {
             return '+' + mov;
         }
         return mov;
+    }
+    
+    function buildPanel(id, title, openByDefault, $content) {
+        var $panel = $('<div class="panel panel-primary"/>')
+            .append($('<div class="accordian-link panel-heading" data-toggle="collapse" href="#' + id + '"/>')
+                .append('<h4 class="panel-title">' + title + '</h4>')
+            )
+            .append($('<div id="' + id + '" class="panel-collapse collapse' + (openByDefault ? ' in' : '') + '"/>')
+                .append($('<div class="panel-body"/>')
+                    .append($content)
+                )
+            );
+        return $panel;
+    }
+    
+    function buildPayoutTable() {
+        var i, j, k, $pots = [], $payout = $('<div />');
+        
+        for (i=0; i<pots.length; i++) {
+            $pots.push([]);
+            for (j=0; j<2; j++) {
+                $pots[i].push($('<td/>'));
+                for (k=0; k<pots[i][j].users.length; k++) {
+                    $pots[i][j].append(globals.avatarBubble(pots[i][j].users[k]));
+                }
+            }
+        }
+        $payout.append($('<table class="table table-bordered table-condensed payout-table" />')
+            .append($('<thead/>')
+                .append($('<tr/>')
+                    .append('<th colspan="2" style="width:33.3%">Pot 1 (Stay-Alive)<br />' + globals.dollarFormat(settings.board.length * CONF.entryFee / 2) + '</th>')
+                    .append('<th colspan="2" style="width:33.3%">Pot 2 (Best Record)<br />' + globals.dollarFormat(settings.board.length * CONF.entryFee / 2) + '</th>')
+                    .append('<th colspan="2" style="width:33.3%">Pot 3 (Margin of Defeat)<br />' + globals.dollarFormat(settings.board.length * CONF.movFee) + '</th>')
+                )
+                .append($('<tr/>')
+                    .append('<th style="width:16.7%">1st Place (' + globals.dollarFormat(pots[0][0].money) + ')</th>')
+                    .append('<th style="width:16.7%">2nd Place (' + globals.dollarFormat(pots[0][1].money) + ')</th>')
+                    .append('<th style="width:16.7%">1st Place (' + globals.dollarFormat(pots[1][0].money) + ')</th>')
+                    .append('<th style="width:16.7%">2nd Place (' + globals.dollarFormat(pots[1][1].money) + ')</th>')
+                    .append('<th style="width:16.7%">1st Place (' + globals.dollarFormat(pots[2][0].money) + ')</th>')
+                    .append('<th style="width:16.7%">2nd Place (' + globals.dollarFormat(pots[2][1].money) + ')</th>')
+                )
+            )
+            .append($('<thead/>')
+                .append($('<tr/>')
+                    .append($pots[0][0])
+                    .append($pots[0][1])
+                    .append($pots[1][0])
+                    .append($pots[1][1])
+                    .append($pots[2][0])
+                    .append($pots[2][1])
+                )
+            )
+        );
+        return $payout;
     }
     
     function getSortOrder(order, currentOrder) {
@@ -482,32 +538,31 @@ function Board(options) {
         
         
         // draw the pots payout
-        // KDHTODO clean up this display
         if (settings.currentYear == CONF.currentYear) {
-            $payout = $('<div />');
-            for (i=0; i<pots.length; i++) {
-                $payout.append('Pot ' + (i+1) + ':<br /> 1st (' + globals.dollarFormat(pots[i][0].money) + '):');
-                for (j=0; j<pots[i][0].users.length; j++) {
-                    $payout.append(' ' + pots[i][0].users[j].username);
-                }
-                $payout.append('<br />2nd (' + globals.dollarFormat(pots[i][1].money) + '):');
-                for (j=0; j<pots[i][1].users.length; j++) {
-                    $payout.append(' ' + pots[i][1].users[j].username);
-                }
-                $payout.append('<br /><br />');
-            }
+            $payout = buildPayoutTable();
         }
         
         
         // show all the output
         $table.append($thead).append($tbody);
         $container = self.getContainer();
-        $container
-            .empty()
-            .append($payout)
-            .append($('<div class="table-responsive"/>')
-                .append($table)
-            );
+        
+        if (settings.collapsable) {
+            $container
+                .empty()
+                .append(buildPanel('collapsePayout', 'Current Payout Breakdown', false, $payout))
+                .append(buildPanel('collapseBoard', 'Pick Board', true, $('<div class="table-responsive"/>')
+                    .append($table)
+                ));
+        } else {
+            $container
+                .empty()
+                .append($payout)
+                .append($('<div class="table-responsive"/>')
+                    .append($table)
+                );
+        }
+        
         globals.lightboxAvatars();  // re-activate the newly-drawn avatars as lightboxes
         drawn = true;
     };

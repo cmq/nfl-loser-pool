@@ -61,6 +61,17 @@ th.active-sort {
 th.active-sort.reverse {
     background: linear-gradient(#6d94bf, #f0f0f0);
 }
+.accordian-link {
+    cursor: pointer;
+}
+table.payout-table {
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+table.payout-table th {
+    text-align: center;
+}
 
 
 /*
@@ -82,6 +93,10 @@ img.avatar {
     border-radius: 10px;
     -moz-border-radius: 10px;
 }
+img.tiny-avatar {
+    height: 16px;
+}
+
 
 /*
  * Logos
@@ -322,7 +337,7 @@ img.user-badge {
 .trophycase .popover, .trophycase .popover td, .trophycase .popover th {
     color: #666;
 }
-.referral-display {
+.referral-display, .profile-bubble {
     display: inline-block;
     border: #ddd 1px solid;
     border-radius: 3px;
@@ -330,6 +345,7 @@ img.user-badge {
     margin: 2px;
     padding: 2px;
     background-color: #f3f3f3;
+    white-space: nowrap;
 }
 .referral-display.parent {
     background-color: #fffff3;

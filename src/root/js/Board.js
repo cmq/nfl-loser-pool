@@ -10,7 +10,7 @@ function Board(options) {
             showAdmin:   CONF.isAdmin,
             board:       [],
             viewOptions: {
-                // KDHTODO make these togglable in real-time now that angular is gone
+                // KDHLATER we could make these togglable in real-time now that angular is gone
                 collapseHistory: false,
                 showBadges:      true,
                 showMov:         true,
@@ -53,7 +53,6 @@ function Board(options) {
     
     function getSortHeadClass(key) {
         var classes = [];
-        key = key.toLowerCase();
         if (key === settings.order.replace('-', '')) {
             classes.push('active-sort');
             if (settings.order.indexOf('-') === 0) {
@@ -75,7 +74,8 @@ function Board(options) {
         }
         switch (key.toLowerCase()) {
             case 'record':
-                wl = user.record.split('-');
+            case 'oldrecord':
+                wl = key == 'record' ? user.record.split('-') : user.oldRecord.split('-');
                 p = 0;
                 if (wl.length == 2) {
                     w = parseFloat(wl[0], 10);
@@ -154,6 +154,7 @@ function Board(options) {
             correct   = 0;
             incorrect = 0;
             margin    = 0;
+            lastPick  = '';
             for (j=1; j<=21; j++) {
                 pick = getPick(user, j);
                 if (pick) {
@@ -167,13 +168,16 @@ function Board(options) {
                             firstWeek = parseInt(pick.week, 10);
                         }
                         incorrect++;
+                        lastPick = 'incorrect';
                     } else {
                         correct++;
+                        lastPick = 'correct';
                     }
                 }
             }
             settings.board[i].correct   = correct;
             settings.board[i].record    = correct + '-' + incorrect;
+            settings.board[i].oldRecord = (correct - (lastPick=='correct' ? 1 : 0)) + '-' + (incorrect - (lastPick=='incorrect' ? 1 : 0));
             settings.board[i].stayAlive = firstWeek;
             settings.board[i].margin    = margin;
             settings.board[i].money     = 0;    // we'll figure this out below
@@ -283,11 +287,15 @@ function Board(options) {
             for (j=i+1; j<settings.board.length; j++) {
                 thisVal    = getSortVal(settings.board[i], settings.order);
                 compareVal = getSortVal(settings.board[j], settings.order);
-                if (compareVal == thisVal && settings.order != 'username') {
-                    // secondary sort is always username
-                    // KDHTODO alter secondary sort or add tertiary sort for place?
-                    thisVal    = getSortVal(settings.board[i], 'username');
-                    compareVal = getSortVal(settings.board[j], 'username');
+                if (compareVal == thisVal && settings.order != 'money') {
+                    // secondary sort is always money
+                    thisVal    = getSortVal(settings.board[i], 'money');
+                    compareVal = getSortVal(settings.board[j], 'money');
+                    if (compareVal == thisVal && settings.order != 'powerRanking') {
+                        // tertiary sort is always power ranking
+                        thisVal    = getSortVal(settings.board[i], 'powerRanking');
+                        compareVal = getSortVal(settings.board[j], 'powerRanking');
+                    }
                 }
                 if ((compareVal < thisVal) === (settings.order.charAt(0) != '-')) {
                     swap              = settings.board[i];
@@ -324,15 +332,14 @@ function Board(options) {
             );
         if (settings.viewOptions.collapseHistory) {
             $tr.append($('<th/>')
-                //.addClass(getSortHeadClass('historicalRecord'))   // KDHTODO implement
+                .addClass(getSortHeadClass('oldRecord'))
                 .html('Weeks 1 - ' + (settings.currentWeek-1))
                 .on('click', function(e) {
                     e.preventDefault();
-                    // KDHTODO implement sorting by early-season record
+                    self.sort(getSortOrder('oldRecord', settings.order), true);
                 })
             );
         }
-        // KDHTODO whichever heading is the SORT heading should be highlighted in some way (I am adding classes "active-sort" and optionally "reverse", but need to CSS them somehow)
         for (i=startWeek; i<=21; i++) {
             $tr.append($('<th/>')
                 .addClass(getSortHeadClass('pick' + i))
@@ -446,7 +453,7 @@ function Board(options) {
                                 .addClass('pickMov')
                                 .addClass(pick.week < settings.currentWeek || pick.year < settings.currentYear ? 'old' : '')
                                 .addClass(pick.incorrect ? 'incorrect' : '')
-                                .html(stylizeMov(pick.mov && pick.mov.hasOwnProperty('mov') ? pick.mov.mov : ''))   // KDHTODO does this use the viewOptions correctly?
+                                .html(stylizeMov(pick.mov && pick.mov.hasOwnProperty('mov') ? pick.mov.mov : ''))
                             )
                             .append(!settings.viewOptions.showLogos ? pick.team.shortname : $('<div/>')
                                 .addClass('logo')

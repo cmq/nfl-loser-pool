@@ -51,6 +51,18 @@ body {
     color: #fff;
 }
 
+
+/*
+ * Pick table stuff
+ */
+th.active-sort {
+    background: linear-gradient(#f0f0f0, #6d94bf);
+}
+th.active-sort.reverse {
+    background: linear-gradient(#6d94bf, #f0f0f0);
+}
+
+
 /*
  * Avatars
  */

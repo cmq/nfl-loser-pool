@@ -2,8 +2,9 @@
 <script>
 $(function() {
     window.board = new Board({
-        table: $('#pick-board'),
+        container: $('#pick-board'),
         poll:  true,
+        order: 'record',
         viewOptions: {
             collapseHistory: <?php echo userField('collapse_history') ? 'true' : 'false'?>,
             showBadges:      <?php echo userField('show_badges') ? 'true' : 'false'?>,
@@ -27,6 +28,7 @@ $(function() {
     
     <h5>Debug Current Week / Header Week: <?php echo getCurrentWeek();?> / <?php echo getHeaderWeek();?></h5>
     
+    <div id="pick-board"></div>
     <div class="table-responsive">
         <table class="picks table table-striped table-bordered" id="pick-board">
         </table>

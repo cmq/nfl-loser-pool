@@ -26,6 +26,7 @@
  *  - Distinguish badges more.  Like, the 800 badge isn't "floating", it's earnable.  But some earnable badges are permanent and some aren't.
  *  - For floating/losable badges, have a "badge history" page that shows where they belonged?  Maybe that's overkill
  *  - When showing all the badges, show floating badges as "year introduced" instead of "year unlocked", and show "current owner" instead of "unlocked by"
+ *  - How to run the recalculate (rankings/badges) routine automatically?
  *  - Clean up the data fields for the userbadge and badge tables so the popovers look cooler
  *  - Add large power points for having uploaded a custom avatar
  *  - Make badges so they still have a title so that you can hover them for a name without having to click on them for the full details

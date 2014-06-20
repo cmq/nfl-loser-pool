@@ -11,6 +11,8 @@ var CONF = {
     avatarWebDirectory:     '<?php echo param('avatarWebDirectory')?>',
     winnerTrophyUrlPrefix:  '<?php echo param('winnerTrophyUrlPrefix')?>',
     boardPollerInterval:    <?php echo param('boardPollerInterval')?>,
+    entryFee:               <?php echo param('entryFee')?>,
+    movFee:                 <?php echo param('movFee')?>,
     url: {
         poll:           '<?php echo $this->createAbsoluteUrl('site/poll')?>',
         showCorrect:    '<?php echo $this->createAbsoluteUrl('admin/showCorrect')?>',

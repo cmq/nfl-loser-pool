@@ -301,6 +301,9 @@ img.user-badge {
     background-color: transparent;
     color: #999;
 }
+.trophycase {
+    display: inline-block;
+}
 #trophycase {
     margin-left: 50px;
 }

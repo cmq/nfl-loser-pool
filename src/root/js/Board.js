@@ -1,15 +1,17 @@
 function Board(options) {
     var self = this,
         settings = $.extend(true, {
-            container:   null,
-            order:       'money',
-            collapsable: false,
-            poll:        false,
-            currentUser: CONF.userId,
-            currentWeek: CONF.currentWeek,
-            currentYear: CONF.currentYear,
-            showAdmin:   CONF.isAdmin,
-            board:       [],
+            container:      null,
+            order:          'money',
+            collapsable:    false,
+            poll:           false,
+            currentUser:    CONF.userId,
+            currentWeek:    CONF.currentWeek,
+            currentYear:    CONF.currentYear,
+            showAdmin:      CONF.isAdmin,
+            showBandwagon:  true,
+            board:          [],
+            bandwagon:      [],
             viewOptions: {
                 // KDHLATER we could make these togglable in real-time now that angular is gone
                 collapseHistory: false,
@@ -18,10 +20,10 @@ function Board(options) {
                 showLogos:       true
             }
         }, options),
-        pots = [[{"money":0,"users":[]},{"money":0,"users":[]}],[{"money":0,"users":[]},{"money":0,"users":[]}],[{"money":0,"users":[]},{"money":0,"users":[]}]],   // first index is 0-based pot, next index is 0-based place, so "pots[1][0]" is "pot 2, first place"
-        polling = false,
-        drawn = false,
-        lastBoard = JSON.stringify(settings.board),
+        pots        = [[{"money":0,"users":[]},{"money":0,"users":[]}],[{"money":0,"users":[]},{"money":0,"users":[]}],[{"money":0,"users":[]},{"money":0,"users":[]}]],   // first index is 0-based pot, next index is 0-based place, so "pots[1][0]" is "pot 2, first place"
+        polling     = false,
+        drawn       = false,
+        lastBoard   = JSON.stringify(settings.board),
         $container;
 
 
@@ -48,6 +50,65 @@ function Board(options) {
         var pick = getPick(user, week);
         if (pick && pick.team) {
             return pick.team.id;
+        }
+        return 0;
+    }
+    
+    function getBandwagon(week) {
+        var i;
+        if (typeof week === 'undefined') {
+            week = settings.currentWeek;
+        }
+        for (i=0; i<settings.bandwagon.length; i++) {
+            if (settings.bandwagon[i].week == week) {
+                return settings.bandwagon[i];
+            }
+        }
+        return null;
+    }
+    
+    function isOnBandwagon(user, week) {
+        var b;
+        if (typeof week === 'undefined') {
+            week = settings.currentWeek;
+        }
+        b = getBandwagon(week);
+        return (b && getPickId(user, week) == b.teamid);
+    }
+    
+    function bandwagonStreak(user, week) {
+        var i;
+        if (typeof week === 'undefined') {
+            week = settings.currentWeek;
+        }
+        for (i=0; i<user.picks.length; i++) {
+            if (user.picks[i].week == week) {
+                return user.picks[i].weeks_on_bandwagon;
+            }
+        }
+        return 0;
+    }
+    
+    function getUserBandwagonPick(week) {
+        // get a random pick from any old user for the given bandwagon week so we can gather details
+        var i, b, p = null;
+        b = getBandwagon(week);
+        if (b) {
+            for (i=0; i<settings.board.length; i++) {
+                if (isOnBandwagon(settings.board[i], week)) {
+                    return settings.board[i].picks[week-1]; // provided week is 1-based, make 0-based to access array records
+                }
+            }
+        }
+        return p;
+    }
+    
+    function getBandwagonStreak(user) {
+        var p;
+        for (p=settings.currentWeek; p>=1; p--) {
+            if (user.picks.length >= p) {
+                return user.picks[p-1].weeks_on_bandwagon;
+            }
         }
         return 0;
     }
@@ -108,6 +169,8 @@ function Board(options) {
                 return parseInt(user.power_ranking);
             case 'money':
                 return user.money * -1;
+            case 'bwstreak':
+                return getBandwagonStreak(user);
             default:
                 return user.username.toLowerCase();
         }
@@ -214,7 +277,7 @@ function Board(options) {
             for (j=1; j<=21; j++) {
                 pick = getPick(user, j);
                 if (pick) {
-                    if (pick.week > settings.currentWeek && settings.currentYear >= CONF.currentYear) {
+                    if (pick.week > settings.currentWeek && settings.currentYear >= settings.currentYear) {
                         // we hit a week that is beyond the current year/week, so we can't count it, and we're done with this user
                         break;
                     }
@@ -264,7 +327,7 @@ function Board(options) {
         }
         
         // figure out the pots
-        if (settings.currentYear == CONF.currentYear) {
+        if (settings.currentYear == settings.currentYear) {
             // reset the users on each pot and each place
             for (i=0; i<3; i++) {
                 for (j=0; j<2; j++) {
@@ -367,6 +430,15 @@ function Board(options) {
     
     this.redraw = function() {
         var $container, $table, $tr, i, j, user, pick, $userDisplay,
+            // stuff for calculating the bandwagon row
+            bwpick, bwuser,
+            firstWeek = 22,
+            correct   = 0,
+            incorrect = 0,
+            margin    = 0,
+            ////////////
+            onBandwagon, bwStreak,
+            mostMoney = 0, mostMoneyUser = null,
             startWeek = settings.viewOptions.collapseHistory ? settings.currentWeek : 1,
             $payout   = null,
             $thead    = $('<thead/>'),
@@ -448,6 +520,14 @@ function Board(options) {
                 self.sort(getSortOrder('powerRanking', settings.order), true);
             })
         );
+        $tr.append($('<th/>')
+            .addClass(getSortHeadClass('bwStreak'))
+            .html('BW<br />Streak')
+            .on('click', function(e) {
+                e.preventDefault();
+                self.sort(getSortOrder('bwStreak', settings.order), true);
+            })
+        );
         $thead.append($tr);
 
         // add the admin-correction-link row to the header
@@ -466,9 +546,86 @@ function Board(options) {
                     })
                 );
             }
-            $tr.append('<th colspan="6"/>');
+            $tr.append('<th colspan="7"/>');
+            $thead.append($tr);
         }
-        $thead.append($tr);
+        
+        // add the bandwagon
+        if (settings.showBandwagon && settings.bandwagon) {
+            $tr = $('<tr/>')
+                .append('<th/>')
+                // KDHTODO make "The Bandwagon" a link to the about page that explains what it is
+                .append('<th nowrap="nowrap"><div class="avatar-wrapper"><img src="/images/bwanimated-thumb.gif" class="avatar"></div><a style="float:left;" href="#">The Bandwagon</a><br /></th>');
+            // collapsed view
+            if (settings.viewOptions.collapseHistory) {
+                bwuser = {picks: [] };  // simulate a "user"-like object for using the getOldRecord function
+                for (j=0; j<settings.bandwagon.length; j++) {
+                    bwuser.picks.push(getUserBandwagonPick(settings.bandwagon[j].week));
+                }
+                $tr.append('<th>' + globals.getOldRecord(bwuser, settings.currentWeek) + '</th>');
+            }
+            // week-by-week view
+            for (i=startWeek; i<=21; i++) {
+                if (i <= settings.currentWeek) {
+                    for (j=0; j<settings.bandwagon.length; j++) {
+                        if (settings.bandwagon[j].week == i) {
+                            bwpick = getUserBandwagonPick(i);
+                            $tr.append($('<th/>')
+                                .addClass(bwpick.incorrect == 1 ? 'incorrect' : '')
+                                .append($('<div/>')
+                                    .addClass('pick-wrapper')
+                                    .append(!settings.viewOptions.showMov || j > settings.currentWeek || !bwpick ? '' : $('<div/>')
+                                        .addClass('pickMov')
+                                        .addClass(bwpick.week < settings.currentWeek || bwpick.year < settings.currentYear ? 'old' : '')
+                                        .addClass(bwpick.incorrect ? 'incorrect' : '')
+                                        .html(stylizeMov(bwpick.mov && bwpick.mov.hasOwnProperty('mov') ? bwpick.mov.mov : ''))
+                                    )
+                                    .append(!settings.viewOptions.showLogos ? bwpick.team.shortname : $('<div/>')
+                                        .addClass('logo')
+                                        .addClass('logo-' + (i == settings.currentWeek ? 'medium' : 'small'))
+                                        .css('background-position', globals.getTeamLogoOffset(bwpick.team, 'small'))
+                                        .attr('title', bwpick.team.longname)
+                                    )
+                                )
+                            );
+                            break;
+                        }
+                    }
+                } else {
+                    $tr.append('<th/>');
+                }
+            }
+            // calculate the summaries
+            for (i=1; i<=21; i++) {
+                if (i <= settings.currentWeek) {
+                    for (j=0; j<settings.bandwagon.length; j++) {
+                        if (settings.bandwagon[j].week == i) {
+                            bwpick = getUserBandwagonPick(i);
+                            if (bwpick) {
+                                if (bwpick.week <= settings.currentWeek || settings.currentYear < settings.currentYear) {
+                                    margin -= bwpick.mov && bwpick.mov.hasOwnProperty('mov') ? parseInt(bwpick.mov.mov, 10) : 0;
+                                    if (bwpick.incorrect == 1) {
+                                        if (firstWeek === 22) {
+                                            firstWeek = parseInt(bwpick.week, 10);
+                                        }
+                                        incorrect++;
+                                    } else {
+                                        correct++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // show the summaries
+            $tr.append('<th>' + (firstWeek > 21 ? '...' : 'Week ' + firstWeek) + '</th>');
+            $tr.append('<th>' + correct + '-' + incorrect + '</th>');
+            $tr.append('<th class="text-right">' + margin + '</th>');
+            $tr.append('<th colspan="3">N/A</th>');
+            $tr.append('<th style="font-size:32px;">&infin;</th>');
+            $thead.append($tr);
+        }
 
         // build the table body
         for (i=0; i<settings.board.length; i++) {
@@ -479,14 +636,14 @@ function Board(options) {
             if (user.id == settings.currentUser) {
                 $tr.addClass('success');
             }
-            $tr.append('<td>' + (i+1) + '</td>');
-            $tr.append($('<td nowrap="nowrap"/>')
+            $tr.append('<td class="text-right">' + (i+1) + '</td>');
+            $tr.append($('<td nowrap="nowrap" />')
                 .append($('<div/>')
                     .addClass('avatar-wrapper')
                     .append('<img class="avatar" src="' + globals.getUserAvatar(user) + '"/>')
                 )
-                .append($userDisplay = $('<div/>')
-                    .append('<a href="' + CONF.url.profile(user.id) + '">' + user.username + (CONF.isSuperadmin ? ' (' + user.id + ')' : '') + '</a><br />')
+                .append('<a style="float:left;" href="' + CONF.url.profile(user.id) + '">' + user.username + (CONF.isSuperadmin ? ' (' + user.id + ')' : '') + '</a><br />')
+                .append($userDisplay = $('<div style="display:block;margin-left:52px;"/>')
                 )
             );
 
@@ -500,22 +657,31 @@ function Board(options) {
             }
             for (j=startWeek; j<=21; j++) {
                 pick = getPick(user, j);
+                onBandwagon = isOnBandwagon(user, j);
                 if (pick) {
                     $tr.append($('<td/>')
                         .addClass(pick.incorrect == 1 ? 'incorrect' : '')
                         .append($('<div/>')
                             .addClass('pick-wrapper')
+                            // mov
                             .append(!settings.viewOptions.showMov || j > settings.currentWeek ? '' : $('<div/>')
                                 .addClass('pickMov')
                                 .addClass(pick.week < settings.currentWeek || pick.year < settings.currentYear ? 'old' : '')
                                 .addClass(pick.incorrect ? 'incorrect' : '')
                                 .html(stylizeMov(pick.mov && pick.mov.hasOwnProperty('mov') ? pick.mov.mov : ''))
                             )
+                            // bandwagon icon
+                            .append(j >= settings.currentWeek || !onBandwagon ? '' : $('<div/>')
+                                .addClass('pickBandwagon')
+                                .html('<img src="/images/bwanimated-thumb.gif" title="Riding the Bandwagon" />')
+                            )
+                            // team icon or bandwagon icon
                             .append(!settings.viewOptions.showLogos ? pick.team.shortname : $('<div/>')
                                 .addClass('logo')
                                 .addClass('logo-' + globals.getTeamLogoClass(pick, settings.currentWeek))
-                                .css('background-position', globals.getTeamLogoOffset(pick.team, 'small'))
-                                .attr('title', pick.team.longname + (pick.setbysystem ? ' (Set by System)' : ''))
+                                .css('background-position', onBandwagon && settings.currentWeek === j ? '200px 0' : globals.getTeamLogoOffset(pick.team, 'small'))
+                                .attr('title', (onBandwagon ? '[BANDWAGON] ' : '') + pick.team.longname + (pick.setbysystem ? ' (Set by System)' : ''))
+                                .append(!onBandwagon || j !== settings.currentWeek ? '' : '<div class="bandwagon-main-icon-wrapper"><img src="/images/bwanimated-thumb.gif" title="Riding the Bandwagon" /></div>')
                             )
                         )
                     );
@@ -525,14 +691,25 @@ function Board(options) {
             }
             
             // show the end columns
-            $tr.append('<td class="text-center">' + (user.stayAlive > 21 ? '...' : 'Week ' + user.stayAlive) + '</td>');
+            bwStreak = getBandwagonStreak(user);
+            $tr.append('<td class="text-center" nowrap="nowrap">' + (user.stayAlive > 21 ? '...' : 'Week ' + user.stayAlive) + '</td>');
             $tr.append('<td class="text-center">' + user.record + '</td>');
             $tr.append('<td class="text-right">' + user.margin + '</td>');
             $tr.append('<td class="text-right">' + globals.dollarFormat(user.money) + '</td>');
             $tr.append('<td class="text-right">' + globals.ordinal(user.power_ranking) + '</td>');
             $tr.append('<td class="text-right">' + user.power_points + '</td>');
+            $tr.append('<td class="text-center">' + (bwStreak > 0 ? '+' : '') + bwStreak + '</td>');
             
             $tbody.append($tr);
+            
+            if (user.money >= mostMoney) {
+                if (user.money == mostMoney) {
+                    mostMoneyUser = 'Tie';
+                } else {
+                    mostMoney = user.money;
+                    mostMoneyUser = user.username;
+                }
+            }
                 
         }
         
@@ -550,16 +727,20 @@ function Board(options) {
         if (settings.collapsable) {
             $container
                 .empty()
-                .append(buildPanel('collapsePayout', 'Current Payout Breakdown', false, $payout))
-                .append(buildPanel('collapseBoard', 'Pick Board', true, $('<div class="table-responsive"/>')
-                    .append($table)
+                .append(buildPanel('collapsePayout', 'Current Payout Breakdown (Current Leader: ' + mostMoneyUser + ' - ' + globals.dollarFormat(mostMoney) + ')', false, $payout))
+                .append(buildPanel('collapseBoard', 'Pick Board', true, $('<div style="width:auto;overflow:auto;"/>')
+                    .append($('<div class="table-responsive"/>')
+                        .append($table)
+                    )
                 ));
         } else {
             $container
                 .empty()
                 .append($payout)
-                .append($('<div class="table-responsive"/>')
-                    .append($table)
+                .append($('<div style="width:auto;overflow:auto;"/>')
+                    .append($('<div class="table-responsive"/>')
+                        .append($table)
+                    )
                 );
         }
         
@@ -583,14 +764,19 @@ function Board(options) {
                 cache:      false,
                 success:    function(r) {
                                 var boardString;
-                                if (r && r.board) {
-                                    boardString = JSON.stringify(r.board);
-                                    if (lastBoard !== boardString) {
-                                        lastBoard = boardString;
-                                        settings.board = r.board;
-                                        aggregateStats();
-                                        self.sort();
-                                        self.redraw();
+                                if (r) {
+                                    if (r.bandwagon) {
+                                        settings.bandwagon = r.bandwagon;
+                                    }
+                                    if (r.board) {
+                                        boardString = JSON.stringify(r.board);
+                                        if (lastBoard !== boardString) {
+                                            lastBoard = boardString;
+                                            settings.board = r.board;
+                                            aggregateStats();
+                                            self.sort();
+                                            self.redraw();
+                                        }
                                     }
                                 }
                                 if (settings.poll) {

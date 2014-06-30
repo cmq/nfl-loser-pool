@@ -8,11 +8,13 @@
  *  
  *  KDHTODO larger items
  *  
+ *  - On the home page, when showing the collapsable accordian sections, set a cookie to remember which they had open
  *  - When showing Talk posts, only get those where active = 1 (just added that new field to the database)
  *  - On the index page, add an interval that will poll for new board data and automatically update the model with changes
  *  - handle AJAX errors where user is logged out
  *  - Graph of referrers for how people know each other
  *  - Allow likes/dislikes for trash talk -- include these in power ranking
+ *  - Figure out when to run the recalculation routines -- keep in mind bandwagon can be affected by EVERY PICK (so run on a cron or trigger via pick or something?)
  *  - Keep track of WHEN picks are made so we know how early people picked
  *  - For trash talk by me, have a flag I can set so it shows up as just a regular talk versus the yellow highlighted "admin" talk
  *  - Is there a way to not have to keep deactivating users every year?  Maybe allow logins forever, but they can only see the current board if they're playing this year?

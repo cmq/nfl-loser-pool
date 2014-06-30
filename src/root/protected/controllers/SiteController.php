@@ -9,9 +9,17 @@ class SiteController extends Controller
         // ironically, if you apply them in the same order twice, the second time everything works properly... must be something jacked with Yii
         $boardData = User::model()->withPicks(true, isSuperadmin())->active()->withBadges()->withWins()->findAll(array(
             'select' => 't.id, t.username, t.avatar_ext, t.power_points, t.power_ranking',
-            'order' => 't.id, picks.yr, picks.week, wins.place, wins.pot, wins.yr, badge.zindex',
+            'order' => 't.username, t.id, picks.yr, picks.week, wins.place, wins.pot, wins.yr, badge.zindex',
         ));
         return $boardData;
+    }
+    
+    private function _getBandwagon()
+    {
+        $bandwagon = Bandwagon::model()->with(array('team', 'chief'))->findAll(array(
+            'condition' => 't.yr = ' . getCurrentYear(),
+        ));
+        return $bandwagon;
     }
     
     /**
@@ -41,18 +49,20 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $boardData = $this->_getBoardData();
+        $bandwagon = $this->_getBandwagon();
         $talk = Talk::model()->withLikes()->findAll(array(
             'condition' => 't.yr = ' . getCurrentYear(),
             'limit'     => 5,
             'order'     => 't.postedon desc'
         ));
-        $this->render('index', array('boardData'=>$boardData, 'talk'=>$talk));
+        $this->render('index', array('boardData'=>$boardData, 'bandwagon'=>$bandwagon, 'talk'=>$talk));
     }
     
     public function actionPoll()
     {
         $boardData = $this->_getBoardData();
-        $this->writeJson(array('board'=>$boardData));
+        $bandwagon = $this->_getBandwagon();
+        $this->writeJson(array('board'=>$boardData, 'bandwagon'=>$bandwagon));
         exit;
     }
 

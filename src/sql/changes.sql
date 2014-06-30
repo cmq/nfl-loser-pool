@@ -234,3 +234,4 @@ update stat set description = 'The number of times the player has been Chief of 
 update stat set description = 'The frequency of all picks for which the player has been Chief of the Bandwagon' where id = 43;
 update stat set description = 'The number of times the player successfully rode the Bandwagon for 3 or more weeks, then jumped off and got their pick correct, just as the Bandwagon was incorrect' where id = 44;
 
+alter table loserpick add weeks_on_bandwagon int not null default 0;

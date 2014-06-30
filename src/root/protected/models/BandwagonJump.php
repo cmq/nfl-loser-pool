@@ -38,7 +38,7 @@ class BandwagonJump extends DeepActiveRecord
      */
     public function rules() {
         return array(
-            array('yr, week, teamid, cheifid', 'type', 'type'=>'integer'),
+            array('yr, week, userid, previous_weeks', 'type', 'type'=>'integer'),
             array('week', 'numerical', 'integerOnly'=>true, 'min'=>1, 'max'=>21),
         );
     }

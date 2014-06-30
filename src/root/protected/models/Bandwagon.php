@@ -28,8 +28,8 @@ class Bandwagon extends DeepActiveRecord
     public function relations()
     {
         return array(
-        	'team' => array(self::BELONGS_TO, 'Team', 'teamid'),
-            'user' => array(self::BELONGS_TO, 'User', 'cheifid'),
+        	'team'  => array(self::BELONGS_TO, 'Team', 'teamid'),
+            'chief' => array(self::BELONGS_TO, 'User', 'chiefid'),
         );
     }
     
@@ -39,7 +39,7 @@ class Bandwagon extends DeepActiveRecord
      */
     public function rules() {
         return array(
-            array('yr, week, teamid, cheifid', 'type', 'type'=>'integer'),
+            array('yr, week, teamid, chiefid', 'type', 'type'=>'integer'),
             array('week', 'numerical', 'integerOnly'=>true, 'min'=>1, 'max'=>21),
         );
     }

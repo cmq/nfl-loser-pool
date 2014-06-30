@@ -1,6 +1,6 @@
 @CHARSET "UTF-8";
 
-td.incorrect, .incorrect td,
+th.incorrect, td.incorrect, .incorrect td,
 /* the next line is to counter-act the effects of bootstrap clearing out our table cell coloring */
 table.picks > tbody > tr > td.incorrect {
     background: #febbbb; /* Old browsers */
@@ -21,6 +21,9 @@ table.picks > tbody > tr > td.incorrect {
 .bold {
     font-weight: bold;
 }
+.clear {
+    clear: both;
+}
 
 /*
  * Updates to help work with Twitter Bootstrap
@@ -38,6 +41,9 @@ body {
 .picks > thead > tr > th, .picks > tbody > tr > th, .picks > tfoot > tr > th, .picks > thead > tr > td {
     text-align: center;
 }
+.picks > thead > tr > th.text-right {
+    text-align: right;
+}
 .picks.table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
     background-color: #f0f0f0
 }
@@ -49,6 +55,9 @@ body {
 }
 .navbar .loginlogout a {
     color: #fff;
+}
+.panel-group .panel.talk + .panel.talk {
+    margin-top: 20px;
 }
 
 
@@ -217,6 +226,22 @@ img.user-badge {
 .pickMov.incorrect {
     color: black;
 }
+.pickBandwagon {
+    position: absolute;
+    top: -17px;
+    left: 1px;
+}
+.pickBandwagon img {
+    height: 8px;
+}
+.bandwagon-main-icon-wrapper {
+    width: 100%;
+    height: 100%;
+    margin-top: 5px;
+    margin-left: 2px;
+    opacity: 0.85;
+    background-color: inherit;
+}
 
 
 /*
@@ -330,6 +355,7 @@ img.user-badge {
 }
 .trophycase {
     display: inline-block;
+    margin-right: 10px;
 }
 #trophycase {
     margin-left: 50px;
@@ -357,6 +383,26 @@ img.user-badge {
     text-align: center;
 }
 
+
+/*
+ * Bandwagon
+ */
+#the-bandwagon .chief {
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    left: 300px;
+    font-weight: bold;
+    border-radius: 5px;
+    border: red 2px solid;
+    padding: 3px;
+    background-color: #fff;
+    background: linear-gradient(#ffffff, #e0e0e0);
+    box-shadow: 4px 4px 6px #666666;
+}
+#the-bandwagon .others {
+    float: left;
+}
 
 
 

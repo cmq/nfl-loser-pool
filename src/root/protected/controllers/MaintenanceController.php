@@ -135,18 +135,32 @@ class MaintenanceController extends Controller
         return false;
     }
     
-    private function _weeksOnBandwagon($user, $toYear, $toWeek) {
+    private function _weeksOnBandwagon($user, $toYear, $toWeek) {        
         $b = array_reverse($this->bandwagons);
         $weeksOn = 0;
         foreach ($b as $bandwagon) {
-            if ($bandwagon['year'] > $toYear || ($bandwagon['year'] == $toYear && $bandwagon['week'] >= $toWeek)) {
+            if ($bandwagon['year'] > $toYear || ($bandwagon['year'] == $toYear && $bandwagon['week'] > $toWeek)) {
                 // we haven't traveled backwards far enough yet
                 continue;
             }
-            if ($this->_userHasPick($user, $bandwagon['year'], $bandwagon['week'], $bandwagon['teamid'], true)) {
-                $weeksOn++;
-            } else {
-                break;
+            if (isset($user['years'][$bandwagon['year']]['weeks'][$bandwagon['week']]) || isset($user['years'][$bandwagon['year']]['pendingPicks'][$bandwagon['week']])) {
+                if ($this->_userHasPick($user, $bandwagon['year'], $bandwagon['week'], $bandwagon['teamid'], true)) {
+                    // the user has the bandwagon pick for this week
+                    if ($weeksOn < 0) {
+                        // the user was previously NOT on the bandwagon, and that streak is now over
+                        break;
+                    }
+                    // otherwise, just increase their weeks on the bandwagon
+                    $weeksOn++;
+                } else {
+                    // the user does NOT have the bandwagon pick for this week
+                    if ($weeksOn > 0) {
+                        // the user was previously ON the bandwagon, and that streak is now over
+                        break;
+                    }
+                    // otherwise, just decrease their weeks on the bandwagon
+                    $weeksOn--;
+                }
             }
         }
         return $weeksOn;
@@ -646,6 +660,7 @@ class MaintenanceController extends Controller
             
             $this->_buildStreaks($user);
         }
+        unset($user);
 
 
         // set the internal users array for the following functions to use
@@ -656,7 +671,7 @@ class MaintenanceController extends Controller
         
         // recalculate the power ranking
         $this->_recalcPower();
-
+        
         // recalculate bandwagons and bandwagon badges/stats
         $this->_recalcBandwagon();
         
@@ -993,6 +1008,7 @@ class MaintenanceController extends Controller
                 }
             }
         }
+        unset($newBandwagon);
         
         // figure out the chief of each bandwagon and insert it
         foreach ($newBandwagons as $bandwagon) {
@@ -1095,6 +1111,7 @@ class MaintenanceController extends Controller
                     $user['bandwagonChief']++;
                 }
             }
+            unset($user);
             // set chief of the bandwagon floating badge
             if ($bandwagon['year'] == getCurrentYear() && $bandwagon['week'] == getCurrentWeek()) {
                 $this->users[$bandwagon['chiefid']]['years'][$bandwagon['year']]['badges'][] = 19;
@@ -1151,6 +1168,20 @@ class MaintenanceController extends Controller
                         $wasOnBandwagonLastWeek = false;
                     }
                 }
+            }
+        }
+        unset($user);
+        
+        // for all users that have a pick for the current week,
+        // figure out how long they've been on or off the bandwagon up to this week
+        
+        $curYear = getCurrentYear();
+        $curWeek = getCurrentWeek();
+        foreach ($this->users as $user) {
+            if (isset($user['years'][$curYear]['weeks'][$curWeek]) || isset($user['years'][$curYear]['pendingPicks'][$curWeek])) {
+                $weeksOnBandwagon = $this->_weeksOnBandwagon($user, $curYear, $curWeek);
+                $sql = "update loserpick set weeks_on_bandwagon = $weeksOnBandwagon where userid = {$user['id']} and week = $curWeek and yr = $curYear";
+                Yii::app()->db->createCommand($sql)->query();
             }
         }
     }
@@ -1312,8 +1343,11 @@ class MaintenanceController extends Controller
                     $powerUser[] = $powerWeek;
                     $week['powerdata'] = $powerWeek;
                 }
+                unset($week);
             }
+            unset($year);
         }
+        unset($user);
         
         
         // figure out every user's power points for every year
@@ -1332,6 +1366,7 @@ class MaintenanceController extends Controller
             }
             $user['powerpoints'] = $lastPowerPoints;
         }
+        unset($user);
         
         
         // loop over every year and rank all users based on power points they have for that year
@@ -1368,6 +1403,7 @@ class MaintenanceController extends Controller
                     }
                 }
             }
+            unset($user);
         }
         
         

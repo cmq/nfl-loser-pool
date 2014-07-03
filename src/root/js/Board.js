@@ -673,7 +673,7 @@ function Board(options) {
                             // bandwagon icon
                             .append(j >= settings.currentWeek || !onBandwagon ? '' : $('<div/>')
                                 .addClass('pickBandwagon')
-                                .html('<img src="/images/bwanimated-thumb.gif" title="Riding the Bandwagon" />')
+                                .html('<img src="/images/bw-tiny.png" title="Riding the Bandwagon" />')
                             )
                             // team icon or bandwagon icon
                             .append(!settings.viewOptions.showLogos ? pick.team.shortname : $('<div/>')
@@ -681,7 +681,7 @@ function Board(options) {
                                 .addClass('logo-' + globals.getTeamLogoClass(pick, settings.currentWeek))
                                 .css('background-position', onBandwagon && settings.currentWeek === j ? '200px 0' : globals.getTeamLogoOffset(pick.team, 'small'))
                                 .attr('title', (onBandwagon ? '[BANDWAGON] ' : '') + pick.team.longname + (pick.setbysystem ? ' (Set by System)' : ''))
-                                .append(!onBandwagon || j !== settings.currentWeek ? '' : '<div class="bandwagon-main-icon-wrapper"><img src="/images/bwanimated-thumb.gif" title="Riding the Bandwagon" /></div>')
+                                .append(!onBandwagon || j !== settings.currentWeek ? '' : '<div class="bandwagon-main-icon-wrapper"><img src="/images/bwanimated-thumb.gif" /></div>')
                             )
                         )
                     );

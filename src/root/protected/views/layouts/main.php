@@ -9,6 +9,7 @@
  *  KDHTODO larger items
  *  
  *  - On the home page, when showing the collapsable accordian sections, set a cookie to remember which they had open
+ *  - If the user hasn't made a pick for the current week, we need a way to inform them like the header on the old site
  *  - When showing Talk posts, only get those where active = 1 (just added that new field to the database)
  *  - On the index page, add an interval that will poll for new board data and automatically update the model with changes
  *  - handle AJAX errors where user is logged out

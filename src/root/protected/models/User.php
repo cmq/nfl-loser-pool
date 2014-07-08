@@ -135,21 +135,22 @@ class User extends DeepActiveRecord
         );
     }
     
-    public function withPicks($currentYearOnly = true, $future = false)
+    public function withPicks($year = 0, $future = false, $innerJoin = false)
     {
         $condition = '';
-        if ($currentYearOnly) {
-            $condition .= ($condition ? ' AND ' : '') . 'picks.yr = ' . getCurrentYear();
+        if ($year > 0) {
+            $condition .= ($condition ? ' AND ' : '') . 'picks.yr = ' . (int) $year;
         }
-        if (!$future) {
+        if ($year == getCurrentYear() && !$future) {
             $condition .= ($condition ? ' AND ' : '') . '(picks.week < ' . getCurrentWeek() . ' or picks.userid = ' . userId() . ')';
         }
         
         $this->getDbCriteria()->mergeWith(array(
             'with' => array(
                 'picks' => array(
-                    'on'   => $condition,
-                    'with' => array('team', 'mov'),
+                    'joinType' => $innerJoin ? 'INNER JOIN' : 'LEFT OUTER JOIN',
+                    'on'       => $condition,
+                    'with'     => array('team', 'mov'),
                 ),
             ),
         ));

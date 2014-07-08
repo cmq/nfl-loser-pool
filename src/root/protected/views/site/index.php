@@ -17,9 +17,9 @@ $(function() {
         collapsable: true,
         viewOptions: {
             collapseHistory: <?php echo userField('collapse_history') ? 'true' : 'false'?>,
-            showBadges:      <?php echo userField('show_badges') ? 'true' : 'false'?>,
-            showMov:         <?php echo userField('show_mov') ? 'true' : 'false'?>,
-            showLogos:       <?php echo userField('show_logos') ? 'true' : 'false'?>
+            showBadges:      <?php echo userField('show_badges') ? 'true' : 'true'?>,
+            showMov:         <?php echo userField('show_mov') ? 'true' : 'true'?>,
+            showLogos:       <?php echo userField('show_logos') ? 'true' : 'true'?>
         }
     });
 });
@@ -31,6 +31,7 @@ $(function() {
 
 <div class="container-fluid">
     
+    <h2>Loser Pool Home</h2>
     
     <div class="panel-group">
         <div class="panel panel-primary">
@@ -47,7 +48,6 @@ $(function() {
                 </div>
             </div>
         </div>
-        <!-- KDHTODO move this to Board.js -->
         <?php
         if ($thisWeekBandwagon):
             ?>

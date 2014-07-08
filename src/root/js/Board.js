@@ -10,6 +10,7 @@ function Board(options) {
             currentYear:    CONF.currentYear,
             showAdmin:      CONF.isAdmin,
             showBandwagon:  true,
+            showPayout:     true,
             board:          [],
             bandwagon:      [],
             viewOptions: {
@@ -27,6 +28,14 @@ function Board(options) {
         $container;
 
 
+    function countPot2() {
+        return settings.currentYear > CONF.earliestYear;
+    }
+    
+    function countPot3() {
+        return settings.currentYear >= CONF.movFirstYear;
+    }
+    
     function getPick(user, week) {
         week--; // provided week is 1-based, make 0-based to access array records
         if (user.picks && user.picks.length > week && user.picks[week].team) {
@@ -106,7 +115,7 @@ function Board(options) {
     function getBandwagonStreak(user) {
         var p;
         for (p=settings.currentWeek; p>=1; p--) {
-            if (user.picks.length >= p) {
+            if (user.picks.length >= p && user.picks[p-1].teamid > 0) {
                 return user.picks[p-1].weeks_on_bandwagon;
             }
         }
@@ -277,7 +286,7 @@ function Board(options) {
             for (j=1; j<=21; j++) {
                 pick = getPick(user, j);
                 if (pick) {
-                    if (pick.week > settings.currentWeek && settings.currentYear >= settings.currentYear) {
+                    if (pick.week > settings.currentWeek && settings.currentYear >= CONF.currentYear) {
                         // we hit a week that is beyond the current year/week, so we can't count it, and we're done with this user
                         break;
                     }
@@ -327,7 +336,7 @@ function Board(options) {
         }
         
         // figure out the pots
-        if (settings.currentYear == settings.currentYear) {
+        if (settings.currentYear == CONF.currentYear) {
             // reset the users on each pot and each place
             for (i=0; i<3; i++) {
                 for (j=0; j<2; j++) {
@@ -379,8 +388,16 @@ function Board(options) {
                 }
             }
         } else {
-            // KDHTODO this is a past year, the values should be provided from the server
-            settings.board[i].money = user.id;  // KDHTODO replace with real logic
+            // this is a past year, the values should be provided from the server
+            for (i=0; i<settings.board.length; i++) {
+                user = settings.board[i];
+                settings.board[i].money = 0;
+                for (j=0; j<user.wins.length; j++) {
+                    if (parseInt(user.wins[j].yr, 10) == settings.currentYear) {
+                        settings.board[i].money += user.wins[j].winnings;
+                    }
+                }
+            }
         }
         
     }
@@ -406,16 +423,22 @@ function Board(options) {
             for (j=i+1; j<settings.board.length; j++) {
                 thisVal    = getSortVal(settings.board[i], settings.order);
                 compareVal = getSortVal(settings.board[j], settings.order);
-                if (compareVal == thisVal && settings.order != 'money') {
-                    // secondary sort is always money
-                    thisVal    = getSortVal(settings.board[i], 'money');
-                    compareVal = getSortVal(settings.board[j], 'money');
-                    if (compareVal == thisVal && settings.order != 'powerRanking') {
-                        // tertiary sort is always power ranking
+                if (compareVal == thisVal) {
+                    if (settings.order != 'money') {
+                        // secondary sort is always money
+                        thisVal    = getSortVal(settings.board[i], 'money');
+                        compareVal = getSortVal(settings.board[j], 'money');
+                        if (compareVal == thisVal && settings.order != 'powerRanking') {
+                            // tertiary sort is always power ranking
+                            thisVal    = getSortVal(settings.board[i], 'powerRanking');
+                            compareVal = getSortVal(settings.board[j], 'powerRanking');
+                        }
+                    } else {
+                        // we're already doing a primary sort on money, so fall back to power ranking
                         thisVal    = getSortVal(settings.board[i], 'powerRanking');
                         compareVal = getSortVal(settings.board[j], 'powerRanking');
                     }
-                }
+                } 
                 if ((compareVal < thisVal) === (settings.order.charAt(0) != '-')) {
                     swap              = settings.board[i];
                     settings.board[i] = settings.board[j];
@@ -431,7 +454,7 @@ function Board(options) {
     this.redraw = function() {
         var $container, $table, $tr, i, j, user, pick, $userDisplay,
             // stuff for calculating the bandwagon row
-            bwpick, bwuser,
+            bwpick, bwuser, bwfound,
             firstWeek = 22,
             correct   = 0,
             incorrect = 0,
@@ -490,6 +513,7 @@ function Board(options) {
         );
         $tr.append($('<th/>')
             .addClass(getSortHeadClass('record'))
+            .addClass(countPot2() ? '' : 'unused-column')
             .html('Pot 2<br />(Record)')
             .on('click', function(e) {
                 e.preventDefault();
@@ -498,6 +522,7 @@ function Board(options) {
         );
         $tr.append($('<th/>')
             .addClass(getSortHeadClass('margin'))
+            .addClass(countPot3() ? '' : 'unused-column')
             .html('Pot 3<br />(Margin)')
             .on('click', function(e) {
                 e.preventDefault();
@@ -566,32 +591,38 @@ function Board(options) {
             }
             // week-by-week view
             for (i=startWeek; i<=21; i++) {
+                bwfound = false;
                 if (i <= settings.currentWeek) {
                     for (j=0; j<settings.bandwagon.length; j++) {
                         if (settings.bandwagon[j].week == i) {
                             bwpick = getUserBandwagonPick(i);
-                            $tr.append($('<th/>')
-                                .addClass(bwpick.incorrect == 1 ? 'incorrect' : '')
-                                .append($('<div/>')
-                                    .addClass('pick-wrapper')
-                                    .append(!settings.viewOptions.showMov || j > settings.currentWeek || !bwpick ? '' : $('<div/>')
-                                        .addClass('pickMov')
-                                        .addClass(bwpick.week < settings.currentWeek || bwpick.year < settings.currentYear ? 'old' : '')
-                                        .addClass(bwpick.incorrect ? 'incorrect' : '')
-                                        .html(stylizeMov(bwpick.mov && bwpick.mov.hasOwnProperty('mov') ? bwpick.mov.mov : ''))
+                            if (bwpick) {
+                                bwfound = true;
+                                $tr.append($('<th/>')
+                                    .addClass(bwpick.incorrect == 1 ? 'incorrect' : '')
+                                    .append($('<div/>')
+                                        .addClass('pick-wrapper')
+                                        .append(!settings.viewOptions.showMov || j > settings.currentWeek || !bwpick ? '' : $('<div/>')
+                                            .addClass('pickMov')
+                                            .addClass(bwpick.week < settings.currentWeek || bwpick.year < settings.currentYear ? 'old' : '')
+                                            .addClass(bwpick.incorrect ? 'incorrect' : '')
+                                            .html(bwpick.mov && bwpick.mov.hasOwnProperty('mov') ? stylizeMov(bwpick.mov.mov) : '')
+                                        )
+                                        .append(!settings.viewOptions.showLogos ? bwpick.team.shortname : $('<div/>')
+                                            .addClass('logo')
+                                            .addClass('logo-' + (i == settings.currentWeek ? 'medium' : 'small'))
+                                            .css('background-position', globals.getTeamLogoOffset(bwpick.team, 'small'))
+                                            .attr('title', bwpick.team.longname)
+                                        )
                                     )
-                                    .append(!settings.viewOptions.showLogos ? bwpick.team.shortname : $('<div/>')
-                                        .addClass('logo')
-                                        .addClass('logo-' + (i == settings.currentWeek ? 'medium' : 'small'))
-                                        .css('background-position', globals.getTeamLogoOffset(bwpick.team, 'small'))
-                                        .attr('title', bwpick.team.longname)
-                                    )
-                                )
-                            );
+                                );
+                            }
                             break;
                         }
                     }
-                } else {
+                }
+                if (!bwfound) {
+                    // if we get here we didn't find a bandwagon, so we need to display an empty cell
                     $tr.append('<th/>');
                 }
             }
@@ -620,8 +651,8 @@ function Board(options) {
             }
             // show the summaries
             $tr.append('<th>' + (firstWeek > 21 ? '...' : 'Week ' + firstWeek) + '</th>');
-            $tr.append('<th>' + correct + '-' + incorrect + '</th>');
-            $tr.append('<th class="text-right">' + margin + '</th>');
+            $tr.append('<th' + (countPot2() ? '' : ' class="unused-column"') + '>' + correct + '-' + incorrect + '</th>');
+            $tr.append('<th class="text-right' + (countPot3() ? '' : ' unused-column') + '">' + margin + '</th>');
             $tr.append('<th colspan="3">N/A</th>');
             $tr.append('<th style="font-size:32px;">&infin;</th>');
             $thead.append($tr);
@@ -668,7 +699,7 @@ function Board(options) {
                                 .addClass('pickMov')
                                 .addClass(pick.week < settings.currentWeek || pick.year < settings.currentYear ? 'old' : '')
                                 .addClass(pick.incorrect ? 'incorrect' : '')
-                                .html(stylizeMov(pick.mov && pick.mov.hasOwnProperty('mov') ? pick.mov.mov : ''))
+                                .html(pick.mov && pick.mov.hasOwnProperty('mov') ? stylizeMov(pick.mov.mov) : '')
                             )
                             // bandwagon icon
                             .append(j >= settings.currentWeek || !onBandwagon ? '' : $('<div/>')
@@ -693,8 +724,8 @@ function Board(options) {
             // show the end columns
             bwStreak = getBandwagonStreak(user);
             $tr.append('<td class="text-center" nowrap="nowrap">' + (user.stayAlive > 21 ? '...' : 'Week ' + user.stayAlive) + '</td>');
-            $tr.append('<td class="text-center">' + user.record + '</td>');
-            $tr.append('<td class="text-right">' + user.margin + '</td>');
+            $tr.append('<td class="text-center' + (countPot2() ? '' : ' unused-column') + '">' + user.record + '</td>');
+            $tr.append('<td class="text-right' + (countPot3() ? '' : ' unused-column') + '">' + user.margin + '</td>');
             $tr.append('<td class="text-right">' + globals.dollarFormat(user.money) + '</td>');
             $tr.append('<td class="text-right">' + globals.ordinal(user.power_ranking) + '</td>');
             $tr.append('<td class="text-right">' + user.power_points + '</td>');
@@ -715,7 +746,7 @@ function Board(options) {
         
         
         // draw the pots payout
-        if (settings.currentYear == CONF.currentYear) {
+        if (settings.showPayout) {
             $payout = buildPayoutTable();
         }
         
@@ -727,7 +758,7 @@ function Board(options) {
         if (settings.collapsable) {
             $container
                 .empty()
-                .append(buildPanel('collapsePayout', 'Current Payout Breakdown (Current Leader: ' + mostMoneyUser + ' - ' + globals.dollarFormat(mostMoney) + ')', false, $payout))
+                .append(!settings.showPayout ? '' : buildPanel('collapsePayout', 'Payout Breakdown (Current Leader: ' + mostMoneyUser + ' - ' + globals.dollarFormat(mostMoney) + ')', false, $payout))
                 .append(buildPanel('collapseBoard', 'Pick Board', true, $('<div style="width:auto;overflow:auto;"/>')
                     .append($('<div class="table-responsive"/>')
                         .append($table)
@@ -736,7 +767,7 @@ function Board(options) {
         } else {
             $container
                 .empty()
-                .append($payout)
+                .append(settings.showPayout ? $payout : '')
                 .append($('<div style="width:auto;overflow:auto;"/>')
                     .append($('<div class="table-responsive"/>')
                         .append($table)

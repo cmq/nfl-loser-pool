@@ -953,7 +953,7 @@ class MaintenanceController extends Controller
         $sql = '
             select      loserpick.teamid, loserpick.yr, loserpick.week, count(*) total
             from        loserpick
-            where       loserpick.yr > 2004
+            where       loserpick.teamid > 0
             group by    teamid, yr, week
             order by    loserpick.yr, loserpick.week, total desc';
         $rsBandwagon = Yii::app()->db->createCommand($sql)->query();
@@ -1024,7 +1024,7 @@ class MaintenanceController extends Controller
             }
             
             // determine how long each candidate has been on the bandwagon
-            $maxTimeOnBandwagon     = 0;
+            $maxTimeOnBandwagon     = -9999;
             $revisedChiefCandidates = array();
             foreach ($chiefCandidates as $chief) {
                 $timeOnBandwagon = $this->_weeksOnBandwagon($chief, $bandwagon['year'], $bandwagon['week']);
@@ -1044,6 +1044,7 @@ class MaintenanceController extends Controller
             }
             
             // break any ties by awarding chief to the highest-ranked user
+            if (count($chiefCandidates) < 1) continue;  // this was 2004, when certain weeks had no picks because the season ended early
             if (count($chiefCandidates) > 1) {
                 // echo "Chief tie on week {$bandwagon['week']}, {$bandwagon['year']}<br />";
                 $chief = $this->_getHighestRankedUser($chiefCandidates);
@@ -1137,7 +1138,6 @@ class MaintenanceController extends Controller
             $bandwagonCorrectStreak = 0;
             $wasOnBandwagonLastWeek = false;
             foreach ($user['years'] as $y=>$year) {
-                if ($y == 2004) continue;
                 foreach ($year['weeks'] as $w=>$week) {
                     if ($week['onBandwagon']) {
                         // the user was on the bandwagon this week
@@ -1171,6 +1171,22 @@ class MaintenanceController extends Controller
             }
         }
         unset($user);
+        
+        // left this code here just once and updated the userId's in the continue statement so I could process the full history just once
+        /*
+        foreach ($this->users as $user) {
+            if ($user['id'] < 121 || $user['id'] > 150) continue;
+            foreach ($user['years'] as $y=>$year) {
+                foreach ($year['weeks'] as $w=>$week) {
+                    if (isset($user['years'][$y]['weeks'][$w]) || isset($user['years'][$y]['pendingPicks'][$w])) {
+                        $weeksOnBandwagon = $this->_weeksOnBandwagon($user, $y, $w);
+                        $sql = "update loserpick set weeks_on_bandwagon = $weeksOnBandwagon where userid = {$user['id']} and week = $w and yr = $y";
+                        Yii::app()->db->createCommand($sql)->query();
+                    }
+                }
+            }
+        }
+        */
         
         // for all users that have a pick for the current week,
         // figure out how long they've been on or off the bandwagon up to this week

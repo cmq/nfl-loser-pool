@@ -24,6 +24,10 @@ table.picks > tbody > tr > td.incorrect {
 .clear {
     clear: both;
 }
+.unused-column {
+    color: #aaa !important;
+    font-size: 80% !important;
+}
 
 /*
  * Updates to help work with Twitter Bootstrap

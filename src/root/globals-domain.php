@@ -90,17 +90,26 @@ function getWeekName($week, $label=false) {
 	return $name;
 }
 
+function isLocked($week) {
+    $now      = new DateTime();
+    $locktime = getLockTime($week);
+    return ($now >= $locktime);
+}
+
 function getLockTime($week, $format=false) {
-    // KDHTODO get real lock time
-    $locktime = new DateTime();
-    modifyTimeForUser($locktime);
-    // KDHTODO adjust format
-    return $format ? $locktime->format('m/d/y h:i a') : $locktime;
+    $locktime = clone param('firstGame')[$week];
+    $locktime->sub(new DateInterval('PT1H'));   // lock 1 hour before the start
+    if ($format) {
+        modifyTimeForUser($locktime);
+        return $locktime->format('m/d/y h:i a');
+    }
+    return $locktime;
 }
 
 function modifyTimeForUser(&$datetime) {
     // figure out how the user's timezone applies
-    $hours = 0;
+    // NOTE:  locktime comes back in eastern time, but our user timezone modifications are based on central time, so start with -1
+    $hours = -1;
     if (userField('timezone')) {
         $hours = (int) userField('timezone');
     }
@@ -340,4 +349,13 @@ function formatStat($value, $type) {
             break;
     }
     return $ret;
+}
+
+function getTeamLogoOffset($team, $size) {
+    $multiplier = 50;
+    $offset     = (isset($team['image_offset']) ? $team['image_offset'] : 0);
+    if (strtolower($size) == 'large') {
+        $multiplier = 80;
+    }
+    return '0 -' . ($multiplier * $offset) . 'px';
 }

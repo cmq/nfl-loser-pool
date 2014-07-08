@@ -16,15 +16,15 @@ class PickController extends Controller
     
     public function actionSave()
     {
-        // KDHTODO verify the user can't save a pick for a past week (unless superadmin)
         $error  = '';
+        $team   = null;
         
         $userId = isSuperadmin() ? (int) getRequestParameter('user', 0) : userId();
         $week   = (int) getRequestParameter('week', 0);
         $year   = getCurrentYear();
         $teamId = (int) getRequestParameter('team', 0);
         
-        if ($week < getCurrentWeek() || !isSuperadmin()) {
+        if (isLocked($week) && !isSuperadmin()) {
             $error = 'This pick is already locked.';
         }
         
@@ -47,7 +47,11 @@ class PickController extends Controller
             $error = $this->saveRecord($record);
         }
         
-        $this->writeJson(array('error'=>$error));
+        if (!$error) {
+            $team = Team::model()->find(array('condition'=>"id = $teamId"));
+        }
+        
+        $this->writeJson(array('error'=>$error, 'team'=>$team));
         exit;
     }
 

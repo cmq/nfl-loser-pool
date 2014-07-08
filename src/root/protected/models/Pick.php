@@ -77,7 +77,6 @@ class Pick extends DeepActiveRecord
         $this->userid               = (int) $this->userid;
         $this->week                 = (int) $this->week;
         $this->yr                   = (int) $this->yr;
-        $this->incorrect            = (int) $this->incorrect;
         $this->setbysystem          = (int) $this->setbysystem;
         $this->weeks_on_bandwagon   = (int) $this->weeks_on_bandwagon;
     }

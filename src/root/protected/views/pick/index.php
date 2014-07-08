@@ -17,23 +17,44 @@ $(function() {
                 user: <?php echo userId(); ?>,   // KDHTODO update this to the user being edited so that superadmins can change other users' picks
                 week: week,
                 team: team
-            };
+            },
+            $logoContainer = $('.logo-container[week=' + week + ']'),
+            fnError;
+
+        fnError = function(msg) {
+            var $error = $('<span class="text-danger">' + msg + '</span>');
+            $logoContainer.html($error);
+            setTimeout(function() {
+                $error.fadeOut();
+            }, 5000);
+        };
+        
         $this.prop('disabled', true);
+        $logoContainer.find('.text-danger').remove();
+        $logoContainer.find('.logo').fadeOut();
         $.ajax({
             url: '<?php echo $this->createAbsoluteUrl('pick/save')?>',
             type: 'POST',
             data: data,
             success: function(response) {
+                var $newLogo;
                 if (response.hasOwnProperty('error') && response.error !== '') {
-                    // KDHTODO do something different
-                    alert(response.error);
+                    fnError(response.error);
                 } else {
-                    // KDHTODO set new logo
+                    $logoContainer.empty();
+                    if (response.hasOwnProperty('team') && response.team) {
+                        $newLogo = $('<div/>')
+                            .addClass('logo logo-medium')
+                            .css('background-position', globals.getTeamLogoOffset(response.team, 'small'))
+                            .attr('title', response.team.longname)
+                            .hide();
+                        $logoContainer.append($newLogo);
+                        $newLogo.fadeIn();
+                    }
                 }
             },
             error: function() {
-                // KDHTODO do something different
-                alert('An error ocurred, please try again.');
+                fnError('An error ocurred, please try again.');
             },
             complete: function() {
                 $this.prop('disabled', false);
@@ -51,7 +72,7 @@ $(function() {
                 <tr>
                     <th>Week</th>
                     <th colspan="2">Pick</th>
-                    <th>Lock Time</th>
+                    <th colspan="2">Lock Time</th>
                 </tr>
             </thead>
             <tbody>
@@ -65,14 +86,7 @@ $(function() {
                     <tr class="<?php echo $class?>">
                         <td><?php echo getWeekName($pick['week']);?></td>
                         <td>
-                            <!--
-                            // KDHTODO select what the user had
-                            // KDHTODO add a column for the logo
-                            // KDHTODO make a fancier select like the main page, to select a team by logo in a small modal?
-                            // KDHTODO AJAX call to save when the dropdown changes
-                            // KDHTODO disable dropdowns that are locked
-                            -->
-                            <select class="form-control team-pick" data-week="<?php echo $pick['week']?>">
+                            <select class="form-control team-pick" data-week="<?php echo $pick['week']?>"<?php echo isLocked($pick['week']) && !isSuperadmin() ? ' disabled="disabled"' : '';?>>
                                 <option value="">Select Loser...</option>
                                 <?php
                                 foreach ($teams as $team) {
@@ -81,10 +95,19 @@ $(function() {
                                 ?>
                             </select>
                         </td>
-                        <!-- KDHTODO populate -->
-                        <td>Logo</td>
-                        <!-- KDHTODO populate -->
+                        <td class="logo-container" week="<?php echo $pick['week'];?>"><div class="logo logo-medium" style="background-position:<?php echo getTeamLogoOffset($pick['team'], 'medium');?>" title="<?php echo $pick['team']['longname'];?>"></div></td>
                         <td><?php echo getLockTime($pick['week'], true)?></td>
+                        <td>
+                            <?php
+                            if (isLocked($pick['week'])) {
+                                echo '<strong>LOCKED</strong>';
+                            } else {
+                                $now = new DateTime();
+                                $difference = $now->diff(getLockTime($pick['week']));
+                                echo $difference->format('%a days, %h hours, %i minutes');
+                            }
+                            ?>
+                        </td>
                     </tr>
                     <?php
                 }

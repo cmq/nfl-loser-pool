@@ -565,10 +565,6 @@ function Board(options) {
             for (i=startWeek; i<=21; i++) {
                 $tr.append($('<th/>')
                     .html('<a href="' + CONF.url.showCorrect + '?week=' + i + '"><span class="glyphicon glyphicon-flash"></span></a>')
-                    .on('click', function(e) {
-                        e.preventDefault();
-                        self.sort(getSortOrder('pick' + i, settings.order), true);
-                    })
                 );
             }
             $tr.append('<th colspan="7"/>');

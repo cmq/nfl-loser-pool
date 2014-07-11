@@ -1,5 +1,7 @@
 <script src="<?php echo baseUrl('/js/lib/highcharts.js'); ?>"></script>
 <?php
+// KDHTODO this page doesn't work right for inactive users (no power rank point breakdowns)
+// KDHTODO need a link back to the profiles list
 // KDHTODO show floating or losable badges that were owned at one point? (And at which point they were owned)?
 
 

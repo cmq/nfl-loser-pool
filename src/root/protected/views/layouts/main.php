@@ -8,6 +8,8 @@
  *  
  *  KDHTODO larger items
  *  
+ *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?
+ *  - Profile pages don't work for inactive users (no power rank details or anything).  Is this related to the maintenance script?  http://loserpool2.localhost/index.php/stats/profile/20
  *  - On the home page, when showing the collapsable accordian sections, set a cookie to remember which they had open
  *  - If the user hasn't made a pick for the current week, we need a way to inform them like the header on the old site
  *  - When showing Talk posts, only get those where active = 1 (just added that new field to the database)

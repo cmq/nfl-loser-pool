@@ -1,9 +1,3 @@
-<?php
-// KDHTODO add searching?
-// KDHTODO allow hiding of inactive players
-
-?>
-
 <script>
 var users = <?php echo CJSON::encode($users);?>,
     order = 'power',
@@ -23,6 +17,7 @@ function aggregate() {
         users[i].money = money;
         users[i].flare = users[i].wins.length + users[i].userBadges.length;
         users[i].active = !!(parseInt(users[i].active, 10));
+        users[i].shown = true;
     }
 }
 
@@ -63,6 +58,28 @@ function sort(order) {
     draw();
 }
 
+function stylizeName(username) {
+    var filterName = $('#name-filter').val().toLowerCase(),
+        idx = username.toLowerCase().indexOf(filterName.toLowerCase());
+    if (idx >= 0) {
+        return username.substr(0, idx) + '<span class="highlight-search">' + username.substr(idx, filterName.length) + '</span>' + username.substr(idx + filterName.length);
+    }
+    return username;
+}
+
+function filter() {
+    var i,
+        filterName = $('#name-filter').val().toLowerCase(),
+        showActive = $('#active-filter').is(':checked'),
+        matches;
+    for (i=0; i<users.length; i++) {
+        matches = true;
+        matches = matches && (filterName == '' || users[i].username.indexOf(filterName) >= 0);
+        matches = matches && (showActive || users[i].active);
+        users[i].shown = matches;
+    }
+}
+
 function draw() {
     var i, $tbody = $('<tbody/>'),
         $table = $('<table class="table table-striped table-nonfluid"/>')
@@ -96,14 +113,16 @@ function draw() {
             )
             .append($tbody);
     for (i=0; i<users.length; i++) {
-        $tbody.append($('<tr/>')
-            .attr('style', users[i].active ? 'font-weight:bold;' : '')
-            .append('<td class="text-right">#' + users[i].power_ranking + '</td>')
-            .append('<td class="text-center"><img class="avatar" src="' + globals.getUserAvatar(users[i]) + '" /></td>')
-            .append('<td class="text-left"><a href="' + CONF.url.profile(users[i].id) + '">' + users[i].username + '</a></td>')
-            .append('<td class="text-right">' + globals.dollarFormat(users[i].money) + '</td>')
-            .append('<td class="text-right">' + users[i].flare + '</td>')
-        );
+        if (users[i].shown) {
+            $tbody.append($('<tr/>')
+                .attr('style', users[i].active ? 'font-weight:bold;' : '')
+                .append('<td class="text-right">#' + users[i].power_ranking + '</td>')
+                .append('<td class="text-center"><img class="avatar" src="' + globals.getUserAvatar(users[i]) + '" /></td>')
+                .append('<td class="text-left"><a href="' + CONF.url.profile(users[i].id) + '">' + stylizeName(users[i].username) + '</a></td>')
+                .append('<td class="text-right">' + globals.dollarFormat(users[i].money) + '</td>')
+                .append('<td class="text-right">' + users[i].flare + '</td>')
+            );
+        }
     }
     $('#profile-list').html($table);
     globals.lightboxAvatars();  // re-activate the newly-drawn avatars as lightboxes
@@ -112,10 +131,28 @@ function draw() {
 $(function() {
     aggregate();
     sort();
+    $('#name-filter').on('keyup change', function() {
+        filter();
+        draw();
+    });
+    $('#active-filter').on('change', function() {
+        filter();
+        draw();
+    });
 });
 </script>
 
-<div class="container" id="profile-list"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 text-right">Filter Names:</div>
+        <div class="col-xs-12 col-sm-6"><input type="text" id="name-filter" value="" /></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 text-right">Show Inactive Users:</div>
+        <div class="col-xs-12 col-sm-6"><input type="checkbox" id="active-filter" checked="checked" /></div>
+    </div> 
+    <div id="profile-list"></div>
+</div>
 
 <?php
 if (count($users)) {

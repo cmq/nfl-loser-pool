@@ -31,6 +31,10 @@ table.picks > tbody > tr > td.incorrect {
 tr.sortable th {
     cursor: pointer;
 }
+.highlight-search {
+    background-color: #3399f3;
+    color: white;
+}
 
 /*
  * Updates to help work with Twitter Bootstrap

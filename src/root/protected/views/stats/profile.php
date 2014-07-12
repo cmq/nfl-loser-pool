@@ -1,7 +1,5 @@
 <script src="<?php echo baseUrl('/js/lib/highcharts.js'); ?>"></script>
 <?php
-// KDHTODO this page doesn't work right for inactive users (no power rank point breakdowns)
-// KDHTODO need a link back to the profiles list
 // KDHTODO show floating or losable badges that were owned at one point? (And at which point they were owned)?
 
 
@@ -299,6 +297,13 @@ $(function() {
 </script>
 <div class="container">
 <?php
+echo CHtml::link('&laquo; Back to Profiles List', 'stats/profiles');
+?>
+
+<h2>User Profile</h2>
+
+<?php
+
 if ($user) {
     ?>
     <div class="profile panel panel-primary">
@@ -372,7 +377,7 @@ if ($user) {
                     <div class="col-xs-12 col-md-4"><?php echo $userStat->stat->name;?> (<a title="<?php echo htmlspecialchars($userStat->stat->name)?>" data-content="<?php echo htmlspecialchars($userStat->stat->description)?>" href="#" class="stat-help-link spawns-popover">?</a>)</div>
                     <div class="col-xs-1 text-right"><?php echo $formattedStat;?></div>
                     <div class="col-xs-1 text-right"><?php echo ordinal($userStat->place) . ($userStat->tied ? ' (T)' : '');?></div>
-                    <div class="col-xs-1 text-right"><?php echo ordinal($userStat->placeactive) . ($userStat->tiedactive ? ' (T)' : '');?></div>
+                    <div class="col-xs-1 text-right"><?php echo $user->active ? (ordinal($userStat->placeactive) . ($userStat->tiedactive ? ' (T)' : '')) : '-';?></div>
                     <div class="col-xs-8 col-md-4">
                         <?php
                         if ($userStat->meta1) {

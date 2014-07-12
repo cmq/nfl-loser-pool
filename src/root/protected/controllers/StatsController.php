@@ -15,7 +15,7 @@ class StatsController extends Controller
         // KDHTODO get badges/trophies as well
         // KDHTODO allow searching?
         $users = User::model()->withBadges()->withWins()->findAll(array(
-            'select' => 't.id, t.username, t.power_ranking, t.avatar_ext, t.active',
+            'select' => 't.id, t.username, t.power_ranking, t.power_points, t.avatar_ext, t.active',
             'order'  => 't.username'
         ));
         $this->render('profiles', array('users'=>$users));

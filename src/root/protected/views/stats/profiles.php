@@ -109,6 +109,12 @@ function draw() {
                             sort('flare');
                         })
                     )
+                    .append($('<th class="text-right">Power Points</th>')
+                        .on('click', function(e) {
+                            e.preventDefault();
+                            sort('power');
+                        })
+                    )
                 )
             )
             .append($tbody);
@@ -121,6 +127,7 @@ function draw() {
                 .append('<td class="text-left"><a href="' + CONF.url.profile(users[i].id) + '">' + stylizeName(users[i].username) + '</a></td>')
                 .append('<td class="text-right">' + globals.dollarFormat(users[i].money) + '</td>')
                 .append('<td class="text-right">' + users[i].flare + '</td>')
+                .append('<td class="text-right">' + users[i].power_points + '</td>')
             );
         }
     }
@@ -143,6 +150,7 @@ $(function() {
 </script>
 
 <div class="container">
+    <h2>Profiles List</h2>
     <div class="row">
         <div class="col-xs-12 col-sm-6 text-right">Filter Names:</div>
         <div class="col-xs-12 col-sm-6"><input type="text" id="name-filter" value="" /></div>

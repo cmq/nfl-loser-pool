@@ -1406,6 +1406,7 @@ class MaintenanceController extends Controller
             }
             $this->_getPlacesAndTies($allValues, 'powerpoints', $places, $ties);
             foreach ($this->users as &$user) {
+                $user['missingYears'] = array();
                 if (array_key_exists($y, $user['years'])) {
                     $user['powerrank'] = array_search($user['years'][$y]['powerpoints'], $places);
                     $user['years'][$y]['powerrank'] = $user['powerrank'];
@@ -1413,7 +1414,12 @@ class MaintenanceController extends Controller
                     for ($yf=$y; $yf>=param('earliestYear'); $yf--) {
                         if (array_key_exists($yf, $user['years'])) {
                             $user['powerrank'] = array_search($user['years'][$yf]['powerpoints'], $places);
-                            $user['years'][$yf]['powerrank'] = $user['powerrank'];
+                            // store the record of the user's points/rank for this year, even though the user didn't PLAY in this year
+                            $user['missingYears'][$y] = array(
+                                'powerpointdata' => $user['years'][$yf]['powerpointdata'],
+                                'powerpoints'    => $user['years'][$yf]['powerpoints'],
+                                'powerrank'      => $user['powerrank']
+                            );
                             break;
                         }
                     }
@@ -1434,12 +1440,19 @@ class MaintenanceController extends Controller
             $existingPowers[$ep['userid']][$ep['yr']] = $ep;
         }
         foreach ($this->users as $user) {
-            foreach ($user['years'] as $y=>$year) {
+            for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
+                if (array_key_exists($y, $user['years'])) {
+                    $year = $user['years'][$y];
+                } else if (array_key_exists($y, $user['missingYears'])) {
+                    $year = $user['missingYears'][$y];
+                } else {
+                    continue;
+                }
                 if (array_key_exists('powerpoints', $year)) {
                     // for this user/year, try to find the matching existing power record
                     $needInsert = true;
-                    $powerData = $user['years'][$y]['powerpointdata'];
-                    $powerRank = $user['years'][$y]['powerrank'];
+                    $powerData = $year['powerpointdata'];
+                    $powerRank = $year['powerrank'];
                     if (array_key_exists($user['id'], $existingPowers) &&
                         array_key_exists($y, $existingPowers[$user['id']])) {
                             $existingPower = $existingPowers[$user['id']][$y];
@@ -1447,7 +1460,7 @@ class MaintenanceController extends Controller
                             $needInsert = ($existingPower['powerpoints'] != $year['powerpoints'] || $existingPower['powerrank'] != $year['powerrank']);
                     }
                     if ($needInsert) {
-                        $details = addslashes(json_encode($user['years'][$y]['powerpointdata']));
+                        $details = addslashes(json_encode($powerData));
                         $sql = "replace into power (userid, yr,
                                     powerpoints, powerrank, seasonPts, correctPts, badgePts, moneyPts, winPctPts, movPts, setBySystemPts, talkPts, referralPts, likesByPts, likesAtPts, firstPlacePts, secondPlacePts, updated
                                 ) values (

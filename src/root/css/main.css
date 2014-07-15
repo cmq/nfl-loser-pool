@@ -75,6 +75,24 @@ body {
 
 
 /*
+ * Navbar/login
+ */
+#navbar-logo {
+    float: left;
+    margin-top: 5px;
+    padding-left: 5px;
+    padding-right: 10px;
+}
+#login-wrapper {
+    position: relative;
+}
+#login-form-wrapper {
+    position: absolute;
+    left: 220px;
+    top: 100px;
+}
+
+/*
  * Pick table stuff
  */
 th.active-sort {
@@ -415,6 +433,15 @@ img.user-badge {
 }
 #the-bandwagon .others {
     float: left;
+}
+
+
+/*
+ * Stats stuff
+ */
+.details-row td {
+    background-color: #f0f0f0;
+    font-size: 80%;
 }
 
 

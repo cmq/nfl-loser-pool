@@ -45,6 +45,7 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
 
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <img src="/images/loser-logo-small.png" id="navbar-logo" />
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -72,7 +73,6 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                     <ul class="dropdown-menu">
                         <?php
                         echo navItem('Player Profiles', 'stats/profiles', null, $controllerName == 'stats' && ($actionName == 'index' || $actionName == 'profiles' || $actionName == 'profile'));
-                        echo navItem('Player Stat Rankings', 'stats/rankings', null, $controllerName == 'stats' && $actionName == 'rankings');
                         echo navItem('Pick Statistics', 'stats/picks', null, $controllerName == 'stats' && $actionName == 'picks');
                         ?>
                     </ul>

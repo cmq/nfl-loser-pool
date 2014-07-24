@@ -440,7 +440,7 @@ img.user-badge {
  * Stats stuff
  */
 .details-row td {
-    background-color: #f0f0f0;
+    background-color: #e0e0e0 !important;
     font-size: 80%;
 }
 

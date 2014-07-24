@@ -8,7 +8,14 @@
  *  
  *  KDHTODO larger items
  *  
- *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?
+ *  - Sort "other riders" in the bandwagon by num weeks on it, descending
+ *  - With collapsed history, all records are reporting 0-18
+ *  - Profile list page filter name should be case-insensitive
+ *  - Look at Andy's max incorrect streak details on his profile page (has same start and end week)
+ *  - Have a way to gray out pot #1 after it's decided
+ *  - Still need to hide content from people that haven't paid (I think...)
+ *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
+ *  - Need to stylize the sorted-by header on the profiles list page, the pick stats page, and the winners page (use the same gradient we use on the pick board)
  *  - Profile pages don't work for inactive users (no power rank details or anything).  Is this related to the maintenance script?  http://loserpool2.localhost/index.php/stats/profile/20
  *  - On the home page, when showing the collapsable accordian sections, set a cookie to remember which they had open
  *  - If the user hasn't made a pick for the current week, we need a way to inform them like the header on the old site

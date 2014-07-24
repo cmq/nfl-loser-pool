@@ -604,12 +604,7 @@ function Board(options) {
                                             .addClass(bwpick.incorrect ? 'incorrect' : '')
                                             .html(bwpick.mov && bwpick.mov.hasOwnProperty('mov') ? stylizeMov(bwpick.mov.mov) : '')
                                         )
-                                        .append(!settings.viewOptions.showLogos ? bwpick.team.shortname : $('<div/>')
-                                            .addClass('logo')
-                                            .addClass('logo-' + (i == settings.currentWeek ? 'medium' : 'small'))
-                                            .css('background-position', globals.getTeamLogoOffset(bwpick.team, 'small'))
-                                            .attr('title', bwpick.team.longname)
-                                        )
+                                        .append(!settings.viewOptions.showLogos ? bwpick.team.shortname : globals.getTeamLogo(bwpick.team, (i == settings.currentWeek ? 'medium' : 'small')))
                                     )
                                 );
                             }

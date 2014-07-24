@@ -110,8 +110,8 @@ globals.getUserAvatar = function(user, fullsize) {
     return CONF.avatarWebDirectory + '/' + img;
 };
 
-globals.avatarBubble = function(user) {
-    return '<div class="profile-bubble"><a href="' + CONF.url.profile(user.id) + '"><img src="' + globals.getUserAvatar(user) + '" class="avatar tiny-avatar" />' + user.username + '</a></div>';
+globals.avatarBubble = function(user, notTiny) {
+    return '<div class="profile-bubble"><a href="' + CONF.url.profile(user.id) + '"><img src="' + globals.getUserAvatar(user) + '" class="avatar' + (notTiny !== true ? ' tiny-avatar' : '') + '" />' + user.username + '</a></div>';
 };
 
 globals.getTeamLogoOffset = function(team, size) {
@@ -128,6 +128,14 @@ globals.getTeamLogoClass = function(pick, currentWeek) {
     suffix += pick.week == currentWeek ? 'medium' : 'small';
     suffix += pick.setbysystem ? '-inactive' : '';
     return suffix;
+};
+
+globals.getTeamLogo = function(team, size) {
+    return $('<div/>')
+        .addClass('logo')
+        .addClass('logo-' + size)
+        .css('background-position', globals.getTeamLogoOffset(team, size))
+        .attr('title', team.longname);
 };
 
 globals.shortenYear = function(input) {
@@ -188,4 +196,36 @@ globals.lightboxAvatars = function() {
         e.preventDefault();
         return false;
     });
+};
+
+// @see http://stackoverflow.com/questions/5199901/how-to-sort-an-associative-array-by-its-values-in-javascript
+globals.bySortedValue = function(obj, propName, callback, context, reverse) {
+    var key, length, tuples = [];
+    
+    for (key in obj) {
+        if (propName) {
+            if (typeof propName === 'function') {
+                tuples.push([key, propName(obj[key], key)]);
+            } else if (obj[key].hasOwnProperty(propName)) {
+                tuples.push([key, obj[key][propName]]);
+            }
+        } else {
+            tuples.push([key, obj[key]]);
+        }
+    }
+    
+    tuples.sort(function(a, b) {
+        var val = a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : 0;
+        if (reverse === true) {
+            val *= -1;
+        }
+        return val;
+    });
+    
+    if (typeof callback === 'function' && typeof context !== 'undefined') {
+        length = tuples.length;
+        while (length--) {
+            callback.call(context, tuples[length][0], tuples[length][1]);
+        }
+    }
 };

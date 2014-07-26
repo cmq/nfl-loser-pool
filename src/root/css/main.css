@@ -273,6 +273,9 @@ img.user-badge {
     opacity: 0.85;
     background-color: inherit;
 }
+.pick-board-set-height {
+    height: 53px;   /* makes all the rows on the pick board the same height, even for users who don't have badges */
+}
 
 
 /*

@@ -13,7 +13,7 @@ foreach ($talk->likes as $like) {
 }
 
 ?>
-<div class="panel talk <?php echo ($talk->admin ? 'panel-warning' : ($talk->at && $talk->at->id == userId() ? 'panel-primary' : 'panel-default'));?>">
+<div class="panel talk <?php echo ($talk->admin ? 'panel-warning' : ($talk->at && $talk->at->id == userId() ? 'panel-success' : 'panel-default'));?>">
     <div class="panel-heading">
         <div class="talk-time small">
             <?php echo date('n:ia \o\n D, M jS, Y', strtotime($talk->postedon));?>

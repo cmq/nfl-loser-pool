@@ -659,7 +659,7 @@ function Board(options) {
                 $tr.addClass('success');
             }
             $tr.append('<td class="text-right">' + (i+1) + '</td>');
-            $tr.append($('<td nowrap="nowrap" />')
+            $tr.append($('<td nowrap="nowrap" class="pick-board-set-height" />')
                 .append($('<div/>')
                     .addClass('avatar-wrapper')
                     .append('<img class="avatar" src="' + globals.getUserAvatar(user) + '"/>')

@@ -25,9 +25,9 @@ $(function() {
 });
 </script>
 
-
+<!--
 <h5>Debug Current Week / Header Week: <?php echo getCurrentWeek();?> / <?php echo getHeaderWeek();?></h5>
-
+-->
 
 <div class="container-fluid">
     

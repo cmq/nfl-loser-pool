@@ -28,7 +28,7 @@ class Win extends DeepActiveRecord
     public function relations()
     {
         return array(
-            'unlockedBy' => array(self::BELONGS_TO, 'User', 'userid'),
+            'user' => array(self::BELONGS_TO, 'User', 'userid'),
         );
     }
     

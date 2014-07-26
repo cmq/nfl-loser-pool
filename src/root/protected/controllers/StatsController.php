@@ -31,8 +31,6 @@ class StatsController extends Controller
 
     public function actionPicks()
     {
-        // KDHTODO need to fix this -- this query is super slow, might have to write it ourselves
-        
         $teams = Team::model()->findAll();
         $picks = Pick::model()->findAll(array(
             'condition' => 'yr < ' . getCurrentYear() . ' or week < ' . getCurrentWeek()

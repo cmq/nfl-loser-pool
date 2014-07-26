@@ -9,6 +9,8 @@
  *  KDHTODO larger items
  *  
  *  - Sort "other riders" in the bandwagon by num weeks on it, descending
+ *  - Got lazy and am not showing trophies/badges on pick stats and previous winners pages.  Should I?
+ *  - Should the avatarBubble (along with everywhere else) show the user's power rank?)
  *  - With collapsed history, all records are reporting 0-18
  *  - Profile list page filter name should be case-insensitive
  *  - Look at Andy's max incorrect streak details on his profile page (has same start and end week)

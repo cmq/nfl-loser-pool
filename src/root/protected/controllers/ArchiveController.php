@@ -12,8 +12,13 @@ class ArchiveController extends Controller
     
     public function actionWinners()
     {
-        // KDHTODO implement
-        $this->render('winners');
+        $wins = Win::model()->with(array(
+            'user' => array(
+                'joinType' => 'inner join',
+                'select'   => 'user.id, user.username, user.power_ranking, user.power_points, user.avatar_ext, user.active',
+            )
+        ))->findAll();
+        $this->render('winners', array('wins'=>$wins));
     }
 
     public function actionYear()

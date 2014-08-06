@@ -15,7 +15,6 @@
  *  - Should the avatarBubble (along with everywhere else) show the user's power rank?)
  *  - Need to mark the Chief of the Bandwagon badge as Unlocked
  *  - Have about pages link to each other, like in the power ranking page how it talks about the bandwagon.
- *  - Look at Andy's max incorrect streak details on his profile page (has same start and end week)
  *  - Have a way to gray out pot #1 after it's decided
  *  - Still need to hide content from people that haven't paid (I think...)
  *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.

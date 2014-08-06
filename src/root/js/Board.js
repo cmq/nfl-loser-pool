@@ -14,7 +14,7 @@ function Board(options) {
             board:          [],
             bandwagon:      [],
             viewOptions: {
-                // KDHLATER we could make these togglable in real-time now that angular is gone
+                // KDHTODO we could make these togglable in real-time now that angular is gone
                 collapseHistory: false,
                 showBadges:      true,
                 showMov:         true,
@@ -683,7 +683,7 @@ function Board(options) {
                     $tr.append($('<td/>')
                         .addClass(pick.incorrect == 1 ? 'incorrect' : '')
                         .append($('<div/>')
-                            .addClass('pick-wrapper')
+                            .addClass('pick-wrapper text-center')
                             // mov
                             .append(!settings.viewOptions.showMov || j > settings.currentWeek ? '' : $('<div/>')
                                 .addClass('pickMov')

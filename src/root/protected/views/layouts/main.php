@@ -15,7 +15,6 @@
  *  - Should the avatarBubble (along with everywhere else) show the user's power rank?)
  *  - Need to mark the Chief of the Bandwagon badge as Unlocked
  *  - Have about pages link to each other, like in the power ranking page how it talks about the bandwagon.
- *  - With collapsed history, all records are reporting 0-18
  *  - Profile list page filter name should be case-insensitive
  *  - Look at Andy's max incorrect streak details on his profile page (has same start and end week)
  *  - Have a way to gray out pot #1 after it's decided
@@ -28,7 +27,6 @@
  *  - Graph of referrers for how people know each other
  *  - Allow dislikes for trash talk?
  *  - Figure out when to run the recalculation routines -- keep in mind bandwagon can be affected by EVERY PICK (so run on a cron or trigger via pick or something?)
- *  - For trash talk by me, have a flag I can set so it shows up as just a regular talk versus the yellow highlighted "admin" talk
  *  - Is there a way to not have to keep deactivating users every year?  Maybe allow logins forever, but they can only see the current board if they're playing this year?
  *  - For floating/losable badges, have a "badge history" page that shows where they belonged?  Maybe that's overkill
  *  - When showing all the badges, show floating badges as "year introduced" instead of "year unlocked", and show "current owner" instead of "unlocked by"
@@ -40,15 +38,9 @@
  *  - Add a badge that takes away a power point for users who use IE
  *  - Does the show/hide trophies/badges setting need to apply on other pages (being the pick board)?  Or if not, make it known on the profile page that the setting only applies to the pick boards. 
  *  - When in production, re-run the recalc/maintenance page multiple times (letting it time out) until the power ranking table is filled
- *  - Ability to hide team logos setting does not work
  *  - Customized View options on the main page:
- *  	- Allow these to be changed from a settings page, or toggled directly on the home page
- *  		- Have "presets" that set each of them, like the "no frills" preset, with everything off, or the "full experience" preset, with everything on, etc
  *  	- Ability to show/hide user avatars
- *  	- Ability to show/hide the bandwagon section
- *  	- Ability to show/hide trash talk (still need admin messages to show)
- *  	- Ability to show/hide the season outlook (pots)
- *  	- Ability to show/hide power rank columns
+ *      - Ability to show/hide the bandwagon column/icon/row
  *  - Bandwagon
  *  	- Badges
  *  		- timely jumper

@@ -17,9 +17,9 @@ $(function() {
         collapsable: true,
         viewOptions: {
             collapseHistory: <?php echo userField('collapse_history') ? 'true' : 'false'?>,
-            showBadges:      <?php echo userField('show_badges') ? 'true' : 'true'?>,
-            showMov:         <?php echo userField('show_mov') ? 'true' : 'true'?>,
-            showLogos:       <?php echo userField('show_logos') ? 'true' : 'true'?>
+            showBadges:      <?php echo userField('show_badges') ? 'true' : 'false'?>,
+            showMov:         <?php echo userField('show_mov') ? 'true' : 'false'?>,
+            showLogos:       <?php echo userField('show_logos') ? 'true' : 'false'?>
         }
     });
 });

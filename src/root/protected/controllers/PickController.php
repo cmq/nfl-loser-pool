@@ -5,7 +5,6 @@ class PickController extends Controller
     
     public $layout = 'naked';
 
-    // KDHTODO prevent any actions on this controller from executing if the user is a guest
     public function actionIndex()
     {
         $this->layout = 'main';

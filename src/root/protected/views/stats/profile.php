@@ -1,7 +1,5 @@
 <script src="<?php echo baseUrl('/js/lib/highcharts.js'); ?>"></script>
 <?php
-// KDHTODO show floating or losable badges that were owned at one point? (And at which point they were owned)?
-
 
 // do the power ranking "stat group" which isn't really stats in the normal way, but just collections of details about the power ranking
 $numPowers    = 0;
@@ -350,7 +348,6 @@ if ($user) {
                     <div class="panel panel-info">
                         <div class="panel-heading"><?php echo $userStat->stat->statGroup->name?></div>
                         <div class="panel-body">
-                        <!-- KDHTODO how will this heading row work on small devices? -->
                         <div class="row">
                             <div class="col-xs-12 col-md-4"><strong>Stat</strong></div>
                             <div class="col-xs-1 text-right"><strong>Value</strong></div>
@@ -401,8 +398,6 @@ if ($user) {
                 <div class="panel-heading">Power Rank Details</div>
                 <div class="panel-body">
                 
-                    <!-- KDHTODO use @media query to adjust how pie chart appears (or hide it completely?) for small screens (http://stackoverflow.com/questions/21241862/twitter-bootstrap-3-rowspan-and-reorder) -->
-                    
                     <div class="row">
                         <div class="col-xs-12 col-md-4"><strong>Stat</strong></div>
                         <div class="col-xs-1 text-right"><strong>Value</strong></div>

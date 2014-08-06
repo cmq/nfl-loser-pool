@@ -1,6 +1,4 @@
 <?php
-// KDHTODO normally when this page is submitted, we run power.php and _stats.php -- need to replace those
-// KDHTODO clean up the styling, especially of the saved-status fields
 $week = isset($_GET['week']) ? (int) $_GET['week'] : getCurrentWeek();
 $bShowScores = $week == getCurrentWeek();
 if ($bShowScores) {

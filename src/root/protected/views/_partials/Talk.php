@@ -1,7 +1,4 @@
 <?php
-// KDHTODO provide a delete button for superadmins?
-// KDHTODO provide an edit button for superadmins?
-
 $thisUserLiked = false;
 $userLikes = array();
 $numLikes = count($talk->likes);

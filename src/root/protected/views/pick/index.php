@@ -14,7 +14,7 @@ $(function() {
             week = $(this).data('week'),
             team = $(this).val(),
             data = {
-                user: <?php echo userId(); ?>,   // KDHTODO update this to the user being edited so that superadmins can change other users' picks
+                user: <?php echo userId(); ?>,   // update this to the user being edited so that superadmins can change other users' picks
                 week: week,
                 team: team
             },

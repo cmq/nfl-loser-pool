@@ -1,23 +1,4 @@
 <?php
-// KDHTODO clean up this file so these random functions aren't hanging around all over cluttering things up
-// KDHTODO make this page have a layout so the navigation is still present, etc.
-// KDHTODO show output on this screen for timing and whatnot
-// KDHTODO the week-by-week breakdown of power ranking is pointless unless we also want to calculate floating badges week-by-week (sort of the same with talks and likes to a lesser extent)
-
-/*
-<ul>
-    <li>Record per Year (show as bar graph?)</li>
-    <li>Times Dodging a Bandwagon Crash</li>
-    <li>Number of Times Picking Each Team</li>
-    <li>Current Power Ranking</li>
-    <li>Highest Power Ranking</li>
-    <li>Lowest Power Ranking</li>
-    <li>Largest One-Week Power Ranking Jump</li>
-    <li>Power-Ranking Calculation Details</li>
-    <li>Year-by-year Stat Breakdown?</li>
-    <li>Floating or losable badges owned at one point (and which points)</li>
-</ul>
-*/
 class MaintenanceController extends Controller
 {
     
@@ -1276,8 +1257,6 @@ class MaintenanceController extends Controller
     }
 
     private function _recalcPower() {
-        
-        // KDHTODO comment this much better
         
         // get the power point values for each badge
         $badgePoints = array();

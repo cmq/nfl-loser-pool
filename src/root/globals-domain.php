@@ -22,7 +22,7 @@ function getCurrentWeek() {
     if ($currentWeek) {
         return $currentWeek;
     }
-    // KDHTODO remove the following line -- it is in place only for developing v2
+    // remove the following line -- it is in place only for developing v2
     return 19;
     
     $dNow        = time();

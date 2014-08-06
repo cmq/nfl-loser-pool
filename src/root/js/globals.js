@@ -199,7 +199,6 @@ globals.lightboxAvatars = function() {
 };
 
 globals.buildBadgePopovers = function($container) {
-    // KDHTODO draw the popups using Yii partials
     var fnHideAll;
     
     if (typeof $container === 'undefined') $container = 'body';
@@ -218,7 +217,6 @@ globals.buildBadgePopovers = function($container) {
         title: function() {
             var win = $(this).data('win'),
                 content;
-            // KDHTODO see if the icon's negative margin still works on other devices
             content = '<div class="icon"><img src="/images/badges/winnerbadge-' + win.pot + win.place + '.png" /></div>';
             content += (win.place == 1 ? 'First' : 'Second') + ' Place';
             return content;
@@ -250,7 +248,6 @@ globals.buildBadgePopovers = function($container) {
         title: function() {
             var userBadge = $(this).data('userBadge'),
                 content;
-            // KDHTODO see if the icon's negative margin still works on other devices
             content = '<div class="icon"><img src="' + userBadge.badge.img + '" /></div>' + userBadge.badge.name;
             return content;
         },

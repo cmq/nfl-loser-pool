@@ -1,13 +1,5 @@
 <script src="<?php echo baseUrl('/js/lib/fileuploader.js'); ?>"></script>
 
-<?php
-
-// KDHTODO make save routines have consistent ways to show completion and errors (errors above the field in a div that takes up space whether or not it's empty, and successes as little save checkmarks to the left of each field that fade away)
-    // the checkmark should default to being present, and then should disappear when the user changes the field value or while an AJAX request is pending.  Once successful, it will reappear next to the field.
-// KDHTODO clean up avatar upload section (general look, as well as error block)
-
-
-?>
 <script>
 var uploader,
     defaults = {
@@ -447,12 +439,11 @@ $(function() {
         <div class="form-group fieldwrap-password">
             <label class="control-label col-sm-2" for="username">Password</label>
             <div class="col-sm-5">
-                <div id="change-password-static">   <!-- KDHTODO add a top padding of about 9px for this -->
+                <div id="change-password-static">
                     *****************
                     <button type="button" class="btn btn-xs btn-default">Change</button>
                 </div>
                 <div id="change-password-form" style="display:none;">
-                    <!-- KDHTODO make sure these placeholders work for all devices, otherwise we might need to show some form labels for certain devices -->
                     <div class="form-group">
                         <div class="col-sm-6">
                             <input type="password" id="oldpw" class="form-control" placeholder="Old Password" />
@@ -506,7 +497,7 @@ $(function() {
                     (<a class="help-link spawns-popover" title="Show Margin of Defeat" data-content="If this option is enabled, each finished pick will show the Margin of Defeat for that game.">?</a>)
                 </div>
                 <span class="help-block"></span>
-                <div id="viewsetting-saved" style="display:none;">Saved</div>   <!-- KDHTODO use help-block instead -->
+                <div id="viewsetting-saved" style="display:none;">Saved</div>
             </div>
         </div>
         <div class="form-group fieldwrap-avatar">

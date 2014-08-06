@@ -18,7 +18,7 @@ class AdminController extends Controller
     public function filters() {
         return array(
             array('application.filters.AdminFilter'),
-            array('application.filters.SuperadminFilter + superadmintest'),     // KDHTODO are there any superadmin-only functions?
+            array('application.filters.SuperadminFilter + superadmintest'),
         );
     }
     
@@ -28,8 +28,7 @@ class AdminController extends Controller
      */
     public function actionIndex()
     {
-        // KDHTODO is there anything to do here?  Maybe show a page where we can manually re-run the stats/power calculations?
-        die('?');
+        die('?');   // what to do here?
     }
     
     /**
@@ -106,7 +105,7 @@ class AdminController extends Controller
     
     public function actionSuperadmintest()
     {
-        // KDHTODO this is just a placeholder for any SUPER admin functions (so that we can build the sample hole punching in the filters() method above)
+        // this is just a placeholder for any SUPER admin functions (so that we can build the sample hole punching in the filters() method above)
     }
     
     /**

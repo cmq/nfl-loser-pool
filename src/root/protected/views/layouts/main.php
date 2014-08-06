@@ -6,64 +6,107 @@
  *  @see http://getbootstrap.com/getting-started/#template
  *  
  *  
- *  KDHTODO larger items
+ *  KDHTODO remaining items
  *  
- *  - Sort "other riders" in the bandwagon by num weeks on it, descending
- *  - Add a setting to receive the reminder email always, never, or just if you haven't made a pick.
- *  - When left open for too long, the home page takes forever.  I think there's a memory leak.
- *  - Got lazy and am not showing trophies/badges on pick stats and previous winners pages.  Should I?
- *  - Should the avatarBubble (along with everywhere else) show the user's power rank?)
+ *  BUGS
  *  - Need to mark the Chief of the Bandwagon badge as Unlocked
+ *  - When showing Talk posts, only get those where active = 1 (just added that new field to the database)
+ *  
+ *  PERFORMANCE ENHANCEMENTS
+ *  - When left open for too long, the home page takes forever.  I think there's a memory leak.
+ *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
+ *  
+ *  DISPLAY ISSUES/FEATURES
+ *  - What does navigation look like for a guest?
+ *  - Sort "other riders" in the bandwagon by num weeks on it, descending
  *  - Have about pages link to each other, like in the power ranking page how it talks about the bandwagon.
  *  - Have a way to gray out pot #1 after it's decided
- *  - Still need to hide content from people that haven't paid (I think...)
- *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
  *  - Pick a new style for table headers so they're contrasted more
- *  - On the home page, when showing the collapsable accordian sections, set a cookie to remember which they had open
  *  - If the user hasn't made a pick for the current week, we need a way to inform them like the header on the old site
- *  - When showing Talk posts, only get those where active = 1 (just added that new field to the database)
- *  - Graph of referrers for how people know each other
- *  - Allow dislikes for trash talk?
- *  - Figure out when to run the recalculation routines -- keep in mind bandwagon can be affected by EVERY PICK (so run on a cron or trigger via pick or something?)
- *  - Is there a way to not have to keep deactivating users every year?  Maybe allow logins forever, but they can only see the current board if they're playing this year?
- *  - For floating/losable badges, have a "badge history" page that shows where they belonged?  Maybe that's overkill
  *  - When showing all the badges, show floating badges as "year introduced" instead of "year unlocked", and show "current owner" instead of "unlocked by"
- *  - Add large power points for having uploaded a custom avatar
  *  - Make badges so they still have a title so that you can hover them for a name without having to click on them for the full details
+ *  - Trophies/badges have a negative margin to make them look nice on the Pick Board -- test this out in other devices
+ *  - Test out the Profile pages in other devices, as heavy use of rows/columns was used
+ *  - Update the page title from page to page
+ *  - In the PickController, TalkController, and maybe other places, disallow any actions if the user is a Guest
+ *  - On the Bandwagon about page, show the bandwagon icons inline where they are being talked about
+ *  - On the Map about page, consider isVisible and isDisabled from the Navigation partial template so that the map matches the navbar for all users (guests and authenticated)
+ *  - On the Map page, add a map entry for "log in" or "log out" depending on the user's status
+ *  - On the Settings page, make save routines have consistent ways to show completion and errors (errors above the field in a div that takes up space whether or not it's empty, and successes as little save checkmarks to the left of each field that fade away)
+ *          the checkmark should default to being present, and then should disappear when the user changes the field value or while an AJAX request is pending.  Once successful, it will reappear next to the field.
+ *          clean up avatar upload section (general look, as well as error block)
+ *          the change-password-static needs about a 9px padding maybe?  Depending on how much we refactor the appearance
+ *          test page in other devices
+ *          test placeholders in other devices... fields don't have labels by default, so are placeholders sufficient?
+ *          viewsetting-saved should use the help-block instead maybe?
+ *  - On the Profile page, use @media query to adjust how pie chart appears (or hide it completely?) for small screens (http://stackoverflow.com/questions/21241862/twitter-bootstrap-3-rowspan-and-reorder)
+ *  - In the $.ajax() call from the Talk view, handle errors some way other than alerting them.
+ *  - Clean up the display of the talk page?
+ *  
+ *  NEW FEATURES
+ *  - Add a setting to receive the reminder email always, never, or just if you haven't made a pick.
+ *  - Still need to hide content from people that haven't paid (I think...)
+ *  - On the home page, when showing the collapsable accordian sections, set a cookie to remember which they had open
+ *  - Figure out when to run the recalculation routines -- keep in mind bandwagon can be affected by EVERY PICK (so run on a cron or trigger via pick or something?)
+ *  - Add View Option to show/hide user avatars
+ *  - Add View Option to show/hide the bandwagon column/icon/row
+ *  
+ *  UNDECIDED FEATURES
+ *  - Make the Pick Board view options toggleable in real-time?
+ *  - Got lazy and am not showing trophies/badges on pick stats and previous winners pages.  Should I?
+ *  - Does the show/hide trophies/badges setting need to apply on other pages (being the pick board)?  Or if not, make it known on the profile page that the setting only applies to the pick boards. 
+ *  - Should the avatarBubble (along with everywhere else) show the user's power rank?
+ *  
+ *  SUPERADMIN FUNCTIONS
+ *  - In AdminController remove superadmintest action and use in the SuperadminFilter -- just there for an example
+ *  - Do something with the indexAction
+ *  - Clean up the MaintenanceController so random functions aren't hanging around all over cluttering things up
+ *  - Give Maintenance page a layout so the navigation is still present, etc.
+ *  - Show debug/timing output on the screen during Maintenance?
+ *  - Comment MaintenanceController better, especially _recalcPower()
+ *  - Test that a Superadmin is able to modify settings/names/avatars/etc on another user's profile page
+ *  - Allow Superadmins to delete talk messages
+ *  - Allow Superadmins to edit talk messages inline
+ *  - Clean up the styling of the corrections page, especially of the saved-status fields
+ *  - In the views/pick/index.php, the data that's built always uses the current user (userId()).  Change that so that superadmins can make picks for other users.
+ *  - From a user's profile page, give a Superadmin links to change that user's profile/picks.  (Only do picks if the user is currently active, obviously)
+ *  
+ *  BADGES/POWER STUFF
+ *  - Add large power points for having uploaded a custom avatar
  *  - Add a weiner badge for someone who lets the system pick x number of picks for them in a given season
  *  - Make an "against the flow" badge for users who stay off the bandwagon the most
  *  - Allow grouping of like-type badges so it only shows the badge once and then has a little counter if they have more than 1 of them.
  *  - Add a badge that takes away a power point for users who use IE
- *  - Does the show/hide trophies/badges setting need to apply on other pages (being the pick board)?  Or if not, make it known on the profile page that the setting only applies to the pick boards. 
+ *  - Add a Timely Jumper badge
+ *  - Add a Badge for Lowest Percentage of time on Bandwagon lifetime (with a min # picks)
+ *  - Skating By (ice skates) - Lowest margin of Defeat for the user tied in first for overall record
+ *  - Variety badge - longest to go without picking the same team twice in a season
+ *  - Timing badge (stopwatching - Highest avg time choosing picks before the weekly deadline
+ *  - Power Rank - less emphasis on longevity (tried to reduce this, but still need more!)
+ *  
+ *  GO-LIVE
  *  - When in production, re-run the recalc/maintenance page multiple times (letting it time out) until the power ranking table is filled
- *  - Customized View options on the main page:
- *  	- Ability to show/hide user avatars
- *      - Ability to show/hide the bandwagon column/icon/row
- *  - Bandwagon
- *  	- Badges
- *  		- timely jumper
- *  		- longest time off bandwagon
- *  		- % pick stats on/off bandwagon
- *  - New badges
- *  	- Skating by (ice skate) - lowest margin of defeat for those tied for first place in the overall record pool.
- *  	- Variety - longest to go without picking the same team twice in a season.
- *  	- Timing badge (stopwatch) - highest avg time choosing picks before the weekly deadline.
- *  	- Stretch goals
- *  		- Rivalry - most or least divisional games picked in a season.
- *  		- Prime time badge (picture of Deion) - most TNF + SNF + MNF games picked.
- *  - Power ranking formula
- *  	- less emphasis on longevity (tried to reduce this, but still need more!)
- *  	- include points for likes on trash talk
- *          - Only give credits for posts made that were liked by at least 3 people so people can't team-spam
- *          - Give more credit for more likes, but diminishing returns
- *          - Give credit for liking other people's posts, but only if at least 2 other people liked the same post (otherwise you could simply spam likes)
+ *  - Removing the hardcoding of week 19 from the getCurrentWeek() function in globals-domain.php
+ *  
+ *  STRETCH GOALS
+ *  - Graph of referrers for how people know each other
+ *  - Allow dislikes for trash talk?
+ *  - Is there a way to not have to keep deactivating users every year?  Maybe allow logins forever, but they can only see the current board if they're playing this year?
+ *  - For floating/losable badges, have a "badge history" page that shows where they belonged?  Maybe that's overkill
+ *  - Rivalry Badge - most or least divisional games picked in a season.
+ *  - Prime time badge (picture of Deion) - most TNF + SNF + MNF games picked.
+ *  - Power Ranking - Only give credits for posts made that were liked by at least 3 people so people can't team-spam
+ *  - Power Ranking - Give more credit for more likes, but diminishing returns
+ *  - Power Ranking - Give credit for liking other people's posts, but only if at least 2 other people liked the same post (otherwise you could simply spam likes)
+ *  - Can we make more use of Yii partials, such as when drawing badges in globals.buildBadgePopovers()?
+ *  - Add some common "action" methods to the base Controller module, per Dough.
+ *  - In the User Model, implement the delete() and changepw() methods?  (Note: changepw logic is in the controller now, but the model is a more appropriate spot for it)
  *  
  *  
  */
 ?><!DOCTYPE html>
 <html>
     <head>
-        <!-- KDHTODO change the title per page -->
         <title><?php echo CHtml::encode($this->pageTitle); ?></title>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />

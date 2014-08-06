@@ -16,14 +16,12 @@ $(function() {
             cache:      false,
             success:    function(response) {
                             if (response.hasOwnProperty('error') && response.error != '') {
-                                // KDHTODO handle error differently
                                 alert(response.error);
                             } else {
                                 location.href = '<?php echo Yii::app()->createAbsoluteUrl('site/index')?>';
                             }
                         },
             error:      function() {
-                            // KDHTODO handle error differently
                             alert('An error occurred, please try again.');
                         },
             complete:   function() {
@@ -36,9 +34,6 @@ $(function() {
 });
 </script>
 
-<?php
-// KDHTODO clean up the display of this
-?>
 <div class="container">
     <form role="form">
         <div class="form-group">

@@ -162,8 +162,6 @@ class ProfileController extends Controller
     
     public function actionAvatar()
     {
-        // KDHTODO obviously test this, including the ability for superadmin to modify another user's stuff
-        
         $user  = $this->_getUser();
         $error = $this->_checkuser($user);
         

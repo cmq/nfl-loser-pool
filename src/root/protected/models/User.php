@@ -164,7 +164,6 @@ class User extends DeepActiveRecord
      * @override
      * @see CActiveRecord::delete()
      */
-    // KDHTODO implement delete user method?
     public function delete() {
         $this->active = 0;
         $this->scenario = 'delete';
@@ -175,7 +174,6 @@ class User extends DeepActiveRecord
     /**
      * Change the user's password
      */
-    // KDHTODO implement change password method
     public function changepw() {
         $this->password = UserIdentity::saltPassword($this->password, $this->salt);
         $this->scenario = 'changepw';

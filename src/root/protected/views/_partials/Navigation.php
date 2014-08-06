@@ -1,5 +1,4 @@
 <?php
-// KDHTODO what does navigation look like for a guest?
 $controllerName = $this->uniqueid;
 $actionName     = $this->action->id;
 

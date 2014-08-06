@@ -14,7 +14,6 @@ function Board(options) {
             board:          [],
             bandwagon:      [],
             viewOptions: {
-                // KDHTODO we could make these togglable in real-time now that angular is gone
                 collapseHistory: false,
                 showBadges:      true,
                 showMov:         true,

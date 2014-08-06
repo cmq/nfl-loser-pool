@@ -1,7 +1,3 @@
-<?php
-// KDHTODO show the bandwagon icons right in place when talking about them
-// KDHTODO add links to the other help pages and such
-?>
 <div class="container">
     <h2>The Bandwagon</h2>
     <h4>Overview</h4>

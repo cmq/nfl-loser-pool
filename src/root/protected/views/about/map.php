@@ -1,4 +1,3 @@
-<!-- KDHTODO consider isVisible and isDisabled from the Navigation partial template so this matches the main nav -->
 <div class="container">
     <h2>Site Map</h2>
     <ul>

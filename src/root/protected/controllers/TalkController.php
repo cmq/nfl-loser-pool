@@ -5,8 +5,6 @@ class TalkController extends Controller
     
     public $layout = 'naked';
 
-    // KDHTODO prevent any actions on this controller from executing if the user is a guest or hasn't paid
-    
     public function actionIndex()
     {
         $this->layout = 'main';

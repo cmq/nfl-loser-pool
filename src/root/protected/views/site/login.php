@@ -1,13 +1,56 @@
 <script>
-$(function() {
-    $('#navbar-logo').css('visibility', 'hidden');
-    $('input[name=username]').focus().select();
-    // KDHTODO remove this:
-    $('#test-animation').on('click', function(e) {
-        e.preventDefault();
-        loggedIn();
-    });
-});
+var loggingIn = false;
+
+function logIn() {
+    var err = false, data = {}, fnClearError, fnLoginError, iClearError;
+
+    fnClearError = function() {
+        $('#login-error').fadeOut('fast', function() {
+            $('#login-error').html('&nbsp;').show().css('visibility', 'hidden');
+        });
+    };
+    
+    fnLoginError = function(s) {
+        err = true;
+        $('#login-error').html(s).css('visibility', 'visible');
+        $('input[name=username]').focus().select();
+        iClearError = setTimeout(fnClearError, 3000);
+    };
+    
+    if (!loggingIn) {
+        loggingIn = true;
+        clearTimeout(iClearError);
+        fnClearError();
+        $('#login-button').html('Logging In...').prop('disabled', true);
+        data['username'] = $('input[name=username]').val();
+        data['password'] = $('input[name=password]').val();
+        if ($('input[name=rememberMe]:checked').size() > 0) {
+            data['rememberMe'] = 1;
+        }
+        $.ajax({
+            url: '<?php echo Yii::app()->request->requestUri;?>',
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: function(response) {
+                if (response.hasOwnProperty('error') && response.error !== '') {
+                    fnLoginError(response.error);
+                } else {
+                    loggedIn();
+                }
+            },
+            error: function() {
+                fnLoginError('An unknown error occurred, please try again.');
+            },
+            complete: function() {
+                if (err) {
+                    loggingIn = false;
+                    $('#login-button').html('Log In').prop('disabled', false);
+                }
+            }
+        });
+    }
+}
 
 function loggedIn() {
     $('#login-form-wrapper').fadeOut(250, function() {
@@ -19,10 +62,25 @@ function loggedIn() {
         }, 500, 'swing', function() {
             $('#navbar-logo').css('visibility', 'visible');
             $('#logo-large.remove');
-            window.location.href = '/';
+            $('body').append('<div class="container text-center"><h3>Logged In.  Redirecting...</h3></div>');
+            window.location.href = '<?php Yii::app()->createUrl('site/index')?>';
         });
     });
 }
+
+$(function() {
+    $('#navbar-logo').css('visibility', 'hidden');
+    $('input[name=username]').focus().select();
+    $('#login-button').prop('disabled', false);
+    $('#login-form').on('submit', function(e) {
+        e.preventDefault();
+        logIn();
+    });
+    $('#login-button').on('click', function(e) {
+        e.preventDefault();
+        logIn();
+    });
+});
 </script>
 <?php
 $this->pageTitle=Yii::app()->name . ' - Login';
@@ -30,20 +88,18 @@ $this->pageTitle=Yii::app()->name . ' - Login';
 if (isset($errorMessage)):
     echo $errorMessage;
 endif;
-// KDHTODO clean up this form
-// KDHTODO remove the test button
-// KDHTODO make the form AJAX-y
-// KDHTODO do the animation upon successful login
 ?>
 <div id="login-wrapper">
     <img src="/images/loser-logo-large.png" id="logo-large" style="position:fixed;" />
     <div id="login-form-wrapper">
-        <form method="post" action="<?php echo Yii::app()->request->requestUri;?>">
-        	Username: <input type="text" name="username"/><br />
-        	Password: <input type="password" name="password"/><br />
-        	<input type="checkbox" name="rememberMe" checked="checked"/> Remember me<br />
-        	<button type="submit" class="btn btn-primary">Login</button>
-        	<button class="btn" id="test-animation">Test Animation</button>
+        <div id="login-error" class="text-danger text-center" style="visibility:hidden;">&nbsp;</div>
+        <form method="post" action="<?php echo Yii::app()->request->requestUri;?>" id="login-form">
+            <table style="border-spacing:3px;border-collapse:separate;">
+                <tr><td>Username:</td><td><input type="text" name="username"/></td></tr>
+                <tr><td>Password:</td><td><input type="password" name="password"/></td></tr>
+                <tr><td>&nbsp;</td><td><input type="checkbox" name="rememberMe" checked="checked"/> Remember me</td></tr>
+                <tr><td>&nbsp;</td><td><button type="submit" class="btn btn-primary" id="login-button">Login</button></td></tr>
+            </table>
         </form>
     </div>
 </div>

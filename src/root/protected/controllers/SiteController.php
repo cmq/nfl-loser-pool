@@ -23,26 +23,6 @@ class SiteController extends Controller
     }
     
     /**
-     * Declares class-based actions.
-     */
-    public function actions()
-    {
-        // KDHTODO can we make use of these?
-        return array(
-            // captcha action renders the CAPTCHA image displayed on the contact page
-            'captcha'=>array(
-                'class'=>'CCaptchaAction',
-                'backColor'=>0xFFFFFF,
-            ),
-            // page action renders "static" pages stored under 'protected/views/site/pages'
-            // They can be accessed via: index.php?r=site/page&view=FileName
-            'page'=>array(
-                'class'=>'CViewAction',
-            ),
-        );
-    }
-
-    /**
      * This is the default 'index' action that is invoked
      * when an action is not explicitly requested by users.
      */
@@ -85,20 +65,31 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        // KDHTODO handle the case when it's an AJAX request instead of a direct POST
         $errorMessage = '';
+        
+        if (!Yii::app()->request->isAjaxRequest && !isGuest()) {
+            // this is a regular page display GET request (not an AJAX (login) request), but the user is already logged in
+            $this->redirect(Yii::app()->user->returnUrl);
+        }
+        
         if (isset($_POST['username']) && isset($_POST['password'])) {
             $identity = new UserIdentity($_POST['username'], $_POST['password']);
             if ($identity->authenticate()) {
-                Yii::app()->user->login($identity, isset($_POST['rememberMe']) ? 3600*24*30 : 0);    // remember for 30 days if they say so
-                $this->redirect(Yii::app()->user->returnUrl);
+                Yii::app()->user->login($identity, isset($_POST['rememberMe']) ? 3600*24*180 : 0);    // remember for 180 days if they say so
+                if (!Yii::app()->request->isAjaxRequest) {
+                    $this->redirect(Yii::app()->user->returnUrl);
+                }
             } else {
                 $errorMessage = $identity->errorMessage;
             }
         }
         
-        // if we get here, display the login form
-        $this->render('login', array('errorMessage'=>$errorMessage));
+		if (Yii::app()->request->isAjaxRequest) {
+            echo CJSON::encode(array('error'=>$errorMessage));
+            exit;
+		} else {
+            $this->render('login', array('errorMessage'=>$errorMessage));
+		}
     }
 
     /**

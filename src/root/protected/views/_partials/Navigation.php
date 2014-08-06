@@ -55,7 +55,7 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"><?php echo getCurrentYear()?> NFL Loser Pool</a>
+            <a class="navbar-brand" href="<?php echo Yii::app()->createAbsoluteUrl('site/index');?>"><?php echo getCurrentYear()?> NFL Loser Pool</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->

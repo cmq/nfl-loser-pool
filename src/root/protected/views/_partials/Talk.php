@@ -19,7 +19,6 @@ foreach ($talk->likes as $like) {
             <?php echo date('n:ia \o\n D, M jS, Y', strtotime($talk->postedon));?>
         </div>
         <?php
-        // KDHTODO send these links to the relative users' profiles
         if ($talk->admin) {
             echo getAvatarProfileLink($talk->user) . ' <strong>ADMINISTRATIVE MESSAGE</strong>';
         } else {

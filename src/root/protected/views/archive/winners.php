@@ -140,16 +140,6 @@ $(function() {
 
 
 
-<?php
-// KDHTODO remove
-/*
-foreach ($wins as $win) {
-    echo "{$win['yr']}, pot {$win['pot']}, place {$win['place']}, {$win['winnings']} -- " . $win->user->username . '<br />';
-}
-*/
-?>
-
-
 <div class="container-fluid">
     <h2>Previous Winners</h2>
     <div id="winners" style="overflow:auto;"></div>

@@ -1390,7 +1390,6 @@ class MaintenanceController extends Controller
             $allValues = array();
             $places    = array();
             $ties      = array();
-            // KDHTODO examine user's first year here
             foreach ($this->users as $user) {
                 if (array_key_exists($y, $user['years'])) {
                     $allValues[] = $user['years'][$y]['powerpoints'];

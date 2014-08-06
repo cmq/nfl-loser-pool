@@ -75,7 +75,7 @@ $(function() {
     for (i=0; i<badges.length; i++) {
         unlocked = badges[i].unlocked_year && badges[i].unlockedBy;
         $table.append($('<tr/>')
-                .append('<td class="text-center"><img src="' + badges[i].img + '" /></td>')     // KDHTODO does this need more classes or need to be clickable?
+                .append('<td class="text-center"><img src="' + badges[i].img + '" /></td>')
                 .append('<td class="text-center">' + badges[i].name + '</td>')
                 .append('<td class="text-center">' + badges[i].type + '</td>')
                 .append('<td class="text-center">' + (badges[i].permanent ? 'Yes' : 'No') + '</td>')

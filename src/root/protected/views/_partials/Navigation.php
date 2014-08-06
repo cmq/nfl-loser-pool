@@ -1,14 +1,5 @@
 <?php
 // KDHTODO what does navigation look like for a guest?
-
-// KDHTODO nav links that still need to be added and written:
-// KDHTODO About page
-// KDHTODO NFL Schedule
-// KDHTODO Stat Rankings page
-// KDHTODO Pick Stats page
-// KDHTODO Prior Winners page
-// KDHTODO Season Archive page
-
 $controllerName = $this->uniqueid;
 $actionName     = $this->action->id;
 

@@ -6,7 +6,6 @@
     <br />
     <strong> - EACH WEEK, PICK ONE TEAM THAT LOSES THEIR GAME. - </strong><br />
     <br />
-    <!-- KDHTODO get dynamic numbers -->
     It sounds easy, but in <?php echo $totalSeasons;?> seasons (encompassing <?php echo $totalPlayerSeasons;?> player-seasons), only <?php echo $perfectSeasons;?> times has a player completed a perfect season.<br />
     <br />
     For more detailed information, please read the other "about" pages.<br />

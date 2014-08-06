@@ -67,7 +67,6 @@ class User extends DeepActiveRecord
             array('show_badges', 'in', 'range'=>array(0,1)),
             array('show_logos', 'in', 'range'=>array(0,1)),
             array('show_mov', 'in', 'range'=>array(0,1)),
-            // KDHTODO add other rules?
         );
     }
     

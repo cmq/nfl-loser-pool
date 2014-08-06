@@ -34,7 +34,6 @@ class Win extends DeepActiveRecord
     
     /**
      * Convert some fields to their proper datatype so JS will deal with it properly
-     * KDHTODO add this type of conversion to other active record models as well
      */
     protected function afterFind() {
         parent::afterFind();

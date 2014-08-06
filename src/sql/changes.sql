@@ -235,3 +235,9 @@ update stat set description = 'The frequency of all picks for which the player h
 update stat set description = 'The number of times the player successfully rode the Bandwagon for 3 or more weeks, then jumped off and got their pick correct, just as the Bandwagon was incorrect' where id = 44;
 
 alter table loserpick add weeks_on_bandwagon int not null default 0;
+
+update badge set `type` = 'Trophy' where id=17;
+alter table badge add permanent tinyint(1) not null default 1;
+alter table badge add replicable tinyint(1) not null default 1;
+update badge set permanent = 0 where `type` = 'Floating' or id = 18;
+update badge set replicable = 0 where `type` = 'Unique' or `type` = 'Floating' or id in (10,17,18);

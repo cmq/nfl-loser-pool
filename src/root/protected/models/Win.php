@@ -38,6 +38,7 @@ class Win extends DeepActiveRecord
      */
     protected function afterFind() {
         parent::afterFind();
+        $this->pot =      (int)   $this->pot;
         $this->place =    (int)   $this->place;
         $this->winnings = (float) $this->winnings;
     }    

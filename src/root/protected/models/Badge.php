@@ -38,6 +38,9 @@ class Badge extends DeepActiveRecord
      */
     protected function afterFind() {
         parent::afterFind();
-        $this->zindex = (int) $this->zindex;
+        $this->permanent    = (bool) $this->permanent;
+        $this->replicable   = (bool) $this->replicable;
+        $this->power_points = (float) $this->power_points;
+        $this->zindex       = (int)  $this->zindex;
     }    
 }

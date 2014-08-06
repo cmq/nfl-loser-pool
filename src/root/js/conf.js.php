@@ -21,6 +21,10 @@ var CONF = {
         profile:        function(id) {
             return '<?php echo $this->createAbsoluteUrl('stats/profile', array('id'=>0))?>'.replace('0', id);
         }
+    },
+    powerMultipliers: {
+        pointsPerFirstPlace:    <?php echo param('powerMultipliers')['pointsPerFirstPlace'];?>,
+        pointsPerSecondPlace:   <?php echo param('powerMultipliers')['pointsPerSecondPlace'];?>
     }
 };
 </script>

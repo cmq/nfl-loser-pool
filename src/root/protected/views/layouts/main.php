@@ -9,8 +9,13 @@
  *  KDHTODO larger items
  *  
  *  - Sort "other riders" in the bandwagon by num weeks on it, descending
+ *  - In the rules, note that if you don't make a pick by week 1, you are defaulted to last year's Superbowl champ.
+ *  - Add a setting to receive the reminder email always, never, or just if you haven't made a pick.
+ *  - When left open for too long, the home page takes forever.  I think there's a memory leak.
  *  - Got lazy and am not showing trophies/badges on pick stats and previous winners pages.  Should I?
  *  - Should the avatarBubble (along with everywhere else) show the user's power rank?)
+ *  - Need to mark the Chief of the Bandwagon badge as Unlocked
+ *  - Have about pages link to each other, like in the power ranking page how it talks about the bandwagon.
  *  - With collapsed history, all records are reporting 0-18
  *  - Profile list page filter name should be case-insensitive
  *  - Look at Andy's max incorrect streak details on his profile page (has same start and end week)

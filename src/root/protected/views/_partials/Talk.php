@@ -21,7 +21,7 @@ foreach ($talk->likes as $like) {
         <?php
         // KDHTODO send these links to the relative users' profiles
         if ($talk->admin) {
-            echo getAvatarProfileLink($talk->user) . ' </strong>ADMINISTRATIVE MESSAGE</strong>';
+            echo getAvatarProfileLink($talk->user) . ' <strong>ADMINISTRATIVE MESSAGE</strong>';
         } else {
             echo getAvatarProfileLink($talk->user) . ' ' . getProfileLink($talk->user) . ' said';
             if ($talk->at) {

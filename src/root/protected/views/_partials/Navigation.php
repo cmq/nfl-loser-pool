@@ -95,7 +95,24 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                 </li>
                 <?php
                 echo navItem('Settings', 'profile/index', null, $controllerName == 'profile', !$isGuest, !$isPaid);
-                echo navItem('About', 'about/index', null, $controllerName == 'about');
+                ?>
+                <li class="dropdown<?php echo ($controllerName == 'about' ? ' active' : '')?>">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <?php
+                        echo navItem('Overview', 'about/overview', null, $controllerName == 'about' && ($actionName == 'index' || $actionName == 'overview'));
+                        echo navItem('Site Map', 'about/map', null, $controllerName == 'about' && $actionName == 'map');
+                        echo navItem('History', 'about/history', null, $controllerName == 'about' && $actionName == 'history');
+                        echo navItem('Rules', 'about/rules', null, $controllerName == 'about' && $actionName == 'rules');
+                        echo navItem('Payout', 'about/payout', null, $controllerName == 'about' && $actionName == 'payout');
+                        echo navItem('Trophies/Badges', 'about/badges', null, $controllerName == 'about' && $actionName == 'badges');
+                        echo navItem('Power Ranking', 'about/power', null, $controllerName == 'about' && $actionName == 'power');
+                        echo navItem('Bandwagon', 'about/bandwagon', null, $controllerName == 'about' && $actionName == 'bandwagon');
+                        echo navItem('Technical Info', 'about/tech', null, $controllerName == 'about' && $actionName == 'tech');
+                        ?>
+                    </ul>
+                </li>
+                <?php
                 echo navItem('NFL Schedule', 'http://www.nfl.com/schedules/' . getCurrentYear() . (getHeaderWeek() <= 17 ? '/REG/' . max(getHeaderWeek(), 1) : '/POST' . (getHeaderWeek()-17)), null, false, true, false, false, true);
                 ?>
             </ul>

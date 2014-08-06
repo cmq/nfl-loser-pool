@@ -115,7 +115,7 @@ class User extends DeepActiveRecord
             'withWins' => array(
                 'with' => array(
                     'wins' => array(
-            			'select' => array('yr', 'pot', 'place', 'winnings'),
+            			'select' => array('wins.yr', 'wins.pot', 'wins.place', 'wins.winnings', 'wins.detail'),
                         'order' => 'wins.yr, wins.place, wins.pot',
                     ),
                 ),

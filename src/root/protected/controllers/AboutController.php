@@ -40,9 +40,9 @@ class AboutController extends Controller
 
     public function actionBadges()
     {
-        $sql = 'select distinct yr, pot, place, winnings from winners where yr = ' . (getCurrentYear()-1) . ' order by place, pot';
+        $sql = 'select distinct yr, pot, place, winnings, detail from winners where yr = ' . (getCurrentYear()-1) . ' order by place, pot';
         $trophies = Yii::app()->db->createCommand($sql)->queryAll();
-        $sql = 'select distinct u.id, u.username, u.avatar_ext, w1.userid, w1.yr, w1.pot, w1.place from winners w1 inner join user u on w1.userid = u.id where w1.yr = (select min(yr) from winners w2 where w2.pot = w1.pot and w2.place = w1.place)';
+        $sql = 'select distinct u.id, u.username, u.avatar_ext, w1.userid, w1.yr, w1.pot, w1.place, w1.detail from winners w1 inner join user u on w1.userid = u.id where w1.yr = (select min(yr) from winners w2 where w2.pot = w1.pot and w2.place = w1.place)';
         $trophiesUnlocked = Yii::app()->db->createCommand($sql)->queryAll();
         $badges = Badge::model()->with(array(
             'unlockedBy' => array(

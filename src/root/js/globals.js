@@ -230,13 +230,13 @@ globals.buildBadgePopovers = function($container) {
             content = '';
             content += '<div class="type-label">Winner Trophy</div>';
             content += '<table class="table table-condensed small popover-table">';
-            content += '<tr><td>Year</td><td>' + win.yr + '</td></tr>';
+            content += '<tr><td>Year</td><td><a href="' + CONF.url.archive(win.yr) + '">' + win.yr + '</a></td></tr>';
             content += '<tr><td>Place</td><td>' + (win.place == 1 ? '1st' : '2nd') + '</td></tr>';
             content += '<tr><td>Pot</td><td>' + globals.getPotName(win.pot) + '</td></tr>';
+            content += '<tr><td>Detail</td><td>' + win.detail + '</td></tr>';
             content += '<tr><td>Won</td><td>' + globals.dollarFormat(win.winnings) + '</td></tr>';
+            content += '<tr><td>Power&nbsp;Points</td><td>' + CONF.powerMultipliers['pointsPer' + (win.place == 1 ? 'First' : 'Second') + 'Place'].toFixed(1) + '</td></tr>';
             content += '</table>';
-            // KDHTODO show the number of power points it's worth
-            // KDHTODO also get the record (pot2) or week of incorrect (pot1), or sum of MOV (pot3) for additional detail?
             return content;
         },
         placement: 'auto top'
@@ -267,7 +267,7 @@ globals.buildBadgePopovers = function($container) {
             content += (userBadge.display ? '<tr><td>Detail</td><td>' + userBadge.display + '</td></tr>' : '');
             content += '<tr class="separator"><td>Type</td><td>' + userBadge.badge.type + '</td></tr>';
             content += (userBadge.badge.unlocked_year || unlockedUser ? '<tr><td>Unlocked</td><td>' + (userBadge.badge.unlocked_year ? userBadge.badge.unlocked_year : '') + (unlockedUser ? ' by <a href="' + CONF.url.profile(userBadge.badge.unlockedBy.id) + '">' + unlockedUser + '</a>' : '') + '</td></tr>' : '');
-            content += '<tr><td>Power&nbsp;Points</td><td>' + userBadge.badge.power_points + '</td></tr>';
+            content += '<tr><td>Power&nbsp;Points</td><td>' + userBadge.badge.power_points.toFixed(1) + '</td></tr>';
             content += '<tr><td>Description</td><td>' + userBadge.badge.description + '</td></tr>';
             content += '</table>';
             return content;

@@ -24,6 +24,9 @@ var CONF = {
         about:          function(page) {
             return '<?php echo $this->createAbsoluteUrl('about/page')?>'.replace('page', page);
         },
+        archive:        function(yr) {
+            return '<?php echo $this->createAbsoluteUrl('archive/year', array('y'=>0))?>'.replace('0', yr);
+        }
     },
     powerMultipliers: {
         pointsPerFirstPlace:    <?php echo param('powerMultipliers')['pointsPerFirstPlace'];?>,

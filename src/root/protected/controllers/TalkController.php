@@ -8,7 +8,10 @@ class TalkController extends Controller
     public function actionIndex()
     {
         $this->layout = 'main';
-        $talks = Talk::model()->current()->withLikes()->findAll(array('order'=>'postedon desc'));
+        $talks = Talk::model()->current()->withLikes()->findAll(array(
+            'condition' => (isSuperadmin() ? '' : 't.active = 1'),
+            'order'=>'postedon desc'
+        ));
         $users = User::model()->active()->findAll(array('order'=>'username'));
         $this->render('index', array('talks'=>$talks, 'users'=>$users));
     }
@@ -47,16 +50,21 @@ class TalkController extends Controller
         $talkId = (int) getRequestParameter('talkid', 0);
         $like   = (int) getRequestParameter('like', 0);
         
-        $record = Like::model()->findByAttributes(array('talkid'=>$talkId, 'userid'=>$userId));
-        if ($record) {
-            $record->active = $like;
-        } else {
-            $record = new Like;
-            $record->talkid = $talkId;
-            $record->userid = $userId;
-            $record->active = $like;
+        $talk   = Talk::model()->findAll(array(
+            'condition' => (isSuperadmin() ? '' : 't.active = 1')
+        ));
+        if ($talk) {
+            $record = Like::model()->findByAttributes(array('talkid'=>$talkId, 'userid'=>$userId));
+            if ($record) {
+                $record->active = $like;
+            } else {
+                $record = new Like;
+                $record->talkid = $talkId;
+                $record->userid = $userId;
+                $record->active = $like;
+            }
+            $record->save();
         }
-        $record->save();
         
         $this->writeJson(array('error'=>$error));
         exit;

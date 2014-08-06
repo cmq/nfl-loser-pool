@@ -37,7 +37,7 @@ class ArchiveController extends Controller
         ));
         
         $talk = Talk::model()->withLikes()->findAll(array(
-            'condition' => "t.yr = $year",
+            'condition' => "t.yr = $year" . (isSuperadmin() ? '' : ' and t.active = 1'),
             'order'     => 't.postedon desc'
         ));
         

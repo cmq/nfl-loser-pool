@@ -575,8 +575,7 @@ function Board(options) {
         if (settings.showBandwagon && settings.bandwagon) {
             $tr = $('<tr/>')
                 .append('<th/>')
-                // KDHTODO make "The Bandwagon" a link to the about page that explains what it is
-                .append('<th nowrap="nowrap"><div class="avatar-wrapper"><img src="/images/bwanimated-thumb.gif" class="avatar"></div><a style="float:left;" href="#">The Bandwagon</a><br /></th>');
+                .append('<th nowrap="nowrap"><div class="avatar-wrapper"><img src="/images/bwanimated-thumb.gif" class="avatar"></div><a style="float:left;" href="' + CONF.url.about('bandwagon') + '">The Bandwagon</a><br /></th>');
             // collapsed view
             if (settings.viewOptions.collapseHistory) {
                 bwuser = {picks: [] };  // simulate a "user"-like object for using the getOldRecord function

@@ -20,7 +20,10 @@ var CONF = {
         like:           '<?php echo $this->createAbsoluteUrl('talk/like')?>',
         profile:        function(id) {
             return '<?php echo $this->createAbsoluteUrl('stats/profile', array('id'=>0))?>'.replace('0', id);
-        }
+        },
+        about:          function(page) {
+            return '<?php echo $this->createAbsoluteUrl('about/page')?>'.replace('page', page);
+        },
     },
     powerMultipliers: {
         pointsPerFirstPlace:    <?php echo param('powerMultipliers')['pointsPerFirstPlace'];?>,

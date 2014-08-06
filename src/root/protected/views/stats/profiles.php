@@ -74,7 +74,7 @@ function filter() {
         matches;
     for (i=0; i<users.length; i++) {
         matches = true;
-        matches = matches && (filterName == '' || users[i].username.indexOf(filterName) >= 0);
+        matches = matches && (filterName == '' || users[i].username.toLowerCase().indexOf(filterName) >= 0);
         matches = matches && (showActive || users[i].active);
         users[i].shown = matches;
     }

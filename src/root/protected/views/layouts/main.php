@@ -15,7 +15,6 @@
  *  - Should the avatarBubble (along with everywhere else) show the user's power rank?)
  *  - Need to mark the Chief of the Bandwagon badge as Unlocked
  *  - Have about pages link to each other, like in the power ranking page how it talks about the bandwagon.
- *  - Profile list page filter name should be case-insensitive
  *  - Look at Andy's max incorrect streak details on his profile page (has same start and end week)
  *  - Have a way to gray out pot #1 after it's decided
  *  - Still need to hide content from people that haven't paid (I think...)
@@ -54,7 +53,7 @@
  *  		- Rivalry - most or least divisional games picked in a season.
  *  		- Prime time badge (picture of Deion) - most TNF + SNF + MNF games picked.
  *  - Power ranking formula
- *  	- less emphasis on longevity
+ *  	- less emphasis on longevity (tried to reduce this, but still need more!)
  *  	- include points for likes on trash talk
  *          - Only give credits for posts made that were liked by at least 3 people so people can't team-spam
  *          - Give more credit for more likes, but diminishing returns

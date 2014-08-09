@@ -9,8 +9,6 @@
  *  KDHTODO remaining items
  *  
  *  BUGS
- *  - Need to mark the Chief of the Bandwagon badge as Unlocked
- *  - When showing Talk posts, only get those where active = 1 (just added that new field to the database)
  *  
  *  PERFORMANCE ENHANCEMENTS
  *  - When left open for too long, the home page takes forever.  I think there's a memory leak.
@@ -85,6 +83,7 @@
  *  - Power Rank - less emphasis on longevity (tried to reduce this, but still need more!)
  *  
  *  GO-LIVE
+ *  - Need to mark the Chief of the Bandwagon badge as Unlocked
  *  - When in production, re-run the recalc/maintenance page multiple times (letting it time out) until the power ranking table is filled
  *  - Removing the hardcoding of week 19 from the getCurrentWeek() function in globals-domain.php
  *  

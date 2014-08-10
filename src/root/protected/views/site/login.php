@@ -53,8 +53,13 @@ function logIn() {
 }
 
 function loggedIn() {
+    var pos = $('#logo-large').position();
     $('#login-form-wrapper').fadeOut(250, function() {
-        $('#logo-large').css('z-index', 99999).animate({
+        $('#logo-large').css({
+            'z-index': 99999,
+            top: pos.top + 'px',
+            left: pos.left + 'px'
+        }).animate({
             width:  42,
             height: 32,
             left: '6px',

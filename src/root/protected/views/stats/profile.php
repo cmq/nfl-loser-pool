@@ -295,7 +295,7 @@ $(function() {
 </script>
 <div class="container">
 <?php
-echo CHtml::link('&laquo; Back to Profiles List', 'stats/profiles');
+echo CHtml::link('&laquo; Back to Profiles List', array('stats/profiles'));
 ?>
 
 <h2>User Profile</h2>

@@ -7,6 +7,11 @@ class MaintenanceController extends Controller
     private $bandwagons   = array();
     private $floatingBadges = array();
     
+    public function filters() {
+        return array(
+            array('application.filters.SuperadminFilter'),
+        );
+    }
     
     // map of stat.id to the key we'll use to describe/calculate that stat
     private $STATS = array(

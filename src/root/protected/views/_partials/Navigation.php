@@ -27,7 +27,7 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
     }
     ob_start();
     ?>
-    <li<?php echo (count($classes) ? ' class="' . implode(' ', $classes) . '"' : '')?>><?php echo CHtml::link($name, $link, ($isExternal ? array('target'=>'_blank') : null))?></li>
+    <li<?php echo (count($classes) ? ' class="' . implode(' ', $classes) . '"' : '')?>><?php echo CHtml::link($name, ($isDisabled ? '#' : $link), ($isExternal ? array('target'=>'_blank') : null))?></li>
     <?
     return ob_get_clean();
 }
@@ -35,7 +35,7 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
 
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <img src="/images/loser-logo-small.png" id="navbar-logo" />
+    <img src="/images/loser-logo-small.png" id="navbar-logo"<?php echo (isGuest() ? ' style="visibility:hidden;"' : '');?> />
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -57,41 +57,43 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                 echo navItem('Home', 'site/index', null, $controllerName == 'site');
                 echo navItem('Make Picks', 'pick/index', null, $controllerName == 'pick', !$isGuest);
                 echo navItem('Messages', 'talk/index', null, $controllerName == 'talk', !$isGuest, !$isPaid);
-                ?>
-                <li class="dropdown<?php echo ($controllerName == 'stats' ? ' active' : '')?>">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Statistics <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <?php
-                        echo navItem('Player Profiles', 'stats/profiles', null, $controllerName == 'stats' && ($actionName == 'index' || $actionName == 'profiles' || $actionName == 'profile'));
-                        echo navItem('Pick Statistics', 'stats/picks', null, $controllerName == 'stats' && $actionName == 'picks');
-                        ?>
-                    </ul>
-                </li>
-                <li class="dropdown<?php echo ($controllerName == 'archive' ? ' active' : '')?>">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Archive <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <?php
-                        echo navItem('Previous Winners', 'archive/winners', null, $controllerName == 'profile' && ($actionName == 'index' || $actionName == 'winners'));
-                        ?>
-                        <li class="divider"></li>
-                        <li><a href="#">Past Season Results</a></li>
-                        <?php
-                        $onYear = (int) getRequestParameter('y', 0);
-                        for ($y=param('earliestYear'); $y<getCurrentYear(); $y++) {
-                            echo navItem($y, 'archive/year', array('y'=>$y), $controllerName == 'archive' && $actionName == 'year' && $onYear == $y, true, false, true);
-                        }
-                        ?>
-                    </ul>
-                </li>
-                <?php
-                echo navItem('Settings', 'profile/index', null, $controllerName == 'profile', !$isGuest, !$isPaid);
+                if (!$isGuest) {
+                    ?>
+                    <li class="dropdown<?php echo ($controllerName == 'stats' ? ' active' : '')?>">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Statistics <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <?php
+                            echo navItem('Player Profiles', 'stats/profiles', null, $controllerName == 'stats' && ($actionName == 'index' || $actionName == 'profiles' || $actionName == 'profile'), !$isGuest, !$isPaid);
+                            echo navItem('Pick Statistics', 'stats/picks', null, $controllerName == 'stats' && $actionName == 'picks', !$isGuest, !$isPaid);
+                            ?>
+                        </ul>
+                    </li>
+                    <li class="dropdown<?php echo ($controllerName == 'archive' ? ' active' : '')?>">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Archive <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <?php
+                            echo navItem('Previous Winners', 'archive/winners', null, $controllerName == 'profile' && ($actionName == 'index' || $actionName == 'winners'), !$isGuest, !$isPaid);
+                            ?>
+                            <li class="divider"></li>
+                            <li><a href="#">Past Season Results</a></li>
+                            <?php
+                            $onYear = (int) getRequestParameter('y', 0);
+                            for ($y=param('earliestYear'); $y<getCurrentYear(); $y++) {
+                                echo navItem($y, 'archive/year', array('y'=>$y), $controllerName == 'archive' && $actionName == 'year' && $onYear == $y, !$isGuest, !$isPaid, true);
+                            }
+                            ?>
+                        </ul>
+                    </li>
+                    <?php
+                    echo navItem('Settings', 'profile/index', null, $controllerName == 'profile', !$isGuest, !$isPaid);
+                }
                 ?>
                 <li class="dropdown<?php echo ($controllerName == 'about' ? ' active' : '')?>">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <?php
                         echo navItem('Overview', 'about/overview', null, $controllerName == 'about' && ($actionName == 'index' || $actionName == 'overview'));
-                        echo navItem('Site Map', 'about/map', null, $controllerName == 'about' && $actionName == 'map');
+                        echo navItem('Site Map', 'about/map', null, $controllerName == 'about' && $actionName == 'map', !$isGuest);
                         echo navItem('History', 'about/history', null, $controllerName == 'about' && $actionName == 'history');
                         echo navItem('Rules', 'about/rules', null, $controllerName == 'about' && $actionName == 'rules');
                         echo navItem('Payout', 'about/payout', null, $controllerName == 'about' && $actionName == 'payout');

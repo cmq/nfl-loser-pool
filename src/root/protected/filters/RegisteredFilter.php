@@ -10,7 +10,7 @@ class RegisteredFilter extends CFilter
         $controller = Yii::app()->controller;
         
         if (isGuest()) {
-            $controller->error('Unauthorized access.');
+            $controller->error('Unauthorized access.  You must be logged in to use this page.');
             return false;
         } else {
             return true;

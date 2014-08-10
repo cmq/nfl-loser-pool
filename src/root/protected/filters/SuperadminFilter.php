@@ -10,7 +10,7 @@ class SuperadminFilter extends CFilter
         $controller = Yii::app()->controller;
         
         if (!isSuperadmin()) {
-            $controller->error('Unauthorized access.');
+            $controller->error('Unauthorized access.  You must be a superadmin to user this page.');
             return false;
         } else {
             return true;

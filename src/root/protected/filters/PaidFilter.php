@@ -10,7 +10,7 @@ class PaidFilter extends CFilter
         $controller = Yii::app()->controller;
         
         if (!isSuperadmin() && !isPaid()) {
-            $controller->error('You have not paid your entry fee yet.');
+            $controller->error('Unauthorized access.  You must pay your entry fee before using this page.');
             return false;
         } else {
             return true;

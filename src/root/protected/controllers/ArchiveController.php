@@ -5,6 +5,13 @@ class ArchiveController extends Controller
     
     public $layout = 'main';
 
+    public function filters() {
+        return array(
+            array('application.filters.RegisteredFilter'),
+            array('application.filters.PaidFilter'),
+        );
+    }
+    
     public function actionIndex()
     {
         $this->actionWinners();

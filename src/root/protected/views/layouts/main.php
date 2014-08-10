@@ -15,7 +15,6 @@
  *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
  *  
  *  DISPLAY ISSUES/FEATURES
- *  - What does navigation look like for a guest?
  *  - Sort "other riders" in the bandwagon by num weeks on it, descending
  *  - Have about pages link to each other, like in the power ranking page how it talks about the bandwagon.
  *  - Have a way to gray out pot #1 after it's decided
@@ -26,10 +25,7 @@
  *  - Trophies/badges have a negative margin to make them look nice on the Pick Board -- test this out in other devices
  *  - Test out the Profile pages in other devices, as heavy use of rows/columns was used
  *  - Update the page title from page to page
- *  - In the PickController, TalkController, and maybe other places, disallow any actions if the user is a Guest
  *  - On the Bandwagon about page, show the bandwagon icons inline where they are being talked about
- *  - On the Map about page, consider isVisible and isDisabled from the Navigation partial template so that the map matches the navbar for all users (guests and authenticated)
- *  - On the Map page, add a map entry for "log in" or "log out" depending on the user's status
  *  - On the Settings page, make save routines have consistent ways to show completion and errors (errors above the field in a div that takes up space whether or not it's empty, and successes as little save checkmarks to the left of each field that fade away)
  *          the checkmark should default to being present, and then should disappear when the user changes the field value or while an AJAX request is pending.  Once successful, it will reappear next to the field.
  *          clean up avatar upload section (general look, as well as error block)
@@ -81,6 +77,7 @@
  *  - Variety badge - longest to go without picking the same team twice in a season
  *  - Timing badge (stopwatching - Highest avg time choosing picks before the weekly deadline
  *  - Power Rank - less emphasis on longevity (tried to reduce this, but still need more!)
+ *  - Add a badge for anyone with a ROI over 1 (maybe the "Paid to Play" badge)
  *  
  *  GO-LIVE
  *  - Need to mark the Chief of the Bandwagon badge as Unlocked

@@ -5,6 +5,13 @@ class TalkController extends Controller
     
     public $layout = 'naked';
 
+    public function filters() {
+        return array(
+            array('application.filters.RegisteredFilter'),
+            array('application.filters.PaidFilter'),
+        );
+    }
+
     public function actionIndex()
     {
         $this->layout = 'main';

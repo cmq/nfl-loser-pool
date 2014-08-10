@@ -36,8 +36,8 @@ class Controller extends CController
             $this->layout = '//layouts/naked';
             $this->writeJson(array('error'=>$error));
 		} else {
-		    echo $error;
-            exit;
+		    $this->layout = '//layouts/main';
+		    $this->render('//site/error', array('error'=>$error));
 		}
     }
     

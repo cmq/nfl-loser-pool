@@ -3,6 +3,12 @@
 class SiteController extends Controller
 {
     
+    public function filters() {
+        return array(
+            array('application.filters.RegisteredFilter + poll'),
+        );
+    }
+    
     private function _getBoardData()
     {
         // for some reason if these scopes aren't applied in exactly the right order, something gets missed.
@@ -28,14 +34,18 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $boardData = $this->_getBoardData();
-        $bandwagon = $this->_getBandwagon();
-        $talk = Talk::model()->withLikes()->findAll(array(
-            'condition' => 't.yr = ' . getCurrentYear(),
-            'limit'     => 5,
-            'order'     => 't.postedon desc'
-        ));
-        $this->render('index', array('boardData'=>$boardData, 'bandwagon'=>$bandwagon, 'talk'=>$talk));
+        if (isGuest()) {
+            $this->render('index-guest');
+        } else {
+            $boardData = $this->_getBoardData();
+            $bandwagon = $this->_getBandwagon();
+            $talk = Talk::model()->withLikes()->findAll(array(
+                'condition' => 't.yr = ' . getCurrentYear() . (isSuperadmin() ? '' : ' and t.active = 1'),
+                'limit'     => 5,
+                'order'     => 't.postedon desc'
+            ));
+            $this->render('index', array('boardData'=>$boardData, 'bandwagon'=>$bandwagon, 'talk'=>$talk));
+        }
     }
     
     public function actionPoll()

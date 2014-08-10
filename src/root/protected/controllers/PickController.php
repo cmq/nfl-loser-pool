@@ -5,6 +5,12 @@ class PickController extends Controller
     
     public $layout = 'naked';
 
+    public function filters() {
+        return array(
+            array('application.filters.RegisteredFilter'),
+        );
+    }
+    
     public function actionIndex()
     {
         $this->layout = 'main';

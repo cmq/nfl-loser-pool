@@ -10,7 +10,7 @@ class AdminFilter extends CFilter
         $controller = Yii::app()->controller;
         
         if (!isAdmin()) {
-            $controller->error('Unauthorized access.');
+            $controller->error('Unauthorized access.  You must be an admin to use this page.');
             return false;
         } else {
             return true;

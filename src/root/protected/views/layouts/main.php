@@ -15,14 +15,12 @@
  *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
  *  
  *  DISPLAY ISSUES/FEATURES
- *  - Sort "other riders" in the bandwagon by num weeks on it, descending
  *  - Have about pages link to each other, like in the power ranking page how it talks about the bandwagon.
  *  - Have a way to gray out pot #1 after it's decided
  *  - Pick a new style for table headers so they're contrasted more
  *  - If the user hasn't made a pick for the current week, we need a way to inform them like the header on the old site
  *  - When showing all the badges, show floating badges as "year introduced" instead of "year unlocked", and show "current owner" instead of "unlocked by"
  *  - Make badges so they still have a title so that you can hover them for a name without having to click on them for the full details
- *  - Trophies/badges have a negative margin to make them look nice on the Pick Board -- test this out in other devices
  *  - Test out the Profile pages in other devices, as heavy use of rows/columns was used
  *  - Update the page title from page to page
  *  - On the Bandwagon about page, show the bandwagon icons inline where they are being talked about
@@ -33,13 +31,11 @@
  *          test page in other devices
  *          test placeholders in other devices... fields don't have labels by default, so are placeholders sufficient?
  *          viewsetting-saved should use the help-block instead maybe?
- *  - On the Profile page, use @media query to adjust how pie chart appears (or hide it completely?) for small screens (http://stackoverflow.com/questions/21241862/twitter-bootstrap-3-rowspan-and-reorder)
  *  - In the $.ajax() call from the Talk view, handle errors some way other than alerting them.
  *  - Clean up the display of the talk page?
  *  
  *  NEW FEATURES
  *  - Add a setting to receive the reminder email always, never, or just if you haven't made a pick.
- *  - Still need to hide content from people that haven't paid (I think...)
  *  - On the home page, when showing the collapsable accordian sections, set a cookie to remember which they had open
  *  - Figure out when to run the recalculation routines -- keep in mind bandwagon can be affected by EVERY PICK (so run on a cron or trigger via pick or something?)
  *  - Add View Option to show/hide user avatars
@@ -83,6 +79,8 @@
  *  - Need to mark the Chief of the Bandwagon badge as Unlocked
  *  - When in production, re-run the recalc/maintenance page multiple times (letting it time out) until the power ranking table is filled
  *  - Removing the hardcoding of week 19 from the getCurrentWeek() function in globals-domain.php
+ *  - On the Profile page, use @media query to adjust how pie chart appears (or hide it completely?) for small screens (http://stackoverflow.com/questions/21241862/twitter-bootstrap-3-rowspan-and-reorder)
+ *  - Trophies/badges have a negative margin to make them look nice on the Pick Board -- test this out in other devices
  *  
  *  STRETCH GOALS
  *  - Graph of referrers for how people know each other

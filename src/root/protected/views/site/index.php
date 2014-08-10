@@ -84,15 +84,30 @@ $(function() {
                                     <h5>Other riders....</h5>
                                     <div class="others">
                                         <?php
+                                        $otherRiders = array();
                                         foreach ($boardData as $user) {
                                             if ($user->id == $thisWeekBandwagon->chief->id) continue;
                                             foreach ($user->picks as $pick) {
                                                 if ($pick->week == getCurrentWeek() && $pick->teamid == $thisWeekBandwagon->team->id) {
-                                                    $weeksOn = $pick->weeks_on_bandwagon;
-                                                    echo '<div class="profile-bubble">' . getAvatarProfileLink($user, true, true) . " ($weeksOn)</div>";
-                                                    break;
+                                                    $weeksOn  = $pick->weeks_on_bandwagon;
+                                                    $rider    = array('user'=>$user, 'weeksOn'=>$weeksOn);
+                                                    $position = count($otherRiders);
+                                                    // find where in the otherRiders array this user fits
+                                                    for ($i=0; $i<count($otherRiders); $i++) {
+                                                        if ($weeksOn > $otherRiders[$i]['weeksOn']) {
+                                                            $position = $i;
+                                                            break;
+                                                        } else if ($weeksOn == $otherRiders[$i]['weeksOn'] && $user->power_ranking < $otherRiders[$i]['user']->power_ranking) {
+                                                            $position = $i;
+                                                            break;
+                                                        }
+                                                    }
+                                                    array_splice($otherRiders, $i, 0, array($rider));
                                                 }
                                             }
+                                        }
+                                        foreach ($otherRiders as $rider) {
+                                            echo '<div class="profile-bubble">' . getAvatarProfileLink($rider['user'], true, true) . " ({$rider['weeksOn']})</div>";
                                         }
                                         ?>
                                     </div>

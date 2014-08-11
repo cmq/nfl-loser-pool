@@ -271,8 +271,8 @@ function Board(options) {
             secondMostCorrect   = -2,
             firstWeekWrong      = 0,
             secondWeekWrong     = 0,
-            highestMargin       = 0,
-            secondHighestMargin = 0;
+            highestMargin       = -1,
+            secondHighestMargin = -2;
         
         // figure out pick stats
         for (i=0; i<settings.board.length; i++) {

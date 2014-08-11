@@ -15,6 +15,9 @@
  *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
  *  
  *  DISPLAY ISSUES/FEATURES
+ *  - Navigation does not work on mobile
+ *  - Login page image is too large on mobile
+ *  - Need to check power ranking chart on mobile
  *  - Have about pages link to each other, like in the power ranking page how it talks about the bandwagon.
  *  - Have a way to gray out pot #1 after it's decided
  *  - Pick a new style for table headers so they're contrasted more

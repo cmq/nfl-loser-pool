@@ -53,9 +53,10 @@ function logIn() {
 }
 
 function loggedIn() {
-    var pos = $('#logo-large').position();
+    var pos = $('#logo-large').offset();
     $('#login-form-wrapper').fadeOut(250, function() {
         $('#logo-large').css({
+            position: 'fixed',
             'z-index': 99999,
             top: pos.top + 'px',
             left: pos.left + 'px'
@@ -73,7 +74,22 @@ function loggedIn() {
     });
 }
 
+function handleSizes() {
+    $('#logo-large').css({
+        width: Math.min(window.originalLogoWidth, $(window).width())
+    });
+    $('#login-form-wrapper').css({
+        width: $('#login-table').width(),
+        'margin-top': ($('#logo-large').height() * -1)
+    });
+}
+
 $(function() {
+    window.originalLogoWidth = $('#logo-large').width();
+    handleSizes();
+    $(window).resize(function(e) {
+        handleSizes();
+    });
     $('#navbar-logo').css('visibility', 'hidden');
     $('input[name=username]').focus().select();
     $('#login-button').prop('disabled', false);
@@ -95,11 +111,11 @@ if (isset($errorMessage)):
 endif;
 ?>
 <div id="login-wrapper">
-    <img src="/images/loser-logo-large.png" id="logo-large" style="position:fixed;" />
+    <img src="/images/loser-logo-large.png" id="logo-large" style="display:block;margin:0 auto;" />
     <div id="login-form-wrapper">
         <div id="login-error" class="text-danger text-center" style="visibility:hidden;">&nbsp;</div>
         <form method="post" action="<?php echo Yii::app()->request->requestUri;?>" id="login-form">
-            <table style="border-spacing:3px;border-collapse:separate;">
+            <table id="login-table" style="border-spacing:3px;border-collapse:separate;">
                 <tr><td>Username:</td><td><input type="text" name="username"/></td></tr>
                 <tr><td>Password:</td><td><input type="password" name="password"/></td></tr>
                 <tr><td>&nbsp;</td><td><input type="checkbox" name="rememberMe" checked="checked"/> Remember me</td></tr>

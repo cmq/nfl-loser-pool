@@ -107,8 +107,9 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                 <?php
                 echo navItem('NFL Schedule', 'http://www.nfl.com/schedules/' . getCurrentYear() . (getHeaderWeek() <= 17 ? '/REG/' . max(getHeaderWeek(), 1) : '/POST' . (getHeaderWeek()-17)), null, false, true, false, false, true);
                 ?>
+                <li class="hidden-md hidden-lg"><?php echo (isGuest() ? CHtml::link('Login', array('site/login')) : CHtml::link('Logout', array('site/logout')));?></li>
             </ul>
-            <p class="navbar-text navbar-right loginlogout">
+            <p class="hidden-xs hidden-sm navbar-text navbar-right loginlogout">
                 Welcome, <?php echo (isGuest() ? 'Guest' : getProfileLink(user()));?>
                 <small>(<?php echo (isGuest() ? CHtml::link('Login', array('site/login')) : CHtml::link('Logout', array('site/logout')));?>)</small>
             </p>

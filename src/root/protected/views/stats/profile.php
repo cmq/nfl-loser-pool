@@ -79,7 +79,8 @@ function drawPickStatsTables($user) {
     ?>
     <br />
     <div class="row hidden-xs">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-xs-12 col-md-7">
+            <strong>Picks by Number</strong>
             <table class="table table-condensed table-bordered" style="border:none;">
                 <tr>
                     <td style="border-top:none;border-left:none;">&nbsp;</td>
@@ -107,7 +108,10 @@ function drawPickStatsTables($user) {
                 </tr>
             </table>
         </div>
-        <div class="col-xs-12 col-md-6">
+    </div>
+    <div class="row hidden-xs">
+        <div class="col-xs-12 col-md-7">
+            <strong>Picks by Percentage</strong>
             <table class="table table-condensed table-bordered" style="border:none;">
                 <tr>
                     <td style="border-top:none;border-left:none;">&nbsp;</td>

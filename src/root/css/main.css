@@ -87,9 +87,7 @@ body {
     position: relative;
 }
 #login-form-wrapper {
-    position: absolute;
-    left: 220px;
-    top: 60px;
+    margin: 0 auto;
 }
 
 /*

@@ -93,15 +93,15 @@ $_config = array(
  * Modify settings based on the environment
  */
 // PRODUCTION
-if (strstr(strtolower($_SERVER['HTTP_HOST']), 'loserpool.kdhstuff.com') !== false) {
+if (isProduction()) {
     // Apache!  Hide index.php script name
     $_config['components']['urlManager']['showScriptName'] = false;
     // Change database connection information
     $_config['components']['db'] = array(
 		'connectionString' => 'mysql:host=localhost;dbname=kdhstuff_loserpool2',
 		'emulatePrepare' => true,
-		'username' => 'kdhstuff_dough',
-		'password' => 'lRKE2@#y9D1+',
+		'username' => 'kdhstuff_loser',
+		'password' => '6ccS&ND^w1*4',
 		'charset' => 'utf8',
 	);
 }

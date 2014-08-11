@@ -38,7 +38,7 @@ $(function() {
                     <div class="panel-body">
                         <?php
                         foreach ($talk as $t) {
-                            $this->renderPartial('//_partials/talk', array('talk'=>$t));
+                            $this->renderPartial('//_partials/Talk', array('talk'=>$t));
                         }
                         ?>
                     </div>

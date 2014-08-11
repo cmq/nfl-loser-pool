@@ -67,7 +67,7 @@ $(function() {
     
     <?php
     foreach ($talks as $talk) {
-        $this->renderPartial('//_partials/talk', array('talk'=>$talk));
+        $this->renderPartial('//_partials/Talk', array('talk'=>$talk));
     }
     ?>
 </div>

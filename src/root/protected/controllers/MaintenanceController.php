@@ -1122,6 +1122,10 @@ class MaintenanceController extends Controller
             $bandwagonCorrectStreak = 0;
             $wasOnBandwagonLastWeek = false;
             foreach ($user['years'] as $y=>$year) {
+                if (!isset($year['weeks']) || !is_array($year['weeks'])) {
+                    // this happens when it's week 0 and users exist for a year but haven't made any picks for it yet
+                    continue;
+                }
                 foreach ($year['weeks'] as $w=>$week) {
                     if ($week['onBandwagon']) {
                         // the user was on the bandwagon this week
@@ -1275,9 +1279,17 @@ class MaintenanceController extends Controller
         foreach ($this->users as &$user) {
             $powerUser      = array();
             $weekIndex      = -1;    // the index of our flat power weeks array
-            $lastYearBadges = array();
+            $lastPowerData  = null;
             //reset($user['years']);
             foreach ($user['years'] as $y=>&$year) {
+                if (!isset($year['weeks']) || !is_array($year['weeks'])) {
+                    // this happens when it's week 0 and users exist for a year but haven't made any picks for it yet
+                    if ($lastPowerData) {
+                        $year['powerdata'] = $lastPowerData;
+                        $year['powerdata']['numSeasons']++;
+                    }
+                    continue;
+                }
                 end($year['weeks']);
                 $lastWeekForYear = key($year['weeks']);
                 foreach ($year['weeks'] as $w=>&$week) {
@@ -1336,6 +1348,7 @@ class MaintenanceController extends Controller
                             }
                         }
                         $year['powerdata'] = $powerWeek;
+                        $lastPowerData     = $powerWeek;
                     }
                     // append the week to the array
                     $powerUser[] = $powerWeek;

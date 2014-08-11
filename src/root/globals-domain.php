@@ -1,4 +1,8 @@
 <?php
+function isProduction() {
+    return (strstr(strtolower($_SERVER['HTTP_HOST']), 'loserpool.kdhstuff.com') !== false);
+}
+
 function isAdmin() {
     return (bool) userField('admin');
 }
@@ -22,15 +26,20 @@ function getCurrentWeek() {
     if ($currentWeek) {
         return $currentWeek;
     }
-    // remove the following line -- it is in place only for developing v2
-    return 19;
     
-    $dNow        = time();
-    $firstGames  = param('firstGame');
+    // remove the following section -- it is in place only for developing v2
+    if (!isProduction()) {
+        return 19;
+    }
+    
+    $dInOneHour  = new DateTime('NOW');
+    $firstGames  = $GLOBALS['firstGame'];
     $currentWeek = 0;
+    
+    $dInOneHour->add(new DateInterval('PT1H'));
     for ($i=1; $i<=21; $i++) {
-    	if ($dNow > ($firstGames[$i]-(60*60))) {
-    		// "now" is greater than the first game of week $i minus an hour (60*60 seconds)
+    	if ($dInOneHour > $firstGames[$i]) {
+    		// in one hour, the game of week $i will have started
     		$currentWeek = $i;
     	}
     }
@@ -38,30 +47,36 @@ function getCurrentWeek() {
 }
 
 function getHeaderWeek() {
-    $headerWeek = param('currentWeek');
+    $headerWeek = param('headerWeek');
     if ($headerWeek) {
         return $headerWeek;
     }
     
-    $dNow       = time();
-    $firstGames = param('firstGame');
+    $dNow        = new DateTime('NOW');
+    $dIn5Days    = new DateTime('NOW');
+    $dIn12Days   = new DateTime('NOW');
+    $firstGames  = $GLOBALS['firstGame'];
     $headerWeek = 0;
+    
+    $dIn5Days->add(new DateInterval('P5D'));
+    $dIn12Days->add(new DateInterval('P12D'));
+    
     for ($i=1; $i<=21; $i++) {
-    	if ($dNow > ($firstGames[$i]-(60*60*24*5))) {
+    	if ($dIn5Days > $firstGames[$i]) {
     	    // the first game of week $i is within 5 days
     		$headerWeek = $i;
-    	} else if ($i > 20 && $dNow > ($firstGames[$i]-(60*60*24*12))) {
+    	} else if ($i > 20 && $dIn12Days > $firstGames[$i]) {
     		// otherwise, a special case for the superbowl week... if we're within 12 days
     		$headerWeek = $i;
     	}
     }
     $headerWeek = min(max(1, $headerWeek), 21);
-    if ($headerWeek < 18 && date('w', $firstGames[$headerWeek]) > 1) {
+    if ($headerWeek < 18 && $firstGames[$headerWeek]->format('w') > 1) {
     	// the first game of the header week is on a Tuesday-Saturday (i.e., not Sunday) -- if the current day is not yet Tuesday,
     	// continue to show the previous week in the header, because even though we're within 5 days of the next week's games starting,
     	// the current week is still going on!
     	// Note that this doesn't apply during the playoffs
-        if (date('w', $dNow) < 2) {
+    	if ($dNow->format('w') < 2) {
     		$headerWeek--;
     	}
     }

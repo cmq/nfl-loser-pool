@@ -33,6 +33,7 @@
  *          viewsetting-saved should use the help-block instead maybe?
  *  - In the $.ajax() call from the Talk view, handle errors some way other than alerting them.
  *  - Clean up the display of the talk page?
+ *  - On the settings page, need to re-issue a call to lightboxAvatars after a successful upload
  *  
  *  NEW FEATURES
  *  - Add a setting to receive the reminder email always, never, or just if you haven't made a pick.
@@ -81,6 +82,8 @@
  *  - Removing the hardcoding of week 19 from the getCurrentWeek() function in globals-domain.php
  *  - On the Profile page, use @media query to adjust how pie chart appears (or hide it completely?) for small screens (http://stackoverflow.com/questions/21241862/twitter-bootstrap-3-rowspan-and-reorder)
  *  - Trophies/badges have a negative margin to make them look nice on the Pick Board -- test this out in other devices
+ *  - Decide how to upload (either via IDE or git)
+ *  - Get maintenance script running
  *  
  *  STRETCH GOALS
  *  - Graph of referrers for how people know each other
@@ -135,7 +138,7 @@
     </head>
     <body>
         <?php
-        $this->renderPartial('//_partials/navigation', array());
+        $this->renderPartial('//_partials/Navigation', array());
         echo $content;
         ?>
     </body>

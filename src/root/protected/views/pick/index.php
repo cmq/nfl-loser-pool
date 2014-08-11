@@ -77,16 +77,16 @@ $(function() {
             </thead>
             <tbody>
                 <?php
-                foreach ($pickByWeek as $pick) {
+                foreach ($pickByWeek as $week => $pick) {
                     $class = '';
                     if (!is_null($pick['incorrect'])) {
                         $class = $pick['incorrect'] == 1 ? 'danger' : 'success';
                     }
                     ?>
                     <tr class="<?php echo $class?>">
-                        <td><?php echo getWeekName($pick['week']);?></td>
+                        <td><?php echo getWeekName($week);?></td>
                         <td>
-                            <select class="form-control team-pick" data-week="<?php echo $pick['week']?>"<?php echo isLocked($pick['week']) && !isSuperadmin() ? ' disabled="disabled"' : '';?>>
+                            <select class="form-control team-pick" data-week="<?php echo $week;?>"<?php echo isLocked($week) && !isSuperadmin() ? ' disabled="disabled"' : '';?>>
                                 <option value="">Select Loser...</option>
                                 <?php
                                 foreach ($teams as $team) {
@@ -95,15 +95,25 @@ $(function() {
                                 ?>
                             </select>
                         </td>
-                        <td class="logo-container" week="<?php echo $pick['week'];?>"><div class="logo logo-medium" style="background-position:<?php echo getTeamLogoOffset($pick['team'], 'medium');?>" title="<?php echo $pick['team']['longname'];?>"></div></td>
-                        <td><?php echo getLockTime($pick['week'], true)?></td>
+                        <td class="logo-container" week="<?php echo $week;?>">
+                        <?php
+                        if ($pick && $pick['team']) {
+                            ?>
+                            <div class="logo logo-medium" style="background-position:<?php echo getTeamLogoOffset($pick['team'], 'medium');?>" title="<?php echo $pick['team']['longname'];?>"></div>
+                            <?php
+                        } else {
+                            echo '&nbsp;';
+                        }
+                        ?>
+                        </td>
+                        <td><?php echo getLockTime($week, true)?></td>
                         <td>
                             <?php
-                            if (isLocked($pick['week'])) {
+                            if (isLocked($week)) {
                                 echo '<strong>LOCKED</strong>';
                             } else {
                                 $now = new DateTime();
-                                $difference = $now->diff(getLockTime($pick['week']));
+                                $difference = $now->diff(getLockTime($week));
                                 echo $difference->format('%a days, %h hours, %i minutes');
                             }
                             ?>

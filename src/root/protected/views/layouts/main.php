@@ -15,9 +15,9 @@
  *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
  *  
  *  DISPLAY ISSUES/FEATURES
- *  - Navigation does not work on mobile
  *  - Login page image is too large on mobile
- *  - Need to check power ranking chart on mobile
+ *  - Payout breakdown is crap on mobile
+ *  - Need to check pages on tablets as well
  *  - Have about pages link to each other, like in the power ranking page how it talks about the bandwagon.
  *  - Have a way to gray out pot #1 after it's decided
  *  - Pick a new style for table headers so they're contrasted more
@@ -87,6 +87,7 @@
  *  - Trophies/badges have a negative margin to make them look nice on the Pick Board -- test this out in other devices
  *  - Decide how to upload (either via IDE or git)
  *  - Get maintenance script running
+ *  - The profile page shows a 404 in firebug even though everything seems to load fine
  *  
  *  STRETCH GOALS
  *  - Graph of referrers for how people know each other

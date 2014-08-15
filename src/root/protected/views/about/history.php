@@ -34,7 +34,7 @@
             <li>Best Record Pot: <strong>N/A</strong></li>
             <li>Biggest Loser Pot: <strong>N/A</strong></li>
             <li>Payout Structure: <strong>N/A</strong></li>
-            <li>Power Rankings: <strong>No</strong></li>
+            <li>Power Rankings: <strong>N/A</strong></li>
             <li>Set by System Tracking: <strong>N/A</strong></li>
             <li>Talk Messages: <strong>N/A</strong></li>
             <li>Bandwagon: <strong>N/A</strong></li>
@@ -45,7 +45,7 @@
     <h3>2004</h3>
     <p>
         2004 brought a hack of a website that had no bells or whistles, but it served its purpose.  The website was
-        written in ColdFusion and was run on a dev server at on my employer's network (with my boss's blessing).  In
+        written in ColdFusion and was run on a dev server on my employer's network (with my boss's blessing).  In
         2004, there was no such thing as the Best Record pot or the Biggest Loser pot; all you had was the Stay-Alive
         pot.  This turned out to be pretty anti-climatic, since by week 2, literally half of the players had been
         eliminated from the game and were done for the season.  2004 also had an entry fee of only $10, and there was
@@ -69,7 +69,7 @@
     <p>
         In 2005 the Best Record pot was added, meaning that players could now be engaged with the game for the full year.
         The payouts were also modified to award money to players that finished in 2nd place in either pot, which offered
-        more opportunities for people to win.  The problem was with the way the initial payout rules were written.  The
+        more opportunities for people to win.  The problem was with the way the initial payout rules were written.
         The rules said that the player(s) who finished in 2nd place in either of the pots would get their entry fee back,
         while those who finished in 1st place would get the rest.  However, for ties it was determined that the relevent
         pot would be split amongst those players who tied.  Clearly this did not work as intended, as three different
@@ -101,7 +101,7 @@
         60% of the pot in question.  While the intentions of this change were good, clearly this was not the proper
         solution as the end of the year bluntly illustrated.  With 4 players tying for 1st in the Best Record pot, and
         3 players tying for 2nd in that pot, those players in 1st place wound up getting $64.50 each (15% of the pot),
-        while those players in 2nd place wound up with $57.33 each (13.3% of the pot).  Clearly the delination wasn't
+        while those players in 2nd place wound up with $57.33 each (13.3% of the pot).  Clearly the delineation wasn't
         sufficient, and it opened up the opportunity for players in 2nd to actually get MORE money than players in 1st
         if the ties worked out differently.  Aside from the adjusted payout structure, there were a few other changes
         as well.  The entry fee was increased to $20, the ability to post messages (or "trash talk") was added,
@@ -112,7 +112,7 @@
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
-            <li>Payout Structure: <strong>2nd place gets 40% of the pot; 1st place gets 60% of the pot; pots are split 50/50</strong></li>
+            <li>Payout Structure: <strong>2nd place gets 40% of the pot; 1st place gets 60% of the pot; pots are the same size as each other</strong></li>
             <li>Power Rankings: <strong>No</strong></li>
             <li>Set by System Tracking: <strong>No</strong></li>
             <li>Talk Messages: <strong>Yes</strong></li>
@@ -127,7 +127,7 @@
         place in a given pot will receive twice as much as any players finishing in 2nd place in that pot.  Additionally,
         I added the database tracking of Set-by-System picks.
         <small><small><ul>
-            <li>Entry fee: <strong>$10</strong></li>
+            <li>Entry fee: <strong>$20</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -144,7 +144,7 @@
     <p>
         Based on all my research, I can't find anything new that happened in 2008.  I'm a slacker.
         <small><small><ul>
-            <li>Entry fee: <strong>$10</strong></li>
+            <li>Entry fee: <strong>$20</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -164,7 +164,7 @@
         days the site was up and running on my personal webserver at home.  This was apparently enough stress for one
         year, as no other updates were made to the system.
         <small><small><ul>
-            <li>Entry fee: <strong>$10</strong></li>
+            <li>Entry fee: <strong>$20</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -183,7 +183,7 @@
         could be properly decorated for the rest of time.  I also added the Past Winners page so users could find out
         who'd won the most times, the most money, etc.
         <small><small><ul>
-            <li>Entry fee: <strong>$10</strong></li>
+            <li>Entry fee: <strong>$20</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -201,12 +201,12 @@
         In 2011, there were a number of fun features added to the site.  First and foremost was the Power Ranking, which
         attempts to rank all players by how good they are overall.  The formula is constantly being tweaked, but in
         general it gives a pretty good idea of who's had the most success in the Loser Pool.  In a similar vein, badges
-        were also added.  Similar to trophies, Badges were created to recognize special or unique properties of a user
+        were also added.  Similar to trophies, badges were created to recognize special or unique properties of a user
         besides just winning money.  Some of these were rewarded retroactively for achievements that had been made prior
         to 2011.  Finally, a number of pieces of information were added, including the Statistics page, the Past Seasons
         archive pages, and the Season Outlook section on the homepage.
         <small><small><ul>
-            <li>Entry fee: <strong>$10</strong></li>
+            <li>Entry fee: <strong>$20</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -224,7 +224,7 @@
         In 2012, a Profile/Options page was finally added, allowing users to change their Username or Password, and, more
         interestingly, upload an Avatar of their choosing.
         <small><small><ul>
-            <li>Entry fee: <strong>$10</strong></li>
+            <li>Entry fee: <strong>$20</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -241,7 +241,7 @@
     <p>
         The trials of running a website on a home PC are many, and in 2013 this was rectified by moving the Loser Pool
         from my home server to a hosted server.  This removed the reliance on my house's power and internet being being
-        online, which is great for everyone.  The other big change was the additional of the Biggest Loser pot.  This
+        online, which is great for everyone.  The other big change was the addition of the Biggest Loser pot.  This
         pot (suggested by FOX) was originally optional, but since every player opted in, it became a regular part of the
         Loser Pool.  Beyond those changes, I also added the Stat Rankings page, and also started locking down certain
         pages for users that hadn't paid their entry fee to encourage people to pay early so I didn't have to keep

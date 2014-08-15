@@ -195,12 +195,12 @@ function Board(options) {
         return mov;
     }
     
-    function buildPanel(id, title, openByDefault, $content) {
+    function buildPanel(id, title, $content) {
         var $panel = $('<div class="panel panel-primary"/>')
             .append($('<div class="accordian-link panel-heading" data-toggle="collapse" href="#' + id + '"/>')
                 .append('<h4 class="panel-title">' + title + '</h4>')
             )
-            .append($('<div id="' + id + '" class="panel-collapse collapse' + (openByDefault ? ' in' : '') + '"/>')
+            .append($('<div id="' + id + '" class="panel-collapse collapse' + (globals.isSectionCollapsed(id) ? '' : ' in') + '"/>')
                 .append($('<div class="panel-body"/>')
                     .append($content)
                 )
@@ -747,8 +747,8 @@ function Board(options) {
         if (settings.collapsable) {
             $container
                 .empty()
-                .append(!settings.showPayout || settings.currentWeek < 1 ? '' : buildPanel('collapsePayout', 'Payout Breakdown' + (settings.currentWeek < 2 ? '' : '(Current Leader: ' + mostMoneyUser + ' - ' + globals.dollarFormat(mostMoney) + ')'), false, $payout))
-                .append(buildPanel('collapseBoard', 'Pick Board', true, $('<div style="width:auto;overflow:auto;"/>')
+                .append(!settings.showPayout || settings.currentWeek < 1 ? '' : buildPanel('collapsePayout', 'Payout Breakdown' + (settings.currentWeek < 2 ? '' : '(Current Leader: ' + mostMoneyUser + ' - ' + globals.dollarFormat(mostMoney) + ')'), $payout))
+                .append(buildPanel('collapseBoard', 'Pick Board', $('<div style="width:auto;overflow:auto;"/>')
                     .append($('<div class="table-responsive"/>')
                         .append($table)
                     )

@@ -15,7 +15,7 @@
  *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
  *  
  *  DISPLAY ISSUES/FEATURES
- *  - !!! make sure you can only see your own picks if you haven't paid
+ *  - !!! make sure you can only see your own picks (on the pick board) if you haven't paid
  *  - Make sure admins can't see future picks on the corrections page unless they are also superadmins
  *  - Several pages (profiles list, pick stats, etc) still need a once-over in mobile/tablet
  *  - Payout breakdown is crap on mobile
@@ -42,7 +42,6 @@
  *  
  *  NEW FEATURES
  *  - Add a setting to receive the reminder email always, never, or just if you haven't made a pick.
- *  - On the home page, when showing the collapsable accordian sections, set a cookie to remember which they had open
  *  - Figure out when to run the recalculation routines -- keep in mind bandwagon can be affected by EVERY PICK (so run on a cron or trigger via pick or something?)
  *  - Add View Option to show/hide user avatars
  *  - Add View Option to show/hide the bandwagon column/icon/row
@@ -135,6 +134,7 @@
         <?php require(__DIR__ . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array('..', '..', '..', 'js', 'conf.js.php')))?>
         <script src="<?php echo baseUrl('/js/lib/jquery.ba-getobject.min.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/jquery.lightbox_me.js'); ?>"></script>
+        <script src="<?php echo baseUrl('/js/lib/jquery.cookie.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/moment.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/oo.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/lib/types.js'); ?>"></script>

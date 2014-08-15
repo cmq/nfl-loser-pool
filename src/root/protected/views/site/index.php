@@ -22,6 +22,20 @@ $(function() {
             showLogos:       <?php echo userField('show_logos') ? 'true' : 'false'?>
         }
     });
+
+    $('.collapse').on('show.bs.collapse', function () {
+        globals.setSectionCollapsed($(this).attr('id'), false);
+    });
+    $('.collapse').on('hide.bs.collapse', function () {
+        globals.setSectionCollapsed($(this).attr('id'), true);
+    });
+
+    if (!globals.isSectionCollapsed('collapseTalk')) {
+        $('#collapseTalk').addClass('in');
+    }
+    if (!globals.isSectionCollapsed('collapseBandwagon')) {
+        $('#collapseBandwagon').addClass('in');
+    }
 });
 </script>
 
@@ -38,7 +52,7 @@ $(function() {
             <div class="accordian-link panel-heading" data-toggle="collapse" href="#collapseTalk">
                 <h4 class="panel-title">Recent Posts (<?php echo count($talk);?>)</h4>
             </div>
-            <div id="collapseTalk" class="panel-collapse collapse in">
+            <div id="collapseTalk" class="panel-collapse collapse">
                 <div class="panel-body">
                     <?php
                     foreach ($talk as $t) {

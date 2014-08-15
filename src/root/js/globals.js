@@ -157,6 +157,36 @@ globals.getOldRecord = function(user, currentWeek) {
     return wins + '-' + losses;
 };
 
+globals.isSectionCollapsed = function(sectionName) {    
+    var cookie = $.cookie('collapsedSections');
+    try {
+        if (typeof cookie === 'undefined') {
+            return true;
+        }
+        cookie = JSON.parse(cookie);
+        if (!cookie.hasOwnProperty(sectionName)) {
+            return true;
+        }
+        return globals.isTruthy(cookie[sectionName]);
+    } catch (e) {
+        return true;
+    }
+};
+
+globals.setSectionCollapsed = function(sectionName, collapsed) {
+    var cookie = $.cookie('collapsedSections');
+    try {
+        if (typeof cookie === 'undefined') {
+            cookie = {};
+        } else {
+            cookie = JSON.parse(cookie);
+        }
+        cookie[sectionName] = collapsed;
+        $.cookie('collapsedSections', JSON.stringify(cookie), {expires: 200, path: '/'});
+    } catch (e) {
+    }
+};
+
 globals.getModal = function(id, title, body, footer) {
     // based off the markup examples from twitter bootstrap:  @see http://getbootstrap.com/javascript/#modals
     var $div;

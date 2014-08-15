@@ -23,10 +23,10 @@ $(function() {
         }
     });
 
-    $('.collapse').on('show.bs.collapse', function () {
+    $(document).on('show.bs.collapse', '.panel-collapse', function () {
         globals.setSectionCollapsed($(this).attr('id'), false);
     });
-    $('.collapse').on('hide.bs.collapse', function () {
+    $(document).on('hide.bs.collapse', '.panel-collapse', function () {
         globals.setSectionCollapsed($(this).attr('id'), true);
     });
 

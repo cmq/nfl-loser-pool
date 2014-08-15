@@ -105,6 +105,8 @@ class MaintenanceController extends Controller
             $teams = array($teams);
         }
         if (array_key_exists($year, $user['years']) &&
+            isset($user['years'][$year]['weeks']) &&    // this can happen when it's week 0 and users exist for a year but haven't made any picks for it yet
+            is_array($user['years'][$year]['weeks']) && // this can happen when it's week 0 and users exist for a year but haven't made any picks for it yet
             array_key_exists($week, $user['years'][$year]['weeks']) &&
             array_search($user['years'][$year]['weeks'][$week]['teamid'], $teams) !== false) {
             // this user has this year/week and one of the teams in the list
@@ -112,6 +114,8 @@ class MaintenanceController extends Controller
         }
         if ($searchPending) {
             if (array_key_exists($year, $user['years']) &&
+                isset($user['years'][$year]['pendingPicks']) &&     // this can happen when it's week 0 and users exist for a year but haven't made any picks for it yet
+                is_array($user['years'][$year]['pendingPicks']) &&  // this can happen when it's week 0 and users exist for a year but haven't made any picks for it yet
                 array_key_exists($week, $user['years'][$year]['pendingPicks']) &&
                 array_search($user['years'][$year]['pendingPicks'][$week], $teams) !== false) {
                 // this user has this year/week and one of the teams in the list
@@ -583,11 +587,11 @@ class MaintenanceController extends Controller
         $sql = 'select t.postedby, l.userid, l.yr from losertalk t inner join likes l on l.talkid = t.id where l.active = 1' . ($userId ? " and (t.postedby = $userId or l.userid) = $userId" : '');
         $rsLike = Yii::app()->db->createCommand($sql)->query();
         foreach ($rsLike as $row) {
-            if (array_key_exists($row['postedby'], $users)) {
+            if (array_key_exists($row['postedby'], $users) && array_key_exists($row['yr'], $users[$row['postedby']]['years'])) {
                 $users[$row['postedby']]['likesBy']++;
                 $users[$row['postedby']]['years'][$row['yr']]['likesBy']++;
             }
-            if (array_key_exists($row['userid'], $users)) {
+            if (array_key_exists($row['userid'], $users) && array_key_exists($row['yr'], $users[$row['userid']]['years'])) {
                 $users[$row['userid']]['likesAt']++;
                 $users[$row['userid']]['years'][$row['yr']]['likesAt']++;
             }
@@ -675,6 +679,7 @@ class MaintenanceController extends Controller
         	from		user
         	inner join	loserpick on loserpick.userid = user.id
         				and loserpick.incorrect = 0
+                        and loserpick.setbysystem = 0
         				and loserpick.teamid > 0
                         and loserpick.yr <= ' . $y . '
             inner join  loseruser on loseruser.userid = user.id
@@ -1282,13 +1287,14 @@ class MaintenanceController extends Controller
             $lastPowerData  = null;
             //reset($user['years']);
             foreach ($user['years'] as $y=>&$year) {
-                if (!isset($year['weeks']) || !is_array($year['weeks'])) {
-                    // this happens when it's week 0 and users exist for a year but haven't made any picks for it yet
-                    if ($lastPowerData) {
-                        $year['powerdata'] = $lastPowerData;
+                // start by defaulting this year's power data to the last known power data
+                if ($lastPowerData) {
+                    $year['powerdata'] = $lastPowerData;
+                    if (!isset($year['weeks']) || !is_array($year['weeks'])) {
+                        // this happens when it's week 0 and users exist for a year but haven't made any picks for it yet
                         $year['powerdata']['numSeasons']++;
+                        continue;
                     }
-                    continue;
                 }
                 end($year['weeks']);
                 $lastWeekForYear = key($year['weeks']);

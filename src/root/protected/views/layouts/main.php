@@ -16,7 +16,6 @@
  *  
  *  DISPLAY ISSUES/FEATURES
  *  - !!! make sure you can only see your own picks (on the pick board) if you haven't paid
- *  - Make sure admins can't see future picks on the corrections page unless they are also superadmins
  *  - Several pages (profiles list, pick stats, etc) still need a once-over in mobile/tablet
  *  - Payout breakdown is crap on mobile
  *  - Need to check pages on tablets as well

@@ -19,6 +19,7 @@ class AdminController extends Controller
         return array(
             array('application.filters.AdminFilter'),
             array('application.filters.SuperadminFilter + superadmintest'),
+            array('application.filters.CorrectFilter + showCorrect, correct'),
         );
     }
     

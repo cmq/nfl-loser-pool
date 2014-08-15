@@ -15,6 +15,9 @@
  *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
  *  
  *  DISPLAY ISSUES/FEATURES
+ *  - !!! make sure you can only see your own picks if you haven't paid
+ *  - Make sure admins can't see future picks on the corrections page unless they are also superadmins
+ *  - Several pages (profiles list, pick stats, etc) still need a once-over in mobile/tablet
  *  - Payout breakdown is crap on mobile
  *  - Need to check pages on tablets as well
  *  - Have about pages link to each other, like in the power ranking page how it talks about the bandwagon.

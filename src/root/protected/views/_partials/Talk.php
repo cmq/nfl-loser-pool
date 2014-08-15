@@ -9,11 +9,33 @@ foreach ($talk->likes as $like) {
     $userLikes[$like->user->id] = $like->user->username;
 }
 
+// adjust the posted time for the user's timezone
+// NOTE:  locktime comes back in mountain time, but our user timezone modifications are based on central time, so start with +1
+$postTime = new DateTime($talk->postedon);
+$hours = +1;
+if (userField('timezone')) {
+    $hours += (int) userField('timezone');
+}
+// figure out how the user's dst settings apply
+if (date('I')) {
+    // it is currently daylight savings time
+    if (!userField('use_dst')) {
+        // but the user doesn't want to use daylight savings time
+        $hours -= 1;
+    }
+}
+if ($hours > 0) {
+    $postTime->add(new DateInterval("PT{$hours}H"));
+} else if ($hours < 0) {
+    $hours *= -1;
+    $postTime->sub(new DateInterval("PT{$hours}H"));
+}
+
 ?>
 <div class="panel talk <?php echo ($talk->admin ? 'panel-warning' : ($talk->at && $talk->at->id == userId() ? 'panel-success' : 'panel-default'));?>">
     <div class="panel-heading">
         <div class="talk-time small">
-            <?php echo date('n:ia \o\n D, M jS, Y', strtotime($talk->postedon));?>
+            <?php echo $postTime->format('g:ia \o\n D, M jS, Y');?>
         </div>
         <?php
         if ($talk->admin) {

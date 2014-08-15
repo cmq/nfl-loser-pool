@@ -38,7 +38,7 @@ $(function() {
             <div class="accordian-link panel-heading" data-toggle="collapse" href="#collapseTalk">
                 <h4 class="panel-title">Recent Posts (<?php echo count($talk);?>)</h4>
             </div>
-            <div id="collapseTalk" class="panel-collapse collapse">
+            <div id="collapseTalk" class="panel-collapse collapse in">
                 <div class="panel-body">
                     <?php
                     foreach ($talk as $t) {

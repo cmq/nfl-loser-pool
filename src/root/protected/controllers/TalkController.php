@@ -16,7 +16,7 @@ class TalkController extends Controller
     {
         $this->layout = 'main';
         $talks = Talk::model()->current()->withLikes()->findAll(array(
-            'condition' => (isSuperadmin() ? '' : 't.active = 1'),
+            'condition' => 't.active = 1',
             'order'=>'postedon desc'
         ));
         $users = User::model()->active()->findAll(array('order'=>'username'));
@@ -58,7 +58,7 @@ class TalkController extends Controller
         $like   = (int) getRequestParameter('like', 0);
         
         $talk   = Talk::model()->findAll(array(
-            'condition' => (isSuperadmin() ? '' : 't.active = 1')
+            'condition' => 't.active = 1'
         ));
         if ($talk) {
             $record = Like::model()->findByAttributes(array('talkid'=>$talkId, 'userid'=>$userId));

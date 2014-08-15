@@ -40,7 +40,7 @@ class SiteController extends Controller
             $boardData = $this->_getBoardData();
             $bandwagon = $this->_getBandwagon();
             $talk = Talk::model()->withLikes()->findAll(array(
-                'condition' => 't.yr = ' . getCurrentYear() . (isSuperadmin() ? '' : ' and t.active = 1'),
+                'condition' => 't.yr = ' . getCurrentYear() . ' and t.active = 1',
                 'limit'     => 5,
                 'order'     => 't.postedon desc'
             ));

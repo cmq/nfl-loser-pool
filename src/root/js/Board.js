@@ -747,7 +747,7 @@ function Board(options) {
         if (settings.collapsable) {
             $container
                 .empty()
-                .append(!settings.showPayout ? '' : buildPanel('collapsePayout', 'Payout Breakdown (Current Leader: ' + mostMoneyUser + ' - ' + globals.dollarFormat(mostMoney) + ')', false, $payout))
+                .append(!settings.showPayout || settings.currentWeek < 1 ? '' : buildPanel('collapsePayout', 'Payout Breakdown' + (settings.currentWeek < 2 ? '' : '(Current Leader: ' + mostMoneyUser + ' - ' + globals.dollarFormat(mostMoney) + ')'), false, $payout))
                 .append(buildPanel('collapseBoard', 'Pick Board', true, $('<div style="width:auto;overflow:auto;"/>')
                     .append($('<div class="table-responsive"/>')
                         .append($table)

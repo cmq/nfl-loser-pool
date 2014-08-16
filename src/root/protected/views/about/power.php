@@ -51,7 +51,7 @@ $multipliers = param('powerMultipliers');
                     <td class="text-right">-<?php echo number_format($multipliers['winPctMultiplier']*(100-$multipliers['winPctThreshold']), 2);?> to +<?php echo number_format($multipliers['winPctMultiplier']*(100-$multipliers['winPctThreshold']), 2);?>*</td>
                 </tr>
                 <tr>
-                    <td>Per Each Point of your Average Marging of Defeat</td>
+                    <td>Per Each Point of your Average Margin of Defeat</td>
                     <td class="text-right"><?php echo number_format($multipliers['movPoints'], 2);?></td>
                 </tr>
                 <tr>

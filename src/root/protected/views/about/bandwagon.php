@@ -9,10 +9,10 @@
     </p>
     <h4>Determining the Bandwagon Pick</h4>
     <p>
-        The concept of The Bandwagon is pretty simple:  Each week, there is one official "Bandwagon Pick."  Which team
-        this is is determined by the team that is chosen by the largest number of players that week.  If two or more teams
-        tie for having been picked the most in a given week, the official Bandwagon Pick becomes that team which was chosen
-        by the player with the highest Power Ranking. 
+        The concept of The Bandwagon is pretty simple:  Each week, there is one official "Bandwagon Pick."  The Bandwagon
+        Pick is the team that is chosen by the largest number of players that week.  If two or more teams tie for having
+        been picked the most in a given week, the official Bandwagon Pick becomes that team which was chosen by the player
+        with the highest Power Ranking. 
     <p>
     <h4>Display on the Pick Board and Home Page</h4>
     <p>

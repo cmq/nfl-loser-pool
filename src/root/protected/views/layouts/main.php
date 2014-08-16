@@ -16,7 +16,7 @@
  *  
  *  DISPLAY ISSUES/FEATURES
  *  - Several pages (profiles list, pick stats, etc) still need a once-over in mobile/tablet
- *  - Payout breakdown is crap on mobile
+ *  - Payout breakdown is crap on mobile, shouldn't have to scroll
  *  - Need to check pages on tablets as well
  *  - Have about pages link to each other, like in the power ranking page how it talks about the bandwagon.
  *  - Have a way to gray out pot #1 after it's decided

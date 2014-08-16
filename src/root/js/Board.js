@@ -210,14 +210,14 @@ function Board(options) {
     }
     
     function buildPayoutTable() {
-        var i, j, k, $pots = [], $payout = $('<div />');
+        var i, j, k, $pots = [], $payout = $('<div class="table-responsive" />');
         
         for (i=0; i<pots.length; i++) {
             $pots.push([]);
             for (j=0; j<2; j++) {
                 $pots[i].push($('<td/>'));
                 for (k=0; k<pots[i][j].users.length; k++) {
-                    $pots[i][j].append(globals.avatarBubble(pots[i][j].users[k]));
+                    $pots[i][j].append(globals.avatarBubble(pots[i][j].users[k]) + '<br />');
                 }
             }
         }

@@ -716,7 +716,7 @@ function Board(options) {
             $tr.append('<td class="text-center" nowrap="nowrap">' + (user.stayAlive > 21 ? '...' : 'Week ' + user.stayAlive) + '</td>');
             $tr.append('<td class="text-center' + (countPot2() ? '' : ' unused-column') + '">' + user.record + '</td>');
             $tr.append('<td class="text-right' + (countPot3() ? '' : ' unused-column') + '">' + user.margin + '</td>');
-            $tr.append('<td class="text-right">' + globals.dollarFormat(user.money) + '</td>');
+            $tr.append('<td class="text-right">' + (settings.userPaid ? globals.dollarFormat(user.money) : '$0.00') + '</td>');
             $tr.append('<td class="text-right">' + globals.ordinal(user.power_ranking) + '</td>');
             $tr.append('<td class="text-right">' + user.power_points + '</td>');
             $tr.append('<td class="text-center">' + (bwStreak > 0 ? '+' : '') + bwStreak + '</td>');

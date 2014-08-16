@@ -197,7 +197,7 @@ class MaintenanceController extends Controller
                 if ($previousWeek) {
                     $correct['startYear'] = $previousWeek['y'];
                     $correct['startWeek'] = $previousWeek['w'];
-                    if ($user['years'][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] === -1) {
+                    if ($user['years'][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] === 1) {
                         $done = true;
                     }
                 } else {
@@ -575,11 +575,11 @@ class MaintenanceController extends Controller
         $sql = 'select * from losertalk where active = 1 and admin = 0' . ($userId ? " and (postedby = $userId or postedat = $userId)" : '');
         $rsTalk = Yii::app()->db->createCommand($sql)->query();
         foreach ($rsTalk as $row) {
-            if (array_key_exists($row['postedby'], $users)) {
+            if (array_key_exists($row['postedby'], $users) && array_key_exists($row['yr'], $users[$row['postedby']]['years'])) {
                 $users[$row['postedby']]['postsBy']++;
                 $users[$row['postedby']]['years'][$row['yr']]['postsBy']++;
             }
-            if (array_key_exists($row['postedat'], $users)) {
+            if (array_key_exists($row['postedat'], $users) && array_key_exists($row['yr'], $users[$row['postedat']]['years'])) {
                 $users[$row['postedat']]['postsAt']++;
                 $users[$row['postedat']]['years'][$row['yr']]['postsAt']++;
             }
@@ -993,7 +993,11 @@ class MaintenanceController extends Controller
                 // find which of these users has the highest power ranking and take their team as the only candidate
                 $highestRankedUser = $this->_getHighestRankedUser($users);
                 if ($highestRankedUser) {
-                    $newBandwagon['teams'] = array($highestRankedUser['years'][$newBandwagon['year']]['weeks'][$newBandwagon['week']]['teamid']);
+                    if (isset($highestRankedUser['years'][$newBandwagon['year']]['weeks'][$newBandwagon['week']])) {
+                        $newBandwagon['teams'] = array($highestRankedUser['years'][$newBandwagon['year']]['weeks'][$newBandwagon['week']]['teamid']);
+                    } else if (isset($highestRankedUser['years'][$newBandwagon['year']]['pendingPicks'][$newBandwagon['week']])) {
+                        $newBandwagon['teams'] = array($highestRankedUser['years'][$newBandwagon['year']]['pendingPicks'][$newBandwagon['week']]);
+                    }
                 }
             }
         }

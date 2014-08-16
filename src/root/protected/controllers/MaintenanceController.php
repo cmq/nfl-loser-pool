@@ -584,7 +584,7 @@ class MaintenanceController extends Controller
                 $users[$row['postedat']]['years'][$row['yr']]['postsAt']++;
             }
         }
-        $sql = 'select t.postedby, l.userid, l.yr from losertalk t inner join likes l on l.talkid = t.id where l.active = 1' . ($userId ? " and (t.postedby = $userId or l.userid) = $userId" : '');
+        $sql = 'select t.postedby, l.userid, l.yr from losertalk t inner join likes l on l.talkid = t.id where l.active = 1' . ($userId ? " and (t.postedby = $userId or l.userid = $userId)" : '');
         $rsLike = Yii::app()->db->createCommand($sql)->query();
         foreach ($rsLike as $row) {
             if (array_key_exists($row['postedby'], $users) && array_key_exists($row['yr'], $users[$row['postedby']]['years'])) {

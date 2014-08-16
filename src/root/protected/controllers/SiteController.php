@@ -14,8 +14,9 @@ class SiteController extends Controller
         // for some reason if these scopes aren't applied in exactly the right order, something gets missed.
         // ironically, if you apply them in the same order twice, the second time everything works properly... must be something jacked with Yii
         $boardData = User::model()->withPicks(getCurrentYear(), isSuperadmin())->active()->withBadges()->withWins()->findAll(array(
-            'select' => 't.id, t.username, t.avatar_ext, t.power_points, t.power_ranking',
-            'order' => 't.username, t.id, picks.yr, picks.week, wins.place, wins.pot, wins.yr, badge.zindex',
+            'condition' => (isPaid() ? '' : 't.id = ' . userId()),
+            'select'    => 't.id, t.username, t.avatar_ext, t.power_points, t.power_ranking',
+            'order'     => 't.username, t.id, picks.yr, picks.week, wins.place, wins.pot, wins.yr, badge.zindex',
         ));
         return $boardData;
     }

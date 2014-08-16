@@ -15,6 +15,7 @@ $(function() {
         poll:  true,
         order: 'record',
         collapsable: true,
+        userPaid: <?php echo isPaid() ? 'true' : 'false'?>,
         viewOptions: {
             collapseHistory: <?php echo userField('collapse_history') ? 'true' : 'false'?>,
             showBadges:      <?php echo userField('show_badges') ? 'true' : 'false'?>,

@@ -13,6 +13,7 @@ function Board(options) {
             showPayout:     true,
             board:          [],
             bandwagon:      [],
+            userPaid:       true,
             viewOptions: {
                 collapseHistory: false,
                 showBadges:      true,
@@ -735,7 +736,7 @@ function Board(options) {
         
         
         // draw the pots payout
-        if (settings.showPayout) {
+        if (settings.showPayout && settings.userPaid) {
             $payout = buildPayoutTable();
         }
         
@@ -747,8 +748,9 @@ function Board(options) {
         if (settings.collapsable) {
             $container
                 .empty()
-                .append(!settings.showPayout || settings.currentWeek < 1 ? '' : buildPanel('collapsePayout', 'Payout Breakdown' + (settings.currentWeek < 2 ? '' : '(Current Leader: ' + mostMoneyUser + ' - ' + globals.dollarFormat(mostMoney) + ')'), $payout))
+                .append(!settings.showPayout || !settings.userPaid || settings.currentWeek < 1 ? '' : buildPanel('collapsePayout', 'Payout Breakdown' + (settings.currentWeek < 2 ? '' : '(Current Leader: ' + mostMoneyUser + ' - ' + globals.dollarFormat(mostMoney) + ')'), $payout))
                 .append(buildPanel('collapseBoard', 'Pick Board', $('<div style="width:auto;overflow:auto;"/>')
+                    .append(settings.userPaid ? '' : '<h3>Other players are hidden from view until you\'ve paid your entry fee.</h3>')
                     .append($('<div class="table-responsive"/>')
                         .append($table)
                     )
@@ -758,6 +760,7 @@ function Board(options) {
                 .empty()
                 .append(settings.showPayout ? $payout : '')
                 .append($('<div style="width:auto;overflow:auto;"/>')
+                    .append(settings.userPaid ? '' : '<h3>Other players are hidden from view until you\'ve paid your entry fee.</h3>')
                     .append($('<div class="table-responsive"/>')
                         .append($table)
                     )

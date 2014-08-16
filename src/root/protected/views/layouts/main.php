@@ -15,7 +15,6 @@
  *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
  *  
  *  DISPLAY ISSUES/FEATURES
- *  - !!! make sure you can only see your own picks (on the pick board) if you haven't paid
  *  - Several pages (profiles list, pick stats, etc) still need a once-over in mobile/tablet
  *  - Payout breakdown is crap on mobile
  *  - Need to check pages on tablets as well
@@ -38,12 +37,14 @@
  *  - In the $.ajax() call from the Talk view, handle errors some way other than alerting them.
  *  - Clean up the display of the talk page?
  *  - On the settings page, need to re-issue a call to lightboxAvatars after a successful upload
+ *  - Why does Kent have no points for likes given?  I think these will start showing up once the season officially starts.  Double check this later.
  *  
  *  NEW FEATURES
  *  - Add a setting to receive the reminder email always, never, or just if you haven't made a pick.
  *  - Figure out when to run the recalculation routines -- keep in mind bandwagon can be affected by EVERY PICK (so run on a cron or trigger via pick or something?)
  *  - Add View Option to show/hide user avatars
  *  - Add View Option to show/hide the bandwagon column/icon/row
+ *  - Allow admin messages to be "sticky"
  *  
  *  UNDECIDED FEATURES
  *  - Make the Pick Board view options toggleable in real-time?
@@ -78,6 +79,7 @@
  *  - Timing badge (stopwatching - Highest avg time choosing picks before the weekly deadline
  *  - Power Rank - less emphasis on longevity (tried to reduce this, but still need more!)
  *  - Add a badge for anyone with a ROI over 1 (maybe the "Paid to Play" badge)
+ *  - Add a badge for the person during the season who has had a pick in the longest time compared to that pick's lock time and got it right (maybe like a crystal ball badge)
  *  
  *  GO-LIVE
  *  - Need to mark the Chief of the Bandwagon badge as Unlocked

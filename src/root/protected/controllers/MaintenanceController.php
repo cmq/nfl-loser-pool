@@ -194,7 +194,7 @@ class MaintenanceController extends Controller
             $correct['startYear'] = $correct['endYear'];
             while (!$done) {
                 $previousWeek = $this->_getPreviousWeek($user, $correct['startYear'], $correct['startWeek']);
-                if ($previousWeek) {
+                if ($previousWeek && $user['years'][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] > 0) {
                     $correct['startYear'] = $previousWeek['y'];
                     $correct['startWeek'] = $previousWeek['w'];
                     if ($user['years'][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] === 1) {
@@ -211,7 +211,7 @@ class MaintenanceController extends Controller
             $incorrect['startYear'] = $incorrect['endYear'];
             while (!$done) {
                 $previousWeek = $this->_getPreviousWeek($user, $incorrect['startYear'], $incorrect['startWeek']);
-                if ($previousWeek) {
+                if ($previousWeek && $user['years'][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] < 0) {
                     $incorrect['startYear'] = $previousWeek['y'];
                     $incorrect['startWeek'] = $previousWeek['w'];
                     if ($user['years'][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] === -1) {

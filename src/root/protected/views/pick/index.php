@@ -1,6 +1,6 @@
 <?php
 $pickByWeek = array();
-for ($i=1; $i<21; $i++) {
+for ($i=1; $i<=21; $i++) {
     $pickByWeek[$i] = null;
 }
 foreach ($picks as $pick) {

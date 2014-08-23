@@ -20,7 +20,7 @@
         Finally, please note that even though I have an automated process that sends reminders to make your selection,
         people will occasionally miss these reminders for a number of reasons, but usually because they're flagged as
         spam or filtered out by the their mail provider.  Be smart and set your own reminders.  The reminders I send are
-        a courtesy, but are not guaranteed to be delivered.  You are responsible fore remembering to make your own pick!
+        a courtesy, but are not guaranteed to be delivered.  You are responsible for remembering to make your own pick!
     </p>
     <h4>Details for the geeks:</h4>
     <ul>

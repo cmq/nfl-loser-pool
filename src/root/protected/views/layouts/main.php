@@ -9,12 +9,15 @@
  *  KDHTODO remaining items
  *  
  *  BUGS
+ *  - When creating new players, they wind up with "null" powerpoints and 0th place
+ *  - The profile page shows a 404 in firebug even though everything seems to load fine
  *  
  *  PERFORMANCE ENHANCEMENTS
  *  - When left open for too long, the home page takes forever.  I think there's a memory leak.
  *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
  *  
  *  DISPLAY ISSUES/FEATURES
+ *  - Note image cache for users who upload a new profile picture
  *  - Several pages (profiles list, pick stats, etc) still need a once-over in mobile/tablet
  *  - Payout breakdown is crap on mobile, shouldn't have to scroll
  *  - Need to check pages on tablets as well
@@ -23,7 +26,6 @@
  *  - Pick a new style for table headers so they're contrasted more
  *  - If the user hasn't made a pick for the current week, we need a way to inform them like the header on the old site
  *  - When showing all the badges, show floating badges as "year introduced" instead of "year unlocked", and show "current owner" instead of "unlocked by"
- *  - Make badges so they still have a title so that you can hover them for a name without having to click on them for the full details
  *  - Test out the Profile pages in other devices, as heavy use of rows/columns was used
  *  - Update the page title from page to page
  *  - On the Bandwagon about page, show the bandwagon icons inline where they are being talked about
@@ -36,7 +38,6 @@
  *          viewsetting-saved should use the help-block instead maybe?
  *  - In the $.ajax() call from the Talk view, handle errors some way other than alerting them.
  *  - Clean up the display of the talk page?
- *  - On the settings page, need to re-issue a call to lightboxAvatars after a successful upload
  *  - Why does Kent have no points for likes given?  I think these will start showing up once the season officially starts.  Double check this later.
  *  
  *  NEW FEATURES
@@ -45,6 +46,7 @@
  *  - Add View Option to show/hide user avatars
  *  - Add View Option to show/hide the bandwagon column/icon/row
  *  - Allow admin messages to be "sticky"
+ *  - Add a setting to receive email notifications when someone posts a message @ you
  *  
  *  UNDECIDED FEATURES
  *  - Make the Pick Board view options toggleable in real-time?
@@ -68,7 +70,6 @@
  *  
  *  BADGES/POWER STUFF
  *  - Add large power points for having uploaded a custom avatar
- *  - Add a weiner badge for someone who lets the system pick x number of picks for them in a given season
  *  - Make an "against the flow" badge for users who stay off the bandwagon the most
  *  - Allow grouping of like-type badges so it only shows the badge once and then has a little counter if they have more than 1 of them.
  *  - Add a badge that takes away a power point for users who use IE
@@ -79,7 +80,8 @@
  *  - Timing badge (stopwatching - Highest avg time choosing picks before the weekly deadline
  *  - Power Rank - less emphasis on longevity (tried to reduce this, but still need more!)
  *  - Add a badge for anyone with a ROI over 1 (maybe the "Paid to Play" badge)
- *  - Add a badge for the person during the season who has had a pick in the longest time compared to that pick's lock time and got it right (maybe like a crystal ball badge)
+ *  - Add a badge for anti-chief of the bandwagon... maybe the "Trailblazer" badge?
+ *  - Make the weiner badge calculate automatically
  *  
  *  GO-LIVE
  *  - Need to mark the Chief of the Bandwagon badge as Unlocked
@@ -89,7 +91,6 @@
  *  - Trophies/badges have a negative margin to make them look nice on the Pick Board -- test this out in other devices
  *  - Decide how to upload (either via IDE or git)
  *  - Get maintenance script running
- *  - The profile page shows a 404 in firebug even though everything seems to load fine
  *  
  *  STRETCH GOALS
  *  - Graph of referrers for how people know each other

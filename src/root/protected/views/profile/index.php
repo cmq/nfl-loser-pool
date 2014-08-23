@@ -272,6 +272,7 @@ $(function() {
                     $avatar.replaceWith($(globals.htmlDecode(responseJSON.thumbnail)).hide());
                     $('#avatar<?php echo $user->id?> img').attr('src', responseJSON.thumbnailurl + '?x=' + new Date().getTime());
                     $('#avatar<?php echo $user->id?>').fadeIn('fast');
+                    globals.lightboxAvatars();
                 });
                 uploadTimeout = setTimeout(function() {
                     $('ul.qq-upload-list li').fadeOut(400, function() {

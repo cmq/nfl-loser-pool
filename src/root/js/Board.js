@@ -718,7 +718,7 @@ function Board(options) {
             $tr.append('<td class="text-right' + (countPot3() ? '' : ' unused-column') + '">' + user.margin + '</td>');
             $tr.append('<td class="text-right">' + (settings.userPaid ? globals.dollarFormat(user.money) : '$0.00') + '</td>');
             $tr.append('<td class="text-right">' + globals.ordinal(user.power_ranking) + '</td>');
-            $tr.append('<td class="text-right">' + user.power_points + '</td>');
+            $tr.append('<td class="text-right">' + parseFloat(user.power_points).toFixed(3) + '</td>');
             $tr.append('<td class="text-center">' + (bwStreak > 0 ? '+' : '') + bwStreak + '</td>');
             
             $tbody.append($tr);

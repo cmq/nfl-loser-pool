@@ -10,7 +10,8 @@ $(function() {
             data:       {
                             user:    $('#talkuser').val(),
                             message: $('#talkmessage').val()<?php
-                            echo isSuperadmin() ? ",admin: $('#talksuperadmin').is(':checked') ? 1 : 0" : '';?>
+                            echo isSuperadmin() ? ",admin: $('#talksuperadmin').is(':checked') ? 1 : 0" : '';
+                            echo isSuperadmin() ? ",sticky: $('#talksticky').is(':checked') ? 1 : 0" : '';?>
                         },
             type:       'post',
             cache:      false,
@@ -57,6 +58,11 @@ $(function() {
             <div class="checkbox">
                 <label>
                     <input type="checkbox" id="talksuperadmin" /> Post as Administrative Message
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" id="talksticky" /> Sticky
                 </label>
             </div>
             <?php

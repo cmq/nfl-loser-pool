@@ -30,6 +30,7 @@ class TalkController extends Controller
         $userId  = (int) getRequestParameter('user', 0);
         $message = trim((string) getRequestParameter('message', ''));
         $admin   = isSuperadmin() ? (int) getRequestParameter('admin', 0) : 0;
+        $sticky  = isSuperadmin() ? (int) getRequestParameter('sticky', 0) : 0;
         
         if (!$error && !$message) {
             $error = 'The message text cannot be empty.';
@@ -41,6 +42,7 @@ class TalkController extends Controller
             $record->postedat = $userId;
             $record->post     = $message;
             $record->admin    = $admin;
+            $record->sticky   = $sticky;
             
             $error = $this->saveRecord($record);
         }

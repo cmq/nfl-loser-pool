@@ -283,3 +283,5 @@ update winners set detail = '18-3' where pot = 2 and place = 2 and yr = 2013;
 update winners set detail = '259 Points' where pot = 3 and place = 1 and yr = 2013;
 update winners set detail = '257 Points' where pot = 3 and place = 2 and yr = 2013;
 
+
+alter table losertalk add sticky tinyint(1) default 0;

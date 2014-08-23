@@ -47,6 +47,8 @@
  *  - Add View Option to show/hide the bandwagon column/icon/row
  *  - Allow admin messages to be "sticky"
  *  - Add a setting to receive email notifications when someone posts a message @ you
+ *  - Make the recent talk messages load AJAXy too
+ *  - Allow for the user to "load more" messages than 5 on the home page
  *  
  *  UNDECIDED FEATURES
  *  - Make the Pick Board view options toggleable in real-time?
@@ -67,6 +69,8 @@
  *  - Clean up the styling of the corrections page, especially of the saved-status fields
  *  - In the views/pick/index.php, the data that's built always uses the current user (userId()).  Change that so that superadmins can make picks for other users.
  *  - From a user's profile page, give a Superadmin links to change that user's profile/picks.  (Only do picks if the user is currently active, obviously)
+ *  - Add controls to create new accounts, activate old accounts, and reset passwords
+ *  - Need a way to sticky/unsticky messages after they're already posted
  *  
  *  BADGES/POWER STUFF
  *  - Add large power points for having uploaded a custom avatar

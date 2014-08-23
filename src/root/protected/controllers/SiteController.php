@@ -43,7 +43,7 @@ class SiteController extends Controller
             $talk = Talk::model()->withLikes()->findAll(array(
                 'condition' => 't.yr = ' . getCurrentYear() . ' and t.active = 1',
                 'limit'     => 5,
-                'order'     => 't.postedon desc'
+                'order'     => 't.sticky desc, case t.sticky when 1 then t.id else t.id * -1 end asc'
             ));
             $this->render('index', array('boardData'=>$boardData, 'bandwagon'=>$bandwagon, 'talk'=>$talk));
         }

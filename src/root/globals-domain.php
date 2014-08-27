@@ -112,7 +112,8 @@ function isLocked($week) {
 }
 
 function getLockTime($week, $format=false) {
-    $locktime = clone param('firstGame')[$week];
+    $firstGames = param('firstGame');
+    $locktime = clone $firstGames[$week];
     $locktime->sub(new DateInterval('PT1H'));   // lock 1 hour before the start
     if ($format) {
         modifyTimeForUser($locktime);

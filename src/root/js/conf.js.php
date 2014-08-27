@@ -1,3 +1,6 @@
+<?php
+$multipliers = param('powerMultipliers');
+?>
 <script>
 var CONF = {
     userId:                 <?php echo userId()?>,
@@ -29,8 +32,8 @@ var CONF = {
         }
     },
     powerMultipliers: {
-        pointsPerFirstPlace:    <?php echo param('powerMultipliers')['pointsPerFirstPlace'];?>,
-        pointsPerSecondPlace:   <?php echo param('powerMultipliers')['pointsPerSecondPlace'];?>
+        pointsPerFirstPlace:    <?php echo $multipliers['pointsPerFirstPlace'];?>,
+        pointsPerSecondPlace:   <?php echo $multipliers['pointsPerSecondPlace'];?>
     }
 };
 </script>

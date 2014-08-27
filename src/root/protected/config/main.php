@@ -55,7 +55,7 @@ $_config = array(
 			),
 		),
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=loserpool2',
+			'connectionString' => 'mysql:host=127.0.0.1;dbname=loserpool2',
 			'emulatePrepare' => true,
 			'username' => 'root',
 			'password' => 's0methIng',

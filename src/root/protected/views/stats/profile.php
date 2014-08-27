@@ -324,11 +324,12 @@ if ($user) {
             }
             
             if (count($user->userStats)) {
-                $lastStatGroup     = 0;
-                $currentStreakStatId = param('id')['stat']['currentStreak'];
-                $seasonStatGroupId   = param('id')['statGroup']['season'];
-                $picksStatGroupId    = param('id')['statGroup']['picks'];
-                $socialStatGroupId   = param('id')['statGroup']['social'];
+                $lastStatGroup       = 0;
+                $ids                 = param('id');
+                $currentStreakStatId = $ids['stat']['currentStreak'];
+                $seasonStatGroupId   = $ids['statGroup']['season'];
+                $picksStatGroupId    = $ids['statGroup']['picks'];
+                $socialStatGroupId   = $ids['statGroup']['social'];
                 foreach ($user->userStats as $userStat) {
                     if ($lastStatGroup != $userStat->stat->statGroup->id) {
                         if ($lastStatGroup) {

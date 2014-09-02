@@ -92,7 +92,7 @@ class MaintenanceController extends Controller
         $bestPowerRank = 99999;
         $highestUser   = null;
         foreach ($users as $user) {
-            if ($user['powerrank'] < $bestPowerRank) {
+            if (isset($user['powerrank']) && $user['powerrank'] < $bestPowerRank) {
                 $bestPowerRank = $user['powerrank'];
                 $highestUser   = $user;
             }
@@ -424,6 +424,10 @@ class MaintenanceController extends Controller
                 $meta2 = getWeekName($user[$streakKey]['endWeek'], true) . ', ' . $user[$streakKey]['endYear'];
             }
             $activePlace = $activePlace === false ? 0 : $activePlace;
+            if (!$userValue) {
+                $userValue = 0;
+                $place = 999;
+            }
             $sql = "insert into userstat (userid, statid, place, placeactive, tied, tiedactive, value, meta1, meta2) values ($u, $statId, $place, $activePlace, $tied, $activeTied, $userValue, '$meta1', '$meta2')";
             $rs = Yii::app()->db->createCommand($sql)->query();
         }
@@ -1376,7 +1380,7 @@ class MaintenanceController extends Controller
             $lastPowerPoints = 0;
             for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
                 $thisPowerPoints = $lastPowerPoints;
-                if (array_key_exists($y, $user['years'])) {
+                if (array_key_exists($y, $user['years']) && isset($user['years'][$y]['powerdata'])) {
                     $thisPowerPointData = $this->_getPowerPoints($user['years'][$y]['powerdata'], $user['id']);
                     $thisPowerPoints = $thisPowerPointData['points'];
                     // store this user/year
@@ -1396,7 +1400,7 @@ class MaintenanceController extends Controller
             $places    = array();
             $ties      = array();
             foreach ($this->users as $user) {
-                if (array_key_exists($y, $user['years'])) {
+                if (array_key_exists($y, $user['years']) && isset($user['years'][$y]['powerpoints'])) {
                     $allValues[] = $user['years'][$y]['powerpoints'];
                 } else if ($user['firstYear'] < $y) {
                     // the user didn't play in the year we're looking at, but they played before that, so we should count their last known power points
@@ -1411,7 +1415,7 @@ class MaintenanceController extends Controller
             $this->_getPlacesAndTies($allValues, 'powerpoints', $places, $ties);
             foreach ($this->users as &$user) {
                 $user['missingYears'] = array();
-                if (array_key_exists($y, $user['years'])) {
+                if (array_key_exists($y, $user['years']) && isset($user['years'][$y]['powerpoints'])) {
                     $user['powerrank'] = array_search($user['years'][$y]['powerpoints'], $places);
                     $user['years'][$y]['powerrank'] = $user['powerrank'];
                 } else if ($user['firstYear'] < $y) {

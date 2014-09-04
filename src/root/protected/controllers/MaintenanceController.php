@@ -1564,4 +1564,27 @@ class MaintenanceController extends Controller
             }
         }
     }
+    
+    public function actionAutoselect() {
+        $y    = getCurrentYear();
+        $w    = getCurrentWeek();
+        
+        if ($w > 1 && $w < 22) {
+            if (isLocked($w)) {
+                $sql = "insert into loserpick (userid, week, yr, teamid, incorrect, setbysystem)
+                        (select userid, $w, $y, teamid, null, 1 from loserpick where yr = $y and week = " . ($w-1) . " and not exists (
+                            select * from loserpick l2 where l2.yr = $y and l2.week = $w and l2.userid = loserpick.userid and l2.teamid > 0
+                        ))";
+                Yii::app()->db->createCommand($sql)->query();
+                if (isSuperadmin()) {
+                    echo "RAN:<br />$sql";
+                    exit;
+                }
+            }
+        }
+        if (isSuperadmin()) {
+            echo 'Nothing to run.';
+        }
+    }
+    
 }

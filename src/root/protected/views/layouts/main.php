@@ -39,6 +39,7 @@
  *  - In the $.ajax() call from the Talk view, handle errors some way other than alerting them.
  *  - Clean up the display of the talk page?
  *  - Why does Kent have no points for likes given?  I think these will start showing up once the season officially starts.  Double check this later.
+ *  - On latest posts panel of the home page, show the time of the last post, not the count
  *  
  *  NEW FEATURES
  *  - Add a setting to receive the reminder email always, never, or just if you haven't made a pick.
@@ -49,6 +50,7 @@
  *  - Add a setting to receive email notifications when someone posts a message @ you
  *  - Make the recent talk messages load AJAXy too
  *  - Allow for the user to "load more" messages than 5 on the home page
+ *  - Add HTML5 input types so devices can pick up on them, like email address
  *  
  *  UNDECIDED FEATURES
  *  - Make the Pick Board view options toggleable in real-time?
@@ -71,6 +73,7 @@
  *  - From a user's profile page, give a Superadmin links to change that user's profile/picks.  (Only do picks if the user is currently active, obviously)
  *  - Add controls to create new accounts, activate old accounts, and reset passwords
  *  - Need a way to sticky/unsticky messages after they're already posted
+ *  - Make a way to turn off superadmin view so I can see what others see
  *  
  *  BADGES/POWER STUFF
  *  - Add large power points for having uploaded a custom avatar
@@ -110,6 +113,7 @@
  *  - Can we make more use of Yii partials, such as when drawing badges in globals.buildBadgePopovers()?
  *  - Add some common "action" methods to the base Controller module, per Dough.
  *  - In the User Model, implement the delete() and changepw() methods?  (Note: changepw logic is in the controller now, but the model is a more appropriate spot for it)
+ *  - Be able to compile CSS with LESS
  *  
  *  
  */

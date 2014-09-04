@@ -64,6 +64,7 @@ return array(
     'headerWeek'            => getHeaderWeek(),
     'earliestYear'          => 2004,
     'adminEmail'            => 'kirk.hemmen@gmail.com',
+    'systemEmail'           => 'kirk@loserpool.kdhstuff.com',
     'firstYearEntryFee'     => 10,
     'entryFee'              => 20,
     'movFee'                => 5,

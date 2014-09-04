@@ -285,3 +285,13 @@ update winners set detail = '257 Points' where pot = 3 and place = 2 and yr = 20
 
 
 alter table losertalk add sticky tinyint(1) default 0;
+
+create table reminders (
+	id bigint not null auto_increment,
+	userid bigint not null,
+	email varchar(255) not null,
+	week int not null,
+	yr int not null,
+	created datetime null,
+	primary key (id)
+);

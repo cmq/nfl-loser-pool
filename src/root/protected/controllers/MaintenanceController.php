@@ -8,9 +8,11 @@ class MaintenanceController extends Controller
     private $floatingBadges = array();
     
     public function filters() {
+        /*
         return array(
             array('application.filters.SuperadminFilter'),
         );
+        */
     }
     
     // map of stat.id to the key we'll use to describe/calculate that stat
@@ -1509,5 +1511,57 @@ class MaintenanceController extends Controller
         set_time_limit(300);
         $this->_recalcStats();
         echo 'done.';
+    }
+    
+    public function actionReminder ()
+    {
+        $y    = getCurrentYear();
+        $w    = getCurrentWeek() + 1;   // add 1 because we care about NEXT week (the week we're reminding for)
+        $wn   = getWeekName($w, true);
+        $bcc  = array();
+        $send = isset($_GET['send']);
+        
+        if ($w < 22) {
+            $sql = "
+                select      distinct u.id, u.email
+                from        user u
+                inner join  loseruser lu on lu.userid = u.id and lu.yr = $y
+                where       u.active = 1
+                            and not exists (
+                                select * from reminders r where
+                                    r.userid = u.id
+                                    and r.yr = $y
+                                    and r.week = $w
+                            )";
+            $users = Yii::app()->db->createCommand($sql)->query();
+            foreach ($users as $user) {
+                // KDHTODO add logic based on user settings for who should actually receive the email
+                $bcc[] = $user['email'];
+                if ($send) {
+                    $sql = "insert into reminders (userid, email, yr, week, created) values ({$user['id']}, '" . addslashes($user['email']) . "', $y, $w, NOW())";
+                    Yii::app()->db->createCommand($sql)->query();
+                }
+            }
+            
+            ob_start();
+            ?>
+            This is an automated reminder to make or double-check your pick for <?php echo $wn;?> of the <?php echo $y;?> NFL Loser Pool.
+            
+            http://loserpool.kdhstuff.com
+            <?php
+            $body    = ob_get_clean();
+            $bcc     = implode(',', array_unique($bcc));
+            $from    = param('systemEmail');
+            $subject = "$y NFL Loser Pool - $wn Reminder";
+            
+            if ($send && $bcc) {
+                mail($from, $subject, $body, "From: $from\r\nReply-To: $from\r\nBcc: $bcc\r\nX-Mailer: PHP/" . phpversion());
+            }
+            if (isSuperadmin()) {
+                echo "Week $w, $y<br />";
+                echo ($send ? 'SENT TO: ' : 'WOULD HAVE SENT TO: ') . "$bcc<br />";
+                echo "<hr /><strong>$subject</strong><br /><br />$body";
+            }
+        }
     }
 }

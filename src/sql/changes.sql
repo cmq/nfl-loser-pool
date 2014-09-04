@@ -295,3 +295,8 @@ create table reminders (
 	created datetime null,
 	primary key (id)
 );
+
+alter table user add receive_reminders tinyint(1) not null default 1;
+alter table user add reminder_buffer tinyint(1) not null default 24;
+alter table user add reminder_always tinyint(1) not null default 0;
+

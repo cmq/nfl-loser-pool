@@ -1450,12 +1450,14 @@ class MaintenanceController extends Controller
             $existingPowers[$ep['userid']][$ep['yr']] = $ep;
         }
         foreach ($this->users as $user) {
+            $skipUser = false;
             for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
                 if (array_key_exists($y, $user['years'])) {
                     $year = $user['years'][$y];
                 } else if (array_key_exists($y, $user['missingYears'])) {
                     $year = $user['missingYears'][$y];
                 } else {
+                    $skipUser = true;
                     continue;
                 }
                 if (array_key_exists('powerpoints', $year)) {
@@ -1497,8 +1499,10 @@ class MaintenanceController extends Controller
                     }
                 }
             }
-            $sql = "update user set power_points = {$powerData['points']}, power_ranking = {$powerRank} where id = {$user['id']}";
-            Yii::app()->db->createCommand($sql)->query();
+            if (!$skipUser) {
+                $sql = "update user set power_points = {$powerData['points']}, power_ranking = {$powerRank} where id = {$user['id']}";
+                Yii::app()->db->createCommand($sql)->query();
+            }
         }
         
     }
@@ -1523,9 +1527,10 @@ class MaintenanceController extends Controller
         
         if ($w < 22) {
             $sql = "
-                select      distinct u.id, u.email
+                select      distinct u.id, u.email, u.receive_reminders, u.reminder_buffer, u.reminder_always, p.teamid
                 from        user u
                 inner join  loseruser lu on lu.userid = u.id and lu.yr = $y
+                left join   loserpick p on p.userid = u.id and p.yr = $y and p.week = $w
                 where       u.active = 1
                             and not exists (
                                 select * from reminders r where
@@ -1535,7 +1540,14 @@ class MaintenanceController extends Controller
                             )";
             $users = Yii::app()->db->createCommand($sql)->query();
             foreach ($users as $user) {
-                // KDHTODO add logic based on user settings for who should actually receive the email
+                if (!$user['receive_reminders']) continue;  // the user doesn't want reminders
+                if (!$user['reminder_always'] && (int) $user['teamid'] > 0) continue;   // the user doesn't want reminders if they've already made a pick
+                // check their reminder buffer
+                $now = new DateTime();
+                $now->add(new DateInterval("PT{$user['reminder_buffer']}H"));
+                $locktime = getLockTime($w);
+                if ($now < $locktime) continue; // we're not within the user's reminder buffer yet                
+                // if we get here, it's time to send this user an email
                 $bcc[] = $user['email'];
                 if ($send) {
                     $sql = "insert into reminders (userid, email, yr, week, created) values ({$user['id']}, '" . addslashes($user['email']) . "', $y, $w, NOW())";

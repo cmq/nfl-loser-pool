@@ -160,6 +160,33 @@ class ProfileController extends Controller
         exit;
     }
     
+    public function actionChangeReminderSetting()
+    {
+        $user    = $this->_getUser();
+        $setting = (string) getRequestParameter('setting', 0);
+        $value   = (int) getRequestParameter('value', 0);
+        $error   = $this->_checkuser($user);
+        
+        if (!$error) {
+            switch ($setting) {
+                case 'receive_reminders':
+                case 'reminder_buffer':
+                case 'reminder_always':
+                    $user->$setting = $value;
+                    break;
+                default:
+                    $error = "Unrecognized setting: $setting";
+                    break;
+            }
+        }
+        if (!$error) {
+            $error = $this->saveRecord($user);
+        }
+        
+        $this->writeJson(array('error'=>$error));
+        exit;
+    }
+    
     public function actionAvatar()
     {
         $user  = $this->_getUser();

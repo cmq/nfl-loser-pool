@@ -774,7 +774,7 @@ function Board(options) {
         if (settings.collapsable) {
             $container
                 .empty()
-                .append(!settings.showPayout || !settings.userPaid || settings.currentWeek < 1 ? '' : buildPanel('collapsePayout', 'Payout Breakdown' + (settings.currentWeek < 2 ? '' : '(Current Leader: ' + mostMoneyUser + ' - ' + globals.dollarFormat(mostMoney) + ')'), $payout))
+                .append(!settings.showPayout || !settings.userPaid || settings.currentWeek < 1 ? '' : buildPanel('collapsePayout', 'Payout Breakdown' + (settings.currentWeek < 1 ? '' : ' (Current Leader: ' + mostMoneyUser + ' - ' + globals.dollarFormat(mostMoney) + ')'), $payout))
                 .append(buildPanel('collapseBoard', 'Pick Board', $('<div style="width:auto;overflow:auto;"/>')
                     .append(settings.userPaid ? '' : '<h3>Other players are hidden from view until you\'ve paid your entry fee.</h3>')
                     .append($('<div class="table-responsive"/>')

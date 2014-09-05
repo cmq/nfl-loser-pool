@@ -145,6 +145,30 @@ function modifyTimeForUser(&$datetime) {
     }
 }
 
+function formatDateTimeForUserTimezone($datetime, $format='g:ia \o\n D, M jS, Y') {
+    // adjust the posted time for the user's timezone
+    // NOTE:  locktime comes back in mountain time, but our user timezone modifications are based on central time, so start with +1
+    $hours = 1;
+    if (userField('timezone')) {
+        $hours += (int) userField('timezone');
+    }
+    // figure out how the user's dst settings apply
+    if (date('I')) {
+        // it is currently daylight savings time
+        if (!userField('use_dst')) {
+            // but the user doesn't want to use daylight savings time
+            $hours -= 1;
+        }
+    }
+    if ($hours > 0) {
+        $datetime->add(new DateInterval("PT{$hours}H"));
+    } else if ($hours < 0) {
+        $hours *= -1;
+        $datetime->sub(new DateInterval("PT{$hours}H"));
+    }
+    return $datetime->format($format);
+}
+
 function createThumbnail($source, $destination, $maxWidth, $maxHeight) {
     // tried to copy this from http://mediumexposure.com/smart-image-resizing-while-preserving-transparency-php-and-gd-library/ but
     // kept having problems with .gif transparencies.... copied their function instead and it seems to work, too tired to figure

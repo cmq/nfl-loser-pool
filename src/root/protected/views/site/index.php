@@ -49,32 +49,43 @@ $(function() {
     <h2>Loser Pool Home</h2>
     
     <div class="panel-group">
-        <div class="panel panel-primary">
-            <div class="accordian-link panel-heading" data-toggle="collapse" href="#collapseTalk">
-                <h4 class="panel-title">Recent Posts (<?php echo count($talk);?>)</h4>
-            </div>
-            <div id="collapseTalk" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <?php
-                    $hasSticky    = false;
-                    $hasNonSticky = false;
-                    foreach ($talk as $t) {
-                        if ($t->sticky) {
-                            if (!$hasSticky) {
-                                echo '<h3 class="text-center">Stickied posts...</h3>';
+        <?php
+        if (count($talk)) {
+            $recent = null;
+            foreach ($talk as $t) {
+                if (!$t->sticky) {
+                    $recent = $t;
+                    break;
+                }
+            }
+            ?>
+            <div class="panel panel-primary">
+                <div class="accordian-link panel-heading" data-toggle="collapse" href="#collapseTalk">
+                    <h4 class="panel-title">Recent Posts<?php echo ($recent ? ' (Most Recent: ' . formatDateTimeForUserTimezone(new DateTime($recent->postedon)) . ')' : '')?></h4>
+                </div>
+                <div id="collapseTalk" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <?php
+                        $hasSticky    = false;
+                        $hasNonSticky = false;
+                        foreach ($talk as $t) {
+                            if ($t->sticky) {
+                                if (!$hasSticky) {
+                                    echo '<h3 class="text-center">Stickied posts...</h3>';
+                                }
+                                $hasSticky = true;
+                            } else if ($hasSticky && !$hasNonSticky) {
+                                echo '<br /><h3 class="text-center">Other recent posts...</h3>';
+                                $hasNonSticky = true;
                             }
-                            $hasSticky = true;
-                        } else if ($hasSticky && !$hasNonSticky) {
-                            echo '<br /><h3 class="text-center">Other recent posts...</h3>';
-                            $hasNonSticky = true;
+                            $this->renderPartial('//_partials/Talk', array('talk'=>$t));
                         }
-                        $this->renderPartial('//_partials/Talk', array('talk'=>$t));
-                    }
-                    ?>
+                        ?>
+                    </div>
                 </div>
             </div>
-        </div>
-        <?php
+            <?php
+        }
         if ($thisWeekBandwagon):
             ?>
             <div class="panel panel-primary">

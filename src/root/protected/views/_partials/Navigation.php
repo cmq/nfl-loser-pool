@@ -35,7 +35,7 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
 
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <img src="/images/loser-logo-small.png" id="navbar-logo"<?php echo (isGuest() ? ' style="visibility:hidden;"' : '');?> />
+    <a href="<?php echo Yii::app()->createAbsoluteUrl('site/index');?>"><img src="/images/loser-logo-small.png" id="navbar-logo"<?php echo (isGuest() ? ' style="visibility:hidden;"' : '');?> /></a>
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -50,7 +50,7 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="actual-nav-items">
-            <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav" style="float:none;">
                 <?php
                 $isGuest = isGuest();
                 $isPaid  = isPaid();
@@ -106,17 +106,8 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                 </li>
                 <?php
                 echo navItem('NFL Schedule', 'http://www.nfl.com/schedules/' . getCurrentYear() . (getHeaderWeek() <= 17 ? '/REG/' . max(getHeaderWeek(), 1) : '/POST' . (getHeaderWeek()-17)), null, false, true, false, false, true);
-                ?>
-                <li class="hidden-md hidden-lg"><?php echo (isGuest() ? CHtml::link('Login', array('site/login')) : CHtml::link('Logout', array('site/logout')));?></li>
-            </ul>
-            <p class="hidden-xs hidden-sm navbar-text navbar-right loginlogout">
-                Welcome, <?php echo (isGuest() ? 'Guest' : getProfileLink(user()));?>
-                <small>(<?php echo (isGuest() ? CHtml::link('Login', array('site/login')) : CHtml::link('Logout', array('site/logout')));?>)</small>
-            </p>
-            <?php
-            if (isAdmin()) {
-                ?>
-                <ul class="nav navbar-nav navbar-right">
+                if (isAdmin()) {
+                    ?>
                     <li class="dropdown<?php echo ($controllerName == 'admin' ? ' active' : '')?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
                         <ul class="dropdown-menu">
@@ -127,10 +118,15 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                             ?>
                         </ul>
                     </li>
-                </ul>
-                <?
-            }
-            ?>
+                    <?
+                }
+                ?>
+                <li class="hidden-md hidden-lg"><?php echo (isGuest() ? CHtml::link('Login', array('site/login')) : CHtml::link('Logout', array('site/logout')));?></li>
+                <p class="hidden-xs hidden-sm navbar-text navbar-right loginlogout">
+                    Welcome, <?php echo (isGuest() ? 'Guest' : getProfileLink(user()));?>
+                    <small>(<?php echo (isGuest() ? CHtml::link('Login', array('site/login')) : CHtml::link('Logout', array('site/logout')));?>)</small>
+                </p>
+            </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>                

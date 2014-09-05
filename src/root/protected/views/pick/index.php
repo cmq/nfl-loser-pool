@@ -66,6 +66,7 @@ $(function() {
 </script>
 
 <div class="container">
+    <h2>Make Picks</h2>
     <div class="table-responsive">
         <table class="table">
             <thead>

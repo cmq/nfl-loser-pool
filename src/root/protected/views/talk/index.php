@@ -36,6 +36,7 @@ $(function() {
 </script>
 
 <div class="container">
+    <h2>Messages</h2>
     <form role="form">
         <div class="form-group">
             <label for="talkuser">Direct Message At</label>

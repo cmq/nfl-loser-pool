@@ -443,6 +443,7 @@ $(function() {
 
 
 <div class="container">
+    <h2>Settings</h2>
     <div class="row">
         <div class="col-sm-offset-6"><?php echo CHtml::link('View Profile', array('stats/profile', 'id'=>$user->id)) . '<br />'?></div>
     </div>

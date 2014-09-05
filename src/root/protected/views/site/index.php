@@ -87,6 +87,42 @@ $(function() {
             <?php
         }
         if ($thisWeekBandwagon):
+            // figure out stuff about the chief
+            $chiefWeeksOn = 1;
+            foreach ($boardData as $user) {
+                if ($user->id == $thisWeekBandwagon->chief->id) {
+                    foreach ($user->picks as $pick) {
+                        if ($pick->week == getCurrentWeek() && $pick->teamid == $thisWeekBandwagon->team->id) {
+                            $chiefWeeksOn = $pick->weeks_on_bandwagon;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+            // gather the other riders
+            $otherRiders = array();
+            foreach ($boardData as $user) {
+                if ($user->id == $thisWeekBandwagon->chief->id) continue;
+                foreach ($user->picks as $pick) {
+                    if ($pick->week == getCurrentWeek() && $pick->teamid == $thisWeekBandwagon->team->id) {
+                        $weeksOn  = $pick->weeks_on_bandwagon;
+                        $rider    = array('user'=>$user, 'weeksOn'=>$weeksOn);
+                        $position = count($otherRiders);
+                        // find where in the otherRiders array this user fits
+                        for ($i=0; $i<count($otherRiders); $i++) {
+                            if ($weeksOn > $otherRiders[$i]['weeksOn']) {
+                                $position = $i;
+                                break;
+                            } else if ($weeksOn == $otherRiders[$i]['weeksOn'] && $user->power_ranking < $otherRiders[$i]['user']->power_ranking) {
+                                $position = $i;
+                                break;
+                            }
+                        }
+                        array_splice($otherRiders, $position, 0, array($rider));
+                    }
+                }
+            }
             ?>
             <div class="panel panel-primary">
                 <div class="accordian-link panel-heading" data-toggle="collapse" href="#collapseBandwagon">
@@ -98,51 +134,31 @@ $(function() {
                             <h4 class="text-center">Bandwagon Team for <?php echo getWeekName(getCurrentWeek(), true);?>:  <strong><?php echo $thisWeekBandwagon->team->longname;?></strong></h4>
                         </div>
                         <div id="the-bandwagon" class="clearfix"> 
-                            <div class="row">
-                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 pull-right">
-                                    <img src="/images/bandwagon-large.png" />
-                                    <?php
-                                    $weeksOn = 1;
-                                    foreach ($boardData as $user) {
-                                        if ($user->id == $thisWeekBandwagon->chief->id) {
-                                            foreach ($user->picks as $pick) {
-                                                if ($pick->week == getCurrentWeek() && $pick->teamid == $thisWeekBandwagon->team->id) {
-                                                    $weeksOn = $pick->weeks_on_bandwagon;
-                                                    break;
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
-                                    ?>
-                                    <span class="chief">CHIEF: <?php echo getAvatarProfileLink($thisWeekBandwagon->chief, true) . " ($weeksOn" . ' consecutive weeks)';?></span>
+                            <div class="row hidden-xs hidden-sm">
+                                <div class="col-md-6 pull-right text-center">
+                                    <div class="chief text-left">CHIEF: <?php echo getAvatarProfileLink($thisWeekBandwagon->chief, true) . " ($chiefWeeksOn" . ' consecutive weeks)';?></div>
+                                    <img src="/images/bandwagon-large.png" class="bandwagon-hero" />
                                 </div>
-                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 pull-left">
+                                <div class="col-md-6 pull-left">
                                     <h5>Other riders....</h5>
                                     <div class="others">
                                         <?php
-                                        $otherRiders = array();
-                                        foreach ($boardData as $user) {
-                                            if ($user->id == $thisWeekBandwagon->chief->id) continue;
-                                            foreach ($user->picks as $pick) {
-                                                if ($pick->week == getCurrentWeek() && $pick->teamid == $thisWeekBandwagon->team->id) {
-                                                    $weeksOn  = $pick->weeks_on_bandwagon;
-                                                    $rider    = array('user'=>$user, 'weeksOn'=>$weeksOn);
-                                                    $position = count($otherRiders);
-                                                    // find where in the otherRiders array this user fits
-                                                    for ($i=0; $i<count($otherRiders); $i++) {
-                                                        if ($weeksOn > $otherRiders[$i]['weeksOn']) {
-                                                            $position = $i;
-                                                            break;
-                                                        } else if ($weeksOn == $otherRiders[$i]['weeksOn'] && $user->power_ranking < $otherRiders[$i]['user']->power_ranking) {
-                                                            $position = $i;
-                                                            break;
-                                                        }
-                                                    }
-                                                    array_splice($otherRiders, $i, 0, array($rider));
-                                                }
-                                            }
+                                        foreach ($otherRiders as $rider) {
+                                            echo '<div class="profile-bubble">' . getAvatarProfileLink($rider['user'], true, true) . " ({$rider['weeksOn']})</div>";
                                         }
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>    
+                            <div class="row hidden-md hidden-lg">
+                                <div class="col-md-12 text-center">
+                                    <div class="chief text-left">CHIEF: <?php echo getAvatarProfileLink($thisWeekBandwagon->chief, true) . " ($chiefWeeksOn" . ' consecutive weeks)';?></div>
+                                    <img src="/images/bandwagon-large.png" class="bandwagon-hero" />
+                                </div>
+                                <div class="col-md-12">
+                                    <h5>Other riders....</h5>
+                                    <div class="others">
+                                        <?php
                                         foreach ($otherRiders as $rider) {
                                             echo '<div class="profile-bubble">' . getAvatarProfileLink($rider['user'], true, true) . " ({$rider['weeksOn']})</div>";
                                         }

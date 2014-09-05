@@ -8,6 +8,11 @@
  *  
  *  KDHTODO remaining items
  *  
+ *  NEXT
+ *  - Fix bandwagon display for mobile
+ *  - Fix payout display for mobile
+ *  - Fix performance on homepage
+ *  
  *  BUGS
  *  - When creating new players, they wind up with "null" powerpoints and 0th place
  *  - The profile page shows a 404 in firebug even though everything seems to load fine

@@ -144,7 +144,7 @@ class User extends DeepActiveRecord
             $condition .= ($condition ? ' AND ' : '') . 'picks.yr = ' . (int) $year;
         }
         if ($year == getCurrentYear() && !$future) {
-            $condition .= ($condition ? ' AND ' : '') . '(picks.week < ' . getCurrentWeek() . ' or picks.userid = ' . userId() . ')';
+            $condition .= ($condition ? ' AND ' : '') . '(picks.week <= ' . getCurrentWeek() . ' or picks.userid = ' . userId() . ')';
         }
         
         $this->getDbCriteria()->mergeWith(array(

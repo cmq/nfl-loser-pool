@@ -210,39 +210,61 @@ function Board(options) {
     }
     
     function buildPayoutTable() {
-        var i, j, k, $pots = [], $payout = $('<div class="table-responsive" />');
+        var i, j, k, $pots = [], $payout = $('<div />');
         
         for (i=0; i<pots.length; i++) {
             $pots.push([]);
             for (j=0; j<2; j++) {
-                $pots[i].push($('<td/>'));
+                $pots[i].push($('<td style="width:50%"/>'));
                 for (k=0; k<pots[i][j].users.length; k++) {
-                    $pots[i][j].append(globals.avatarBubble(pots[i][j].users[k]) + '<br />');
+                    $pots[i][j].append(globals.avatarBubble(pots[i][j].users[k]) + ' ');
                 }
             }
         }
-        $payout.append($('<table class="table table-bordered table-condensed payout-table" />')
+        $payout.append($('<table class="table table-bordered payout-table" />')
             .append($('<thead/>')
                 .append($('<tr/>')
-                    .append('<th colspan="2" style="width:33.3%">Pot 1 (Stay-Alive)<br />' + globals.dollarFormat(settings.board.length * CONF.entryFee / 2) + '</th>')
-                    .append('<th colspan="2" style="width:33.3%">Pot 2 (Best Record)<br />' + globals.dollarFormat(settings.board.length * CONF.entryFee / 2) + '</th>')
-                    .append('<th colspan="2" style="width:33.3%">Pot 3 (Margin of Defeat)<br />' + globals.dollarFormat(settings.board.length * CONF.movFee) + '</th>')
+                    .append('<th colspan="2">Pot 1 (Stay-Alive)<br />' + globals.dollarFormat(settings.board.length * CONF.entryFee / 2) + '</th>')
                 )
                 .append($('<tr/>')
-                    .append('<th style="width:16.7%">1st Place (' + globals.dollarFormat(pots[0][0].money) + ')</th>')
-                    .append('<th style="width:16.7%">2nd Place (' + globals.dollarFormat(pots[0][1].money) + ')</th>')
-                    .append('<th style="width:16.7%">1st Place (' + globals.dollarFormat(pots[1][0].money) + ')</th>')
-                    .append('<th style="width:16.7%">2nd Place (' + globals.dollarFormat(pots[1][1].money) + ')</th>')
-                    .append('<th style="width:16.7%">1st Place (' + globals.dollarFormat(pots[2][0].money) + ')</th>')
-                    .append('<th style="width:16.7%">2nd Place (' + globals.dollarFormat(pots[2][1].money) + ')</th>')
+                    .append('<th style="width:50%">1st Place (' + globals.dollarFormat(pots[0][0].money) + ')</th>')
+                    .append('<th style="width:50%">2nd Place (' + globals.dollarFormat(pots[0][1].money) + ')</th>')
                 )
             )
             .append($('<thead/>')
                 .append($('<tr/>')
                     .append($pots[0][0])
                     .append($pots[0][1])
+                )
+            )
+        ).append($('<table class="table table-bordered payout-table" />')
+            .append($('<thead/>')
+                .append($('<tr/>')
+                    .append('<th colspan="2">Pot 2 (Best Record)<br />' + globals.dollarFormat(settings.board.length * CONF.entryFee / 2) + '</th>')
+                )
+                .append($('<tr/>')
+                    .append('<th style="width:50%">1st Place (' + globals.dollarFormat(pots[1][0].money) + ')</th>')
+                    .append('<th style="width:50%">2nd Place (' + globals.dollarFormat(pots[1][1].money) + ')</th>')
+                )
+            )
+            .append($('<thead/>')
+                .append($('<tr/>')
                     .append($pots[1][0])
                     .append($pots[1][1])
+                )
+            )
+        ).append($('<table class="table table-bordered payout-table" />')
+            .append($('<thead/>')
+                .append($('<tr/>')
+                    .append('<th colspan="2">Pot 3 (Margin of Defeat)<br />' + globals.dollarFormat(settings.board.length * CONF.movFee) + '</th>')
+                )
+                .append($('<tr/>')
+                    .append('<th style="width:50%">1st Place (' + globals.dollarFormat(pots[2][0].money) + ')</th>')
+                    .append('<th style="width:50%">2nd Place (' + globals.dollarFormat(pots[2][1].money) + ')</th>')
+                )
+            )
+            .append($('<thead/>')
+                .append($('<tr/>')
                     .append($pots[2][0])
                     .append($pots[2][1])
                 )

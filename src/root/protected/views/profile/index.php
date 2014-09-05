@@ -587,6 +587,7 @@ $(function() {
                     <li>File size limit of 1MB.</li>
                     <li>Only images of type .jpg, .gif, or .png are allowed.</li>
                     <li>The images will be automatically resized for you.</li>
+                    <li><strong>If you upload a new image and don't see it replace your old image, it's probably because your browser has the old image cached.  Try super-refreshing your browser (hold ctrl or shift and click refresh) or manually clear cache.</strong></li>
                 </ul>
                 Click the button below to select an image, or drag an image over the button to upload.<br />(Unless you have IE in which case you suck and don't deserve to have such convenient features.)<br />
                 <br />

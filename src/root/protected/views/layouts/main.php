@@ -11,6 +11,7 @@
  *  BUGS
  *  - When creating new players, they wind up with "null" powerpoints and 0th place
  *  - The profile page shows a 404 in firebug even though everything seems to load fine
+ *  - Lock times are wrong.  When there's under 1 minute it says "0 minutes", and when there's 1 it says "1 minutes"
  *  
  *  PERFORMANCE ENHANCEMENTS
  *  - When left open for too long, the home page takes forever.  I think there's a memory leak.
@@ -40,6 +41,7 @@
  *  - Clean up the display of the talk page?
  *  - Why does Kent have no points for likes given?  I think these will start showing up once the season officially starts.  Double check this later.
  *  - On latest posts panel of the home page, show the time of the last post, not the count
+ *  - Show a tiny countdown somewhere that lists when the page will poll for new data, and allow it to be clicked for an immediate re-poll
  *  
  *  NEW FEATURES
  *  - Add a setting to receive the reminder email always, never, or just if you haven't made a pick.

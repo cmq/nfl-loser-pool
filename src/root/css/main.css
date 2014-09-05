@@ -108,13 +108,14 @@ table.payout-table {
     margin-left: auto;
     margin-right: auto;
     */
+    box-shadow: 4px 4px 3px #999999;
 }
 table.payout-table th {
     text-align: center;
-    background: linear-gradient(#f6f6ff, #f0f0f9);
+    background: linear-gradient(#f6f6ff, #e0e0f3);
 }
 table.payout-table thead tr:first-of-type th {
-    background: linear-gradient(#e9e9f3, #e3e3ef);
+    background: linear-gradient(#e9e9f3, #d9d9e9);
 }
 
 

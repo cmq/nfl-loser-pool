@@ -9,10 +9,7 @@
  *  KDHTODO remaining items
  *  
  *  NEXT
- *  - Fix bandwagon display for mobile
- *  - Fix payout display for mobile
  *  - Fix performance on homepage
- *  - Fix navbar for admins in tablet mode
  *  
  *  BUGS
  *  - When creating new players, they wind up with "null" powerpoints and 0th place

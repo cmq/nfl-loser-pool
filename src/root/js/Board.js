@@ -291,15 +291,17 @@ function Board(options) {
                         break;
                     }
                     margin -= pick.mov && pick.mov.hasOwnProperty('mov') ? parseInt(pick.mov.mov, 10) : 0;
-                    if (pick.incorrect == 1) {
-                        if (firstWeek === 22) {
-                            firstWeek = parseInt(pick.week, 10);
+                    if (pick.incorrect != null) {
+                        if (pick.incorrect == 1) {
+                            if (firstWeek === 22) {
+                                firstWeek = parseInt(pick.week, 10);
+                            }
+                            incorrect++;
+                            lastPick = 'incorrect';
+                        } else {
+                            correct++;
+                            lastPick = 'correct';
                         }
-                        incorrect++;
-                        lastPick = 'incorrect';
-                    } else {
-                        correct++;
-                        lastPick = 'correct';
                     }
                 }
             }
@@ -625,13 +627,15 @@ function Board(options) {
                             if (bwpick) {
                                 if (bwpick.week <= settings.currentWeek || settings.currentYear < settings.currentYear) {
                                     margin -= bwpick.mov && bwpick.mov.hasOwnProperty('mov') ? parseInt(bwpick.mov.mov, 10) : 0;
-                                    if (bwpick.incorrect == 1) {
-                                        if (firstWeek === 22) {
-                                            firstWeek = parseInt(bwpick.week, 10);
+                                    if (bwpick.incorrect != null) {
+                                        if (bwpick.incorrect == 1) {
+                                            if (firstWeek === 22) {
+                                                firstWeek = parseInt(bwpick.week, 10);
+                                            }
+                                            incorrect++;
+                                        } else {
+                                            correct++;
                                         }
-                                        incorrect++;
-                                    } else {
-                                        correct++;
                                     }
                                 }
                             }

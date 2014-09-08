@@ -452,10 +452,15 @@ function Board(options) {
                         // secondary sort is always money
                         thisVal    = getSortVal(settings.board[i], 'money');
                         compareVal = getSortVal(settings.board[j], 'money');
-                        if (compareVal == thisVal && settings.order != 'powerRanking') {
-                            // tertiary sort is always power ranking
-                            thisVal    = getSortVal(settings.board[i], 'powerRanking');
-                            compareVal = getSortVal(settings.board[j], 'powerRanking');
+                        if (compareVal == thisVal && settings.order != 'margin') {
+                            // tertiary sort is always mov
+                            thisVal    = getSortVal(settings.board[i], 'margin');
+                            compareVal = getSortVal(settings.board[j], 'margin');
+                            if (compareVal == thisVal && settings.order != 'powerRanking') {
+                                // tertiary sort is always power ranking
+                                thisVal    = getSortVal(settings.board[i], 'powerRanking');
+                                compareVal = getSortVal(settings.board[j], 'powerRanking');
+                            }
                         }
                     } else {
                         // we're already doing a primary sort on money, so fall back to power ranking

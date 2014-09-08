@@ -1450,14 +1450,14 @@ class MaintenanceController extends Controller
             $existingPowers[$ep['userid']][$ep['yr']] = $ep;
         }
         foreach ($this->users as $user) {
-            $skipUser = false;
+            $userFinalRank = null;
+            $userFinalPts  = 0;
             for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
                 if (array_key_exists($y, $user['years'])) {
                     $year = $user['years'][$y];
                 } else if (array_key_exists($y, $user['missingYears'])) {
                     $year = $user['missingYears'][$y];
                 } else {
-                    $skipUser = true;
                     continue;
                 }
                 if (array_key_exists('powerpoints', $year)) {
@@ -1471,6 +1471,8 @@ class MaintenanceController extends Controller
                             // do we need to insert new data
                             $needInsert = ($existingPower['powerpoints'] != $year['powerpoints'] || $existingPower['powerrank'] != $year['powerrank']);
                     }
+                    $userFinalRank = $powerRank;
+                    $userFinalPts  = $powerData['points'];
                     if ($needInsert) {
                         $details = addslashes(json_encode($powerData));
                         $sql = "replace into power (userid, yr,
@@ -1499,8 +1501,8 @@ class MaintenanceController extends Controller
                     }
                 }
             }
-            if (!$skipUser) {
-                $sql = "update user set power_points = {$powerData['points']}, power_ranking = {$powerRank} where id = {$user['id']}";
+            if ($userFinalRank) {
+                $sql = "update user set power_points = {$userFinalPts}, power_ranking = {$userFinalRank} where id = {$user['id']}";
                 Yii::app()->db->createCommand($sql)->query();
             }
         }

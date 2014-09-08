@@ -1,4 +1,5 @@
 <?php
+$delayAmount = (!isPaid() ? getCurrentWeek() * 10 : 0);
 $pickByWeek = array();
 for ($i=1; $i<=21; $i++) {
     $pickByWeek[$i] = null;
@@ -62,12 +63,53 @@ $(function() {
             dataType: 'json'
         });
     });
+
+    <?php
+    if ($delayAmount) {
+        ?>
+        (function() {
+            var seconds = <?php echo $delayAmount;?>,
+                fnCheck = function() {
+                    if (--seconds < 1) {
+                        $('#unpaid-delay').hide();
+                        $('#make-pick-table').show();
+                    } else {
+                        $('#delay-timer').html(seconds);
+                        setTimeout(fnCheck, 1000);
+                    }
+                };
+            setTimeout(fnCheck, 1000);
+        })();
+        <?php
+    }
+    ?>
 });
 </script>
 
 <div class="container">
     <h2>Make Picks</h2>
-    <div class="table-responsive">
+    <?php
+    if ($delayAmount) {
+        ?>
+        <div id="unpaid-delay">
+            <p style="width:50%;margin:0 auto;">
+                Hello there, user!  I've noticed you haven't paid your entry fee yet.  As a penance, you will endure 10 seconds of waiting for every
+                week of the NFL season thus far.  Since it is week <?php echo getCurrentWeek();?>, the wait is <?php echo $delayAmount?> seconds.
+                Here's a countdown timer you can watch to pass the time!<br />
+            </p>
+            <div class="text-center" id="delay-timer" style="font-weight:bold;font-size:200%"><?php echo $delayAmount;?></div>
+            <br />
+                <p style="width:50%;margin:0 auto;">
+                Please Paypal your payment to kirk.hemmen@gmail.com or mail it to:<br />
+                Kirk Hemmen<br />
+                11197 Hillsboro Ave N<br />
+                Champlin, MN 55316
+            </p>
+        </div>
+        <?php
+    }
+    ?>
+    <div id="make-pick-table" class="table-responsive"<?php echo ($delayAmount ? ' style="display:none;"' : '')?>>
         <table class="table">
             <thead>
                 <tr>

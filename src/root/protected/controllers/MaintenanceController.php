@@ -860,6 +860,8 @@ class MaintenanceController extends Controller
         
         $this->floatingBadges[] = 13;   // 13 - on fire
         $this->floatingBadges[] = 14;   // 14 - all-time on fire
+        $sql = 'update userbadge set userid=0 where badgeid in (13,14)';
+        Yii::app()->db->createCommand($sql)->query();
         for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
             $badge = $this->_calculateBadge_onfire($y);
             if ($badge) {

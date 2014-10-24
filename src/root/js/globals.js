@@ -149,9 +149,11 @@ globals.shortenYear = function(input) {
 globals.getOldRecord = function(user, currentWeek) {
     var i, wins = losses = 0;
     for (i=0; i<user.picks.length; i++) {
-        if (user.picks[i].week < currentWeek) {
-            wins   += user.picks[i].incorrect == 1 ? 0 : 1;
-            losses += user.picks[i].incorrect == 1 ? 1 : 0;
+        if (user.picks[i]) {
+            if (user.picks[i].week < currentWeek) {
+                wins   += user.picks[i].incorrect == 1 ? 0 : 1;
+                losses += user.picks[i].incorrect == 1 ? 1 : 0;
+            }
         }
     }
     return wins + '-' + losses;

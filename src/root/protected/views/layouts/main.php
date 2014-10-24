@@ -56,6 +56,7 @@
  *  - Make the recent talk messages load AJAXy too
  *  - Allow for the user to "load more" messages than 5 on the home page
  *  - Add HTML5 input types so devices can pick up on them, like email address
+ *  - Allow users to specify their favorite team
  *  
  *  UNDECIDED FEATURES
  *  - Make the Pick Board view options toggleable in real-time?

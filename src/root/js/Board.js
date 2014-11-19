@@ -37,10 +37,20 @@ function Board(options) {
     }
     
     function getPick(user, week) {
+        var i;
+        if (user.picks) {
+            for (i=0; i<user.picks.length; i++) {
+                if (user.picks[i].week == week && user.picks[i].team) {
+                    return user.picks[i];
+                }
+            }
+        }
+        /*
         week--; // provided week is 1-based, make 0-based to access array records
         if (user.picks && user.picks.length > week && user.picks[week].team) {
             return user.picks[week];
         }
+        */
         return null;
     }
 

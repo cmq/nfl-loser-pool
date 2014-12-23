@@ -741,9 +741,8 @@ function Board(options) {
                             .append(!settings.viewOptions.showLogos ? pick.team.shortname : $('<div/>')
                                 .addClass('logo')
                                 .addClass('logo-' + globals.getTeamLogoClass(pick, settings.currentWeek))
-                                .css('background-position', onBandwagon && settings.currentWeek === j ? '200px 0' : globals.getTeamLogoOffset(pick.team, 'small'))
+                                .css('background-position', globals.getTeamLogoOffset(pick.team, 'small'))
                                 .attr('title', (onBandwagon && j <= settings.currentWeek ? '[BANDWAGON] ' : '') + pick.team.longname + (pick.setbysystem ? ' (Set by System)' : ''))
-                                .append(!onBandwagon || j !== settings.currentWeek ? '' : '<div class="bandwagon-main-icon-wrapper"><img src="/images/bwanimated-thumb.gif" /></div>')
                             )
                         )
                     );

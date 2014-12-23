@@ -57,6 +57,8 @@
  *  - Allow for the user to "load more" messages than 5 on the home page
  *  - Add HTML5 input types so devices can pick up on them, like email address
  *  - Allow users to specify their favorite team
+ *  - Add a row at the top like the bandwagon row, but instead of teams it just shows the best possible margin of defeat you could have earned for each week
+ * 
  *  
  *  UNDECIDED FEATURES
  *  - Make the Pick Board view options toggleable in real-time?

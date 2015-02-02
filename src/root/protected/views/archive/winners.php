@@ -10,7 +10,7 @@ var wins      = <?php echo CJSON::encode($wins);?>,
     var i, w, win, user;
     for (w in wins) {
         win = wins[w];
-        if (parseInt(win.yr, 10) >= CONF.currentYear) continue;
+        //if (parseInt(win.yr, 10) >= CONF.currentYear) continue;
         if (!users.hasOwnProperty(win.userid)) {
             user = {
                 id:            win.user.id,
@@ -23,7 +23,7 @@ var wins      = <?php echo CJSON::encode($wins);?>,
                 winnings:      0,
                 years:         {}
             };
-            for (i=CONF.earliestYear; i<CONF.currentYear; i++) {
+            for (i=CONF.earliestYear; i<=CONF.currentYear; i++) {
                 user.years[i] = {
                     '1': {
                         place:    0,
@@ -94,7 +94,7 @@ function draw() {
     $tr1.append(drawHead('1st Places', 'firsts', 'firsts', true, 1, 2));
     $tr1.append(drawHead('2nd Places', 'seconds', 'seconds', true, 1, 2));
 
-    for (i=CONF.currentYear-1; i>=CONF.earliestYear; i--) {
+    for (i=CONF.currentYear-(CONF.currentWeek < 21 ? 1 : 0); i>=CONF.earliestYear; i--) {
         $tr1.append(drawHead(i, 'year'+i+'pot0', buildSortFunction(i, 0), true, 1 + (i > CONF.earliestYear ? 1 : 0) + (i >= CONF.movFirstYear ? 1 : 0)));
         $tr2.append(drawHead('Stay-<br />Alive', 'year'+i+'pot1', buildSortFunction(i, 1)));
         if (i > CONF.earliestYear) {
@@ -116,7 +116,7 @@ function draw() {
             .append('<td class="text-right">' + users[key].firsts + '</td>')
             .append('<td class="text-right">' + users[key].seconds + '</td>')
         );
-        for (y=CONF.currentYear-1; y>=CONF.earliestYear; y--) {
+        for (y=CONF.currentYear-(CONF.currentWeek < 21 ? 1 : 0); y>=CONF.earliestYear; y--) {
             for (p=1; p<=3; p++) {
                 if (p === 1 || (p === 2 && y > CONF.earliestYear) || (p === 3 && y >= CONF.movFirstYear)) {
                     if (users[key].years[y][p].place > 0) {

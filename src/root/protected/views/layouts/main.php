@@ -109,6 +109,7 @@
  *  - Get maintenance script running
  *  
  *  STRETCH GOALS
+ *  - Add the ability to show "who's online"
  *  - Graph of referrers for how people know each other
  *  - Allow dislikes for trash talk?
  *  - Is there a way to not have to keep deactivating users every year?  Maybe allow logins forever, but they can only see the current board if they're playing this year?

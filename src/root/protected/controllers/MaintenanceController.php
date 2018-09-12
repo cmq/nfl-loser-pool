@@ -860,9 +860,9 @@ class MaintenanceController extends Controller
         
         $this->floatingBadges[] = 13;   // 13 - on fire
         $this->floatingBadges[] = 14;   // 14 - all-time on fire
-        $sql = 'update userbadge set userid=0 where badgeid in (13,14)';
-        Yii::app()->db->createCommand($sql)->query();
         for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
+$sql = 'update userbadge set userid=0 where badgeid in (13,14)';
+Yii::app()->db->createCommand($sql)->query();
             $badge = $this->_calculateBadge_onfire($y);
             if ($badge) {
                 if ($badge['currentUserId']) {
@@ -1563,7 +1563,7 @@ class MaintenanceController extends Controller
             ?>
             This is an automated reminder to make or double-check your pick for <?php echo $wn;?> of the <?php echo $y;?> NFL Loser Pool.
             
-            http://loserpool.kdhstuff.com
+            https://loserpool.kdhstuff.com
             <?php
             $body    = ob_get_clean();
             $bcc     = implode(',', array_unique($bcc));
@@ -1587,6 +1587,12 @@ class MaintenanceController extends Controller
         
         if ($w > 1 && $w < 22) {
             if (isLocked($w)) {
+            	$sql = "delete from loserpick where yr = $y and week = $w and (teamid = 0 or teamid is null)";
+                Yii::app()->db->createCommand($sql)->query();
+                if (isSuperadmin()) {
+                    echo "RAN:<br />$sql<br /><br />";
+                }
+
                 $sql = "insert into loserpick (userid, week, yr, teamid, incorrect, setbysystem)
                         (select userid, $w, $y, teamid, null, 1 from loserpick where yr = $y and week = " . ($w-1) . " and not exists (
                             select * from loserpick l2 where l2.yr = $y and l2.week = $w and l2.userid = loserpick.userid and l2.teamid > 0

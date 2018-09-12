@@ -309,6 +309,8 @@ function getLiveScoring($week=null) {
         $week = getCurrentWeek();
     }
     $scoresFinal = null;
+    /*
+    // Apparently nfl.com changed their API for the 2018 season.  Here was the old way
     try {
         if ($week <= 17) {
             $scoreJson = file_get_contents('http://www.nfl.com/liveupdate/scorestrip/scorestrip.json?random=' . rand(10000000, 99999999));
@@ -351,6 +353,31 @@ function getLiveScoring($week=null) {
                 );
             }
         }
+    } catch (Exception $e) {
+        $scoresFinal = null;
+    }
+    */
+    // Here's the new way as of 2018
+    try {
+		$scoreJson = file_get_contents('https://feeds.nfl.com/feeds-rs/scores.json?random=' . rand(10000000, 99999999));
+		$scoresRaw = json_decode($scoreJson, true);
+		$scoresFinal = array();
+		if ($scoresRaw['week'] == getCurrentWeek()) {
+			foreach ($scoresRaw['gameScores'] as $score) {
+				$hasScore = $score['score'] != null;
+				$awayTeamScore = (int) $hasScore ? $score['score']['visitorTeamScore']['pointTotal'] : 0;
+				$homeTeamScore = (int) $hasScore ? $score['score']['homeTeamScore']['pointTotal'] : 0;
+				$scoresFinal[] = array(
+					'awayteam'  => $score['gameSchedule']['visitorTeamAbbr'],
+					'awayscore' => $awayTeamScore,
+					'awaymov'   => $awayTeamScore - $homeTeamScore,
+					'hometeam'  => $score['gameSchedule']['homeTeamAbbr'],
+					'homescore' => $homeTeamScore,
+					'homemov'   => $homeTeamScore - $awayTeamScore,
+					'final'     => $score['score']['phase'] == 'FINAL'
+				);
+			}
+		}
     } catch (Exception $e) {
         $scoresFinal = null;
     }

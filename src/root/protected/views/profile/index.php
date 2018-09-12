@@ -525,13 +525,13 @@ $(function() {
                     <label>
                         <input type="checkbox" id="receive_reminders"<?php echo userField('receive_reminders') ? ' checked="checked"' : ''?> /> Receive Reminder E-Mails
                     </label>
-                    (<a class="help-link spawns-popover" title="Collapse History" data-content="If this option is enabled, the pick board on the home screen will collapse all weeks prior to the current week into a single column showing each user's record for those collapsed week.  For example, if the current week were Week 15, there would be one column for &quot;Week 1 - Week 14&quot;, and then another column for &quot;Week 15&quot; (the current week).  This prevents you from seeing each pick for each user for each week, but can greatly reduce the width of the board making it easier to see everything.">?</a>)
+                    (<a class="help-link spawns-popover" title="Receive Reminder E-Mails" data-content="If this option is enabled, the system will send a reminder E-mail at the specified time (below).">?</a>)
                 </div>
                 <div class="checkbox">
                     <label>
                         <input type="checkbox" id="reminder_always"<?php echo userField('reminder_always') ? ' checked="checked"' : ''?><?php echo userField('receive_reminders') ? '' : ' disabled="disabled"'?> /> Receive Reminders Even If I've Already Made a Pick
                     </label>
-                    (<a class="help-link spawns-popover" title="Show User Badges and Trophies" data-content="If this option is enabled, the badges and trophies earned by each user will be displayed next to their name.">?</a>)
+                    (<a class="help-link spawns-popover" title="Always Receive Reminders" data-content="If this option is enabled, the system will send you a reminder E-mail even if you've already made a pick for the upcoming week.  If you disable this option, the system will only send you a reminder E-mail if you haven't yet made a pick.">?</a>)
                 </div>
                 <select id="reminder_buffer" class="form-control"<?php echo userField('receive_reminders') ? '' : ' disabled="disabled"'?>>
                     <option value="1"<?php echo userField('reminder_buffer') == 1 ? ' selected="selected"' : ''?>>Remind me 1 HOUR before picks lock</option>

@@ -113,8 +113,11 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                         <ul class="dropdown-menu">
                             <?php
                             echo navItem('Correct Picks', 'admin/showCorrect', null, $controllerName == 'admin' && $actionName == 'showCorrect', isAdmin());
-                            echo navItem('Create Account', 'admin/newAccount', null, $controllerName == 'admin' && $actionName == 'newAccount', isSuperadmin());
-                            echo navItem('Recalculate Rankings', 'admin/recalculateRankings', null, $controllerName == 'admin' && $actionName == 'recalculateRankings', isSuperadmin());
+                            echo navItem('Create Account', 'admin/showCreateUser', null, $controllerName == 'admin' && $actionName == 'showCreateUser', isSuperadmin());
+                            echo navItem('Recalculate Rankings', 'maintenance/recalc', null, $controllerName == 'admin' && $actionName == 'recalculateRankings', isSuperadmin());
+                            // KDHTODO create a reset password
+                            // KDHTODO create a way to reactivate old accounts for the current year
+                            // KDHTODO create a simple user lookup (by login, email, original email/login, real name, etc)
                             ?>
                         </ul>
                     </li>
@@ -129,4 +132,4 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
-</nav>                
+</nav>

@@ -1,25 +1,25 @@
 <?php
 /*
  *  @var $this Controller
- *  
+ *
  *  This template is based off the twitter bootstrap suggested template:
  *  @see http://getbootstrap.com/getting-started/#template
- *  
- *  
+ *
+ *
  *  KDHTODO remaining items
- *  
+ *
  *  NEXT
  *  - Fix performance on homepage
- *  
+ *
  *  BUGS
  *  - When creating new players, they wind up with "null" powerpoints and 0th place
  *  - The profile page shows a 404 in firebug even though everything seems to load fine
  *  - Lock times are wrong.  When there's under 1 minute it says "0 minutes", and when there's 1 it says "1 minutes"
- *  
+ *
  *  PERFORMANCE ENHANCEMENTS
  *  - When left open for too long, the home page takes forever.  I think there's a memory leak.
  *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
- *  
+ *
  *  DISPLAY ISSUES/FEATURES
  *  - Note image cache for users who upload a new profile picture
  *  - Several pages (profiles list, pick stats, etc) still need a once-over in mobile/tablet
@@ -45,7 +45,7 @@
  *  - Why does Kent have no points for likes given?  I think these will start showing up once the season officially starts.  Double check this later.
  *  - On latest posts panel of the home page, show the time of the last post, not the count
  *  - Show a tiny countdown somewhere that lists when the page will poll for new data, and allow it to be clicked for an immediate re-poll
- *  
+ *
  *  NEW FEATURES
  *  - Add a setting to receive the reminder email always, never, or just if you haven't made a pick.
  *  - Figure out when to run the recalculation routines -- keep in mind bandwagon can be affected by EVERY PICK (so run on a cron or trigger via pick or something?)
@@ -58,14 +58,14 @@
  *  - Add HTML5 input types so devices can pick up on them, like email address
  *  - Allow users to specify their favorite team
  *  - Add a row at the top like the bandwagon row, but instead of teams it just shows the best possible margin of defeat you could have earned for each week
- * 
- *  
+ *
+ *
  *  UNDECIDED FEATURES
  *  - Make the Pick Board view options toggleable in real-time?
  *  - Got lazy and am not showing trophies/badges on pick stats and previous winners pages.  Should I?
  *  - Does the show/hide trophies/badges setting need to apply on other pages (being the pick board)?  Or if not, make it known on the profile page that the setting only applies to the pick boards. 
  *  - Should the avatarBubble (along with everywhere else) show the user's power rank?
- *  
+ *
  *  SUPERADMIN FUNCTIONS
  *  - In AdminController remove superadmintest action and use in the SuperadminFilter -- just there for an example
  *  - Do something with the indexAction
@@ -82,7 +82,7 @@
  *  - Add controls to create new accounts, activate old accounts, and reset passwords
  *  - Need a way to sticky/unsticky messages after they're already posted
  *  - Make a way to turn off superadmin view so I can see what others see
- *  
+ *
  *  BADGES/POWER STUFF
  *  - Add large power points for having uploaded a custom avatar
  *  - Make an "against the flow" badge for users who stay off the bandwagon the most
@@ -98,7 +98,7 @@
  *  - Add a badge for anti-chief of the bandwagon... maybe the "Trailblazer" badge?
  *  - Make the weiner badge calculate automatically
  *  - Ice cub -- longest incorrect streak (current)
- *  
+ *
  *  GO-LIVE
  *  - Need to mark the Chief of the Bandwagon badge as Unlocked
  *  - When in production, re-run the recalc/maintenance page multiple times (letting it time out) until the power ranking table is filled
@@ -107,7 +107,7 @@
  *  - Trophies/badges have a negative margin to make them look nice on the Pick Board -- test this out in other devices
  *  - Decide how to upload (either via IDE or git)
  *  - Get maintenance script running
- *  
+ *
  *  STRETCH GOALS
  *  - Add the ability to show "who's online"
  *  - Graph of referrers for how people know each other
@@ -123,8 +123,8 @@
  *  - Add some common "action" methods to the base Controller module, per Dough.
  *  - In the User Model, implement the delete() and changepw() methods?  (Note: changepw logic is in the controller now, but the model is a more appropriate spot for it)
  *  - Be able to compile CSS with LESS
- *  
- *  
+ *
+ *
  */
 ?><!DOCTYPE html>
 <html>

@@ -280,4 +280,21 @@
             <li>Lock Time: <strong>One hour prior to kickoff of the first game of the week</strong></li>
         </ul></small></small>
     </p>
+    
+    <h3>2015-current</h3>
+    <p>
+        With things largely stablizied, no major changes have been made.
+        <small><small><ul>
+            <li>Entry fee: <strong>$25</strong></li>
+            <li>Stay-Alive Pot: <strong>Yes</strong></li>
+            <li>Best Record Pot: <strong>Yes</strong></li>
+            <li>Biggest Loser Pot: <strong>Yes</strong></li>
+            <li>Payout Structure: <strong>Players finishing in 1st get twice as much as players finishing 2nd; pots are split 40/40/20</strong></li>
+            <li>Power Rankings: <strong>Yes</strong></li>
+            <li>Set by System Tracking: <strong>Yes</strong></li>
+            <li>Talk Messages: <strong>Yes</strong></li>
+            <li>Bandwagon: <strong>Yes</strong></li>
+            <li>Lock Time: <strong>One hour prior to kickoff of the first game of the week</strong></li>
+        </ul></small></small>
+    </p>
 </div>

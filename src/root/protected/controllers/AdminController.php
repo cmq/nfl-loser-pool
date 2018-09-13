@@ -18,7 +18,7 @@ class AdminController extends Controller
     public function filters() {
         return array(
             array('application.filters.AdminFilter'),
-            array('application.filters.SuperadminFilter + showCreateUser, createUser'),
+            array('application.filters.SuperadminFilter + showCreateUser, createUser, markPaid, activateUser, resetPassword'),
             array('application.filters.CorrectFilter + showCorrect, correct'),
         );
     }
@@ -172,11 +172,14 @@ class AdminController extends Controller
             if (!$error) {
                 // we are going to add this user
                 
-                // see if we need to insert them into the master email list
+                // see if we need to insert them into the master email list or just update it to make sure it's active
                 $sql = "select * from email where email = '" . addslashes($email) . "'";
                 $rsEmail = Yii::app()->db->createCommand($sql)->query();
                 if (count($rsEmail) < 1) {
                     $sql = "insert into email (email, active) values ('" . addslashes($email) . "', 1)";
+                    Yii::app()->db->createCommand($sql)->query();
+                } else {
+                    $sql = "update email set active = 1 where email = '" . addslashes($email) . "'";
                     Yii::app()->db->createCommand($sql)->query();
                 }
                 
@@ -204,6 +207,73 @@ class AdminController extends Controller
                 }
             }
             
+        } catch (Exception $e) {
+            $error = $e->getMessage();
+        }
+        $this->writeJson(array('error'=>$error));
+    }
+    
+    public function actionMarkPaid()
+    {
+        $error = '';
+        try {
+            $userId     = (int) getRequestParameter('id', 0);
+            $user       = User::model()->findByPk($userId);
+            $paidnote   = addslashes(trim(getRequestParameter('paidnote', '')));
+            if ($user && !empty($paidnote)) {
+                $sql = "update loseruser set paid=1, paidnote='$paidnote' where userid=$userId";
+                Yii::app()->db->createCommand($sql)->query();
+            } else {
+                if ($user) {
+                    $error = 'Paid note not supplied.';
+                } else {
+                    $error = 'User not found.';
+                }
+            }
+        } catch (Exception $e) {
+            $error = $e->getMessage();
+        }
+        $this->writeJson(array('error'=>$error));
+    }
+    
+    public function actionActivateUser()
+    {
+        $error = '';
+        try {
+            $userId = (int) getRequestParameter('id', 0);
+            $user   = User::model()->findByPk($userId);
+            if ($user) {
+                $user->active = 1;
+                $error = $this->saveRecord($user);
+                if (!$error) {
+                    $sql = "insert into loseruser (userid, mov, yr) values ($userId, 1, " . getCurrentYear() . ")";
+                    Yii::app()->db->createCommand($sql)->query();
+                }
+            } else {
+                $error = 'User not found.';
+            }
+        } catch (Exception $e) {
+            $error = $e->getMessage();
+        }
+        $this->writeJson(array('error'=>$error));
+    }
+    
+    public function actionResetPassword()
+    {
+        $error = '';
+        try {
+            $pw      = getRequestParameter('newpw', '');
+            $user    = User::model()->findByPk((int) getRequestParameter('id', 0));
+            if ($user && !empty($pw)) {
+                $user->password = UserIdentity::saltPassword($pw, $user->salt);
+                $error = $this->saveRecord($user);
+            } else {
+                if ($user) {
+                    $error = 'New password not supplied.';
+                } else {
+                    $error = 'User not found.';
+                }
+            }
         } catch (Exception $e) {
             $error = $e->getMessage();
         }

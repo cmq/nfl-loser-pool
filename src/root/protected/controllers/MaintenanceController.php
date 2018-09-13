@@ -1518,7 +1518,7 @@ Yii::app()->db->createCommand($sql)->query();
     public function actionRecalc() {
         set_time_limit(300);
         $this->_recalcStats();
-        echo 'done.';
+        echo 'done.<br /><a href="/">Home</a>';
     }
     
     public function actionReminder ()

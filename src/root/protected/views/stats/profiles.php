@@ -1,3 +1,8 @@
+<style>
+button:disabled {
+    color: #c0c0c0;
+}
+</style>
 <script>
 var users = <?php echo CJSON::encode($users);?>,
     order = 'power',
@@ -18,6 +23,21 @@ function aggregate() {
         users[i].flare = users[i].wins.length + users[i].userBadges.length;
         users[i].active = !!(parseInt(users[i].active, 10));
         users[i].shown = true;
+        if (!users[i].hasOwnProperty('firstname')) {
+            users[i].firstname = '';
+        }
+        if (!users[i].hasOwnProperty('lastname')) {
+            users[i].lastname = '';
+        }
+        if (!users[i].hasOwnProperty('active')) {
+            users[i].active = 0;
+        }
+        if (users[i].hasOwnProperty('userYears') && users[i].userYears.length > 0) {
+            users[i].paid = parseInt(users[i].userYears[0].paid, 10);
+        } else {
+            users[i].paid = 0;
+        }
+        users[i].realname = users[i].firstname + ' ' + users[i].lastname;
     }
 }
 
@@ -29,6 +49,10 @@ function sort(order) {
                 case 'username':
                     val1 = users[i].username.toLowerCase();
                     val2 = users[j].username.toLowerCase();
+                    break;
+                case 'realname':
+                    val1 = users[i].realname.toLowerCase();
+                    val2 = users[j].realname.toLowerCase();
                     break;
                 case 'money':
                     val1 = users[j].money;
@@ -74,7 +98,7 @@ function filter() {
         matches;
     for (i=0; i<users.length; i++) {
         matches = true;
-        matches = matches && (filterName == '' || users[i].username.toLowerCase().indexOf(filterName) >= 0);
+        matches = matches && (filterName == '' || users[i].username.toLowerCase().indexOf(filterName) >= 0 || users[i].realname.toLowerCase().indexOf(filterName) >= 0);
         matches = matches && (showActive || users[i].active);
         users[i].shown = matches;
     }
@@ -85,7 +109,7 @@ function draw() {
         $table = $('<table class="table table-striped table-nonfluid"/>')
             .append($('<thead/>')
                 .append($('<tr class="sortable" />')
-                    .append($('<th class="text-right">Power Ranking</th>')
+                    .append($('<th class="text-right">Power Rank</th>')
                         .on('click', function(e) {
                             e.preventDefault();
                             sort('power');
@@ -97,6 +121,14 @@ function draw() {
                             sort('username');
                         })
                     )
+                    <?php if (isSuperadmin()) { ?>
+                    .append($('<th class="text-left">Real Name</th>')
+                        .on('click', function(e) {
+                            e.preventDefault();
+                            sort('realname');
+                        })
+                    )
+                    <?php } ?>
                     .append($('<th class="text-right">Money Won</th>')
                         .on('click', function(e) {
                             e.preventDefault();
@@ -115,6 +147,9 @@ function draw() {
                             sort('power');
                         })
                     )
+                    <?php if (isSuperadmin()) { ?>
+                    .append('<th class="text-center">Admin</th>')
+                    <?php } ?>
                 )
             )
             .append($tbody);
@@ -125,15 +160,127 @@ function draw() {
                 .append('<td class="text-right">#' + users[i].power_ranking + '</td>')
                 .append('<td class="text-center"><img class="avatar" src="' + globals.getUserAvatar(users[i]) + '" /></td>')
                 .append('<td class="text-left"><a href="' + CONF.url.profile(users[i].id) + '">' + stylizeName(users[i].username) + '</a></td>')
+                <?php if (isSuperadmin()) { ?>
+                .append('<td class="text-left">' + stylizeName(users[i].realname) + '</td>')
+                <?php } ?>
                 .append('<td class="text-right">' + globals.dollarFormat(users[i].money) + '</td>')
                 .append('<td class="text-right">' + users[i].flare + '</td>')
                 .append('<td class="text-right">' + users[i].power_points + '</td>')
+                <?php if (isSuperadmin()) { ?>
+                .append($('<td class="text-left" style="font-weight:normal;">')
+                    .append($('<button title="Mark User Paid">$</button>')
+                        .on('click', userPaid.bind(this, users[i]))
+                        .prop('disabled', users[i].active == 0 || users[i].paid == 1)
+                    )
+                    .append(' ')
+                    .append($('<button title="Activate User for This Season">*</button>')
+                        .on('click', userActive.bind(this, users[i]))
+                        .prop('disabled', users[i].active == 1)
+                    )
+                    .append(' ')
+                    .append($('<button title="Reset User\'s Password">PW</button>')
+                        .on('click', userPassword.bind(this, users[i]))
+                    )
+                )
+                <?php } ?>
             );
         }
     }
     $('#profile-list').html($table);
     globals.lightboxAvatars();  // re-activate the newly-drawn avatars as lightboxes
 }
+
+<?php if (isSuperadmin()) { ?>
+function userPaid(user) {
+    var paidnote = $.trim(prompt('Please enter a note about the payment.'));
+    if (paidnote != null & paidnote != '') {
+        $.ajax({
+            url:        '<?php echo Yii::app()->createAbsoluteUrl('admin/markPaid')?>',
+            data:       {
+                            id: user.id,
+                            paidnote: paidnote
+                        },
+            type:       'post',
+            cache:      false,
+            success:    function(response) {
+                            if (response.hasOwnProperty('error') && response.error != '') {
+                                alert(response.error);
+                            } else {
+                                var i;
+                                for (i=0; i<users.length; i++) {
+                                    if (users[i].id == user.id) {
+                                        users[i].paid = 1;
+                                        break;
+                                    }
+                                }
+                                filter();
+                                draw();
+                            }
+                        },
+            error:      function() {
+                            alert('An unknown error occurred.');
+                        },
+            dataType:   'json'
+        });
+    }
+}
+
+function userActive(user) {
+    if (confirm('Are you sure you want to activate ' + user.username + ' for <?php echo getCurrentYear() ?>?')) {
+        $.ajax({
+            url:        '<?php echo Yii::app()->createAbsoluteUrl('admin/activateUser')?>',
+            data:       {
+                            id: user.id
+                        },
+            type:       'post',
+            cache:      false,
+            success:    function(response) {
+                            if (response.hasOwnProperty('error') && response.error != '') {
+                                alert(response.error);
+                            } else {
+                                var i;
+                                for (i=0; i<users.length; i++) {
+                                    if (users[i].id == user.id) {
+                                        users[i].active = 1;
+                                        break;
+                                    }
+                                }
+                                filter();
+                                draw();
+                            }
+                        },
+            error:      function() {
+                            alert('An unknown error occurred.');
+                        },
+            dataType:   'json'
+        });
+    }
+}
+
+function userPassword(user) {
+    var newpw = $.trim(prompt('Please enter a new password.'));
+    if (newpw != null & newpw != '') {
+        $.ajax({
+            url:        '<?php echo Yii::app()->createAbsoluteUrl('admin/resetPassword')?>',
+            data:       {
+                            id: user.id,
+                            newpw: newpw
+                        },
+            type:       'post',
+            cache:      false,
+            success:    function(response) {
+                            if (response.hasOwnProperty('error') && response.error != '') {
+                                alert(response.error);
+                            }
+                        },
+            error:      function() {
+                            alert('An unknown error occurred.');
+                        },
+            dataType:   'json'
+        });
+    }
+}
+<?php } ?>
 
 $(function() {
     aggregate();

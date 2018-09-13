@@ -19,8 +19,8 @@ class StatsController extends Controller
     
     public function actionProfiles()
     {
-        $users = User::model()->withBadges()->withWins()->findAll(array(
-            'select' => 't.id, t.username, t.power_ranking, t.power_points, t.avatar_ext, t.active',
+        $users = User::model()->withBadges()->withWins()->withThisYear()->findAll(array(
+            'select' => 't.id, t.username, t.power_ranking, t.power_points, t.avatar_ext, t.active' . (isSuperadmin() ? ', t.firstname, t.lastname, t.active' : ''),
             'order'  => 't.username'
         ));
         $this->render('profiles', array('users'=>$users));

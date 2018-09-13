@@ -60,7 +60,7 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                 if (!$isGuest) {
                     ?>
                     <li class="dropdown<?php echo ($controllerName == 'stats' ? ' active' : '')?>">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Statistics <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Players/Stats <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <?php
                             echo navItem('Player Profiles', 'stats/profiles', null, $controllerName == 'stats' && ($actionName == 'index' || $actionName == 'profiles' || $actionName == 'profile'), !$isGuest, !$isPaid);
@@ -115,9 +115,6 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                             echo navItem('Correct Picks', 'admin/showCorrect', null, $controllerName == 'admin' && $actionName == 'showCorrect', isAdmin());
                             echo navItem('Create Account', 'admin/showCreateUser', null, $controllerName == 'admin' && $actionName == 'showCreateUser', isSuperadmin());
                             echo navItem('Recalculate Rankings', 'maintenance/recalc', null, $controllerName == 'admin' && $actionName == 'recalculateRankings', isSuperadmin());
-                            // KDHTODO create a reset password
-                            // KDHTODO create a way to reactivate old accounts for the current year
-                            // KDHTODO create a simple user lookup (by login, email, original email/login, real name, etc)
                             ?>
                         </ul>
                     </li>

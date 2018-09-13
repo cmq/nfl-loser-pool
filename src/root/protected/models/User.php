@@ -89,6 +89,15 @@ class User extends DeepActiveRecord
                     ),
                 ),
             ),
+            'withThisYear' => array(
+                'with'      => array(
+                    'userYears' => array(
+                        'select'   => 'paid',
+                        'joinType' => 'LEFT JOIN',
+                        'on'       => 'userYears.yr = ' . getCurrentYear(),
+                    ),
+                ),
+            ),
             'withYears' => array(
                 'with' => array(
                     'userYears' => array(

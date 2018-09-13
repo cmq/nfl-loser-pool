@@ -11,7 +11,7 @@ $multipliers = param('powerMultipliers');
     <p>
         At the end of the day, Power Ranking is about one thing only -- <strong>bragging rights</strong>.  A player's
         Power Ranking does not affect the amount of money they can win.  The only other thing that takes Power Ranking
-        into account is the Chief of the Bandwagon Badge, where if there is a tie for Chief, the chief is the tied player
+        into account is the Chief of the <a href="/about/bandwagon">Bandwagon</a> Badge, where if there is a tie for Chief, the chief is the tied player
         whose Power Ranking is the highest.
     </p>
     <p>

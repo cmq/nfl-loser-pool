@@ -12,8 +12,6 @@
  *  - Fix performance on homepage
  *
  *  BUGS
- *  - When creating new players, they wind up with "null" powerpoints and 0th place
- *  - The profile page shows a 404 in firebug even though everything seems to load fine
  *  - Lock times are wrong.  When there's under 1 minute it says "0 minutes", and when there's 1 it says "1 minutes"
  *
  *  PERFORMANCE ENHANCEMENTS
@@ -21,11 +19,9 @@
  *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
  *
  *  DISPLAY ISSUES/FEATURES
- *  - Note image cache for users who upload a new profile picture
  *  - Several pages (profiles list, pick stats, etc) still need a once-over in mobile/tablet
  *  - Payout breakdown is crap on mobile, shouldn't have to scroll
  *  - Need to check pages on tablets as well
- *  - Have about pages link to each other, like in the power ranking page how it talks about the bandwagon.
  *  - Have a way to gray out pot #1 after it's decided
  *  - Pick a new style for table headers so they're contrasted more
  *  - If the user hasn't made a pick for the current week, we need a way to inform them like the header on the old site
@@ -42,16 +38,15 @@
  *          viewsetting-saved should use the help-block instead maybe?
  *  - In the $.ajax() call from the Talk view, handle errors some way other than alerting them.
  *  - Clean up the display of the talk page?
- *  - Why does Kent have no points for likes given?  I think these will start showing up once the season officially starts.  Double check this later.
  *  - On latest posts panel of the home page, show the time of the last post, not the count
  *  - Show a tiny countdown somewhere that lists when the page will poll for new data, and allow it to be clicked for an immediate re-poll
+ *  - On previous winners page, put thicker borders between the years
+ *  - On large tables like previous winners and the badges page, repeat the column headings or make them slide with the table
+ *  - On the Profile page, use @media query to adjust how pie chart appears (or hide it completely?) for small screens (http://stackoverflow.com/questions/21241862/twitter-bootstrap-3-rowspan-and-reorder)
  *
  *  NEW FEATURES
- *  - Add a setting to receive the reminder email always, never, or just if you haven't made a pick.
- *  - Figure out when to run the recalculation routines -- keep in mind bandwagon can be affected by EVERY PICK (so run on a cron or trigger via pick or something?)
  *  - Add View Option to show/hide user avatars
  *  - Add View Option to show/hide the bandwagon column/icon/row
- *  - Allow admin messages to be "sticky"
  *  - Add a setting to receive email notifications when someone posts a message @ you
  *  - Make the recent talk messages load AJAXy too
  *  - Allow for the user to "load more" messages than 5 on the home page
@@ -59,15 +54,13 @@
  *  - Allow users to specify their favorite team
  *  - Add a row at the top like the bandwagon row, but instead of teams it just shows the best possible margin of defeat you could have earned for each week
  *
- *
  *  UNDECIDED FEATURES
  *  - Make the Pick Board view options toggleable in real-time?
  *  - Got lazy and am not showing trophies/badges on pick stats and previous winners pages.  Should I?
- *  - Does the show/hide trophies/badges setting need to apply on other pages (being the pick board)?  Or if not, make it known on the profile page that the setting only applies to the pick boards. 
+ *  - Does the show/hide trophies/badges setting need to apply on other pages (being the pick board)?  Or if not, make it known on the profile page that the setting only applies to the pick boards.
  *  - Should the avatarBubble (along with everywhere else) show the user's power rank?
  *
  *  SUPERADMIN FUNCTIONS
- *  - In AdminController remove superadmintest action and use in the SuperadminFilter -- just there for an example
  *  - Do something with the indexAction
  *  - Clean up the MaintenanceController so random functions aren't hanging around all over cluttering things up
  *  - Give Maintenance page a layout so the navigation is still present, etc.
@@ -79,7 +72,6 @@
  *  - Clean up the styling of the corrections page, especially of the saved-status fields
  *  - In the views/pick/index.php, the data that's built always uses the current user (userId()).  Change that so that superadmins can make picks for other users.
  *  - From a user's profile page, give a Superadmin links to change that user's profile/picks.  (Only do picks if the user is currently active, obviously)
- *  - Add controls to create new accounts, activate old accounts, and reset passwords
  *  - Need a way to sticky/unsticky messages after they're already posted
  *  - Make a way to turn off superadmin view so I can see what others see
  *
@@ -98,15 +90,6 @@
  *  - Add a badge for anti-chief of the bandwagon... maybe the "Trailblazer" badge?
  *  - Make the weiner badge calculate automatically
  *  - Ice cub -- longest incorrect streak (current)
- *
- *  GO-LIVE
- *  - Need to mark the Chief of the Bandwagon badge as Unlocked
- *  - When in production, re-run the recalc/maintenance page multiple times (letting it time out) until the power ranking table is filled
- *  - Removing the hardcoding of week 19 from the getCurrentWeek() function in globals-domain.php
- *  - On the Profile page, use @media query to adjust how pie chart appears (or hide it completely?) for small screens (http://stackoverflow.com/questions/21241862/twitter-bootstrap-3-rowspan-and-reorder)
- *  - Trophies/badges have a negative margin to make them look nice on the Pick Board -- test this out in other devices
- *  - Decide how to upload (either via IDE or git)
- *  - Get maintenance script running
  *
  *  STRETCH GOALS
  *  - Add the ability to show "who's online"

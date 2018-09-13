@@ -12,7 +12,7 @@ $isPaid = isPaid();
             weeks in this season</li>
         <li><strong><?php echo $isPaid ? CHtml::link('Messages', array('talk/index')) : 'Messages (Paid Players Only)';?></strong> - On this page, you can post your own talk message, or read any talk messages that have
             been posted in the current season.</li>
-        <li><strong>Statistics</strong>
+        <li><strong>Players/Stats</strong>
             <ul>
                 <li><strong><?php echo $isPaid ? CHtml::link('Player Profiles', array('stats/profiles')) : 'Player Profiles (Paid Players Only)';?></strong> - Show a list of all players who've ever played in the Loser Pool.
                     On this page, you can filter users by name or whether or not they're active.  Clicking on an individual user will bring up their personal profile.</li>

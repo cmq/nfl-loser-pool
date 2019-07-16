@@ -60,6 +60,9 @@ body {
 .picks.table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
     background-color: #f0f0f0
 }
+.picks.table-striped > tbody > tr.success:nth-child(2n+1) > td, .table-striped > tbody > tr.success:nth-child(2n+1) > th {
+    background-color: #dff0d8
+}
 .navbar-brand {
     font-weight: bold;
 }
@@ -487,4 +490,15 @@ img.user-badge {
     background: -ms-linear-gradient(top,  #f3e2c7 0%,#c19e67 50%,#b68d4c 51%,#e9d4b3 100%); /* IE10+ */
     background: linear-gradient(to bottom,  #f3e2c7 0%,#c19e67 50%,#b68d4c 51%,#e9d4b3 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f3e2c7', endColorstr='#e9d4b3',GradientType=0 ); /* IE6-9 */
+}
+
+
+/*
+ * Shit from Richard to fix lightbox sizes
+ */
+.avatar-zoom {
+   text-align: center;
+}
+.avatar-zoom img {
+   max-width: 50%;
 }

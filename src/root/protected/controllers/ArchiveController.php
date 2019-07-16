@@ -48,7 +48,7 @@ class ArchiveController extends Controller
             'order'     => 't.postedon desc'
         ));
         
-        $this->render('year', array('boardData'=>$boardData, 'bandwagon'=>$bandwagon, 'talk'=>$talk, 'year'=>$year));
+        $this->render('year', array('boardData'=>$boardData, 'bandwagon'=>$bandwagon, 'bestWorst'=>getBestWorst($year), 'talk'=>$talk, 'year'=>$year));
     }
     
 }

@@ -374,7 +374,7 @@ function getLiveScoring($week=null) {
 					'hometeam'  => $score['gameSchedule']['homeTeamAbbr'],
 					'homescore' => $homeTeamScore,
 					'homemov'   => $homeTeamScore - $awayTeamScore,
-					'final'     => $score['score']['phase'] == 'FINAL'
+					'final'     => ($score['score']['phase'] == 'FINAL' || $score['score']['phase'] == 'FINAL_OVERTIME')
 				);
 			}
 		}
@@ -425,4 +425,58 @@ function getTeamLogoOffset($team, $size) {
         $multiplier = 80;
     }
     return '0 -' . ($multiplier * $offset) . 'px';
+}
+
+function getBestWorst($year)
+{
+    if ($year <= param('earliestYear')) {
+        return null;
+    }
+    
+    $sql = 'select mov.yr, mov.week, mov.teamid, mov.mov, t.shortname, t.longname, t.image_offset
+                from mov
+                inner join (
+                    select yr, week, min(mov) as mov
+                    from mov
+                    group by yr, week
+                ) as top on mov.yr= top.yr and mov.week = top.week and mov.mov = top.mov
+                inner join loserteam t on mov.teamid = t.id
+                where mov.yr = ' . (int)$year . '
+                order by mov.yr, mov.week';
+    $bestMov = Yii::app()->db->createCommand($sql)->queryAll();
+    $sql = str_replace('min(', 'max(', $sql);
+    $worstMov = Yii::app()->db->createCommand($sql)->queryAll();
+    
+    $bestWorst = array('best'=>array_fill(0, 21, null), 'worst'=>array_fill(0, 21, null));
+    
+    foreach ($bestMov as $game) {
+        if ($game['mov'] < 0) {
+            $bestWorst['best'][$game['week']-1] = array(
+                'year'  => $game['yr'],
+                'mov'   => $game['mov'],
+                'team'=>array(
+                    'id'            => $game['teamid'],
+                    'shortname'     => $game['shortname'],
+                    'longname'      => $game['longname'],
+                    'image_offset'  => $game['image_offset']
+                )
+            );
+        }
+    }
+    foreach ($worstMov as $game) {
+        if ($game['mov'] > 0) {
+            $bestWorst['worst'][$game['week']-1] = array(
+                'year'  => $game['yr'],
+                'mov'   => $game['mov'],
+                'team'=>array(
+                    'id'            => $game['teamid'],
+                    'shortname'     => $game['shortname'],
+                    'longname'      => $game['longname'],
+                    'image_offset'  => $game['image_offset']
+                )
+            );
+        }
+    }
+    
+    return $bestWorst;
 }

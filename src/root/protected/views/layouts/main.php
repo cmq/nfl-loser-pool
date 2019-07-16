@@ -89,7 +89,7 @@
  *  - Add a badge for anyone with a ROI over 1 (maybe the "Paid to Play" badge)
  *  - Add a badge for anti-chief of the bandwagon... maybe the "Trailblazer" badge?
  *  - Make the weiner badge calculate automatically
- *  - Ice cub -- longest incorrect streak (current)
+ *  - Ice cube -- longest incorrect streak (current)
  *
  *  STRETCH GOALS
  *  - Add the ability to show "who's online"

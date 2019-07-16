@@ -45,7 +45,7 @@ class SiteController extends Controller
                 'limit'     => 5,
                 'order'     => 't.sticky desc, case t.sticky when 1 then t.id else t.id * -1 end asc'
             ));
-            $this->render('index', array('boardData'=>$boardData, 'bandwagon'=>$bandwagon, 'talk'=>$talk));
+            $this->render('index', array('boardData'=>$boardData, 'bandwagon'=>$bandwagon, 'bestWorst'=>getBestWorst(getCurrentYear()), 'talk'=>$talk));
         }
     }
     
@@ -53,7 +53,7 @@ class SiteController extends Controller
     {
         $boardData = $this->_getBoardData();
         $bandwagon = $this->_getBandwagon();
-        $this->writeJson(array('board'=>$boardData, 'bandwagon'=>$bandwagon));
+        $this->writeJson(array('board'=>$boardData, 'bandwagon'=>$bandwagon, 'bestWorst'=>getBestWorst(getCurrentYear())));
         exit;
     }
 

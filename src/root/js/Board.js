@@ -10,9 +10,11 @@ function Board(options) {
             currentYear:    CONF.currentYear,
             showAdmin:      CONF.isAdmin,
             showBandwagon:  true,
+            showBestWorst:  true,
             showPayout:     true,
             board:          [],
             bandwagon:      [],
+            bestWorst:      null,
             userPaid:       true,
             viewOptions: {
                 collapseHistory: false,
@@ -25,6 +27,7 @@ function Board(options) {
         polling     = false,
         drawn       = false,
         lastBoard   = JSON.stringify(settings.board),
+        lastBest    = JSON.stringify(settings.bestWorst),
         $container;
 
 
@@ -688,6 +691,108 @@ function Board(options) {
             $tr.append('<th style="font-size:32px;">&infin;</th>');
             $thead.append($tr);
         }
+        
+        // add the best/worst lines
+        if (settings.showBestWorst && settings.bestWorst) {
+            
+            // ** BEST **
+            margin      = 0;
+            correct     = 0;
+            incorrect   = 0;
+            $tr = $('<tr/>')
+                .append('<th/>')
+                .append('<th nowrap="nowrap">Best Possible</th>');
+            // collapsed view
+            if (settings.viewOptions.collapseHistory) {
+                $tr.append('<th>' + settings.currentWeek-1 + '-0</th>');
+            }
+            // week-by-week view
+            for (i=startWeek-1; i<21; i++) {
+                bwfound = false;
+                if (i < settings.currentWeek) {
+                    try {
+                        if (settings.bestWorst.best[i] != null) {
+                            correct++;
+                            margin -= settings.bestWorst.best[i].mov;
+                            $tr.append($('<th/>')
+                                .append($('<div/>')
+                                    .addClass('pick-wrapper')
+                                    .append(!settings.viewOptions.showMov ? '' : $('<div/>')
+                                        .addClass('pickMov')
+                                        .addClass(i < settings.currentWeek-1 || settings.bestWorst.best[i].year < settings.currentYear ? 'old' : '')
+                                        .html(stylizeMov(settings.bestWorst.best[i].mov))
+                                    )
+                                    .append(!settings.viewOptions.showLogos ? settings.bestWorst.best[i].team.shortname : globals.getTeamLogo(settings.bestWorst.best[i].team, (i == settings.currentWeek ? 'medium' : 'small')))
+                                )
+                            );
+                            bwfound = true;
+                        }
+                    } catch (e) {
+                    }
+                }
+                if (!bwfound) {
+                    // if we get here we didn't find a best/worst, so we need to display an empty cell
+                    $tr.append('<th/>');
+                }
+            }
+            // show the summaries
+            $tr.append('<th>...</th>');
+            $tr.append('<th' + (countPot2() ? '' : ' class="unused-column"') + '>' + correct + '-' + incorrect + '</th>');
+            $tr.append('<th class="text-right' + (countPot3() ? '' : ' unused-column') + '">' + margin + '</th>');
+            $tr.append('<th colspan="3">N/A</th>');
+            $tr.append('<th style="font-size:32px;">-</th>');     // KDHTODO need to calculate this
+            $thead.append($tr);
+            
+            // ** WORST **
+            margin      = 0;
+            correct     = 0;
+            incorrect   = 0;
+            $tr = $('<tr/>')
+                .append('<th/>')
+                .append('<th nowrap="nowrap">Worst Possible</th>');
+            // collapsed view
+            if (settings.viewOptions.collapseHistory) {
+                $tr.append('<th>' + settings.currentWeek-1 + '-0</th>');
+            }
+            // week-by-week view
+            for (i=startWeek-1; i<21; i++) {
+                bwfound = false;
+                if (i < settings.currentWeek) {
+                    try {
+                        if (settings.bestWorst.worst[i] != null) {
+                            incorrect++;
+                            margin -= settings.bestWorst.worst[i].mov;
+                            $tr.append($('<th/>')
+                                .addClass('incorrect')
+                                .append($('<div/>')
+                                    .addClass('pick-wrapper')
+                                    .append(!settings.viewOptions.showMov ? '' : $('<div/>')
+                                        .addClass('pickMov')
+                                        .addClass(i < settings.currentWeek-1 || settings.bestWorst.worst[i].year < settings.currentYear ? 'old' : '')
+                                        .addClass('incorrect')
+                                        .html(stylizeMov(settings.bestWorst.worst[i].mov))
+                                    )
+                                    .append(!settings.viewOptions.showLogos ? settings.bestWorst.worst[i].team.shortname : globals.getTeamLogo(settings.bestWorst.worst[i].team, (i == settings.currentWeek ? 'medium' : 'small')))
+                                )
+                            );
+                            bwfound = true;
+                        }
+                    } catch (e) {
+                    }
+                }
+                if (!bwfound) {
+                    // if we get here we didn't find a best/worst, so we need to display an empty cell
+                    $tr.append('<th/>');
+                }
+            }
+            // show the summaries
+            $tr.append('<th>' + (incorrect > 0 ? 'Week 1' : '...') + '</th>');
+            $tr.append('<th' + (countPot2() ? '' : ' class="unused-column"') + '>' + correct + '-' + incorrect + '</th>');
+            $tr.append('<th class="text-right' + (countPot3() ? '' : ' unused-column') + '">' + margin + '</th>');
+            $tr.append('<th colspan="3">N/A</th>');
+            $tr.append('<th style="font-size:32px;">-</th>');     // KDHTODO need to calculate this
+            $thead.append($tr);
+        }
 
         // build the table body
         for (i=0; i<settings.board.length; i++) {
@@ -826,7 +931,9 @@ function Board(options) {
                 type:       'get',
                 cache:      false,
                 success:    function(r) {
-                                var boardString;
+                                var needRedraw = false,
+                                    bestString,
+                                    boardString;
                                 if (r) {
                                     if (r.bandwagon) {
                                         settings.bandwagon = r.bandwagon;
@@ -836,10 +943,21 @@ function Board(options) {
                                         if (lastBoard !== boardString) {
                                             lastBoard = boardString;
                                             settings.board = r.board;
-                                            aggregateStats();
-                                            self.sort();
-                                            self.redraw();
+                                            needRedraw = true;
                                         }
+                                    }
+                                    if (r.bestWorst) {
+                                        bestString = JSON.stringify(r.bestWorst);
+                                        if (lastBest !== bestString) {
+                                            lastBest = bestString;
+                                            settings.bestWorst = r.bestWorst;
+                                            needRedraw = true;
+                                        }
+                                    }
+                                    if (needRedraw) {
+                                        aggregateStats();
+                                        self.sort();
+                                        self.redraw();
                                     }
                                 }
                                 if (settings.poll) {
@@ -873,4 +991,4 @@ function Board(options) {
         self.sort();
         self.redraw();
     }
-};
+}

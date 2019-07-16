@@ -5,6 +5,7 @@ $(function() {
         container: $('#pick-board'),
         board: <?php echo CJSON::encode($boardData);?>,
         bandwagon: <?php echo CJSON::encode($bandwagon);?>,
+        bestWorst: <?php echo CJSON::encode($bestWorst);?>,
         poll:  false,
         order: '<?php echo ($year == param('earliestYear') ? 'stayAlive' : 'money');?>',
         collapsable: true,

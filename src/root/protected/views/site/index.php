@@ -149,7 +149,7 @@ $(function() {
                                         ?>
                                     </div>
                                 </div>
-                            </div>    
+                            </div>
                             <div class="row hidden-md hidden-lg">
                                 <div class="col-md-12 text-center">
                                     <div class="chief text-left">CHIEF: <?php echo getAvatarProfileLink($thisWeekBandwagon->chief, true) . " ($chiefWeeksOn" . ' consecutive weeks)';?></div>
@@ -165,8 +165,8 @@ $(function() {
                                         ?>
                                     </div>
                                 </div>
-                            </div>    
-                        </div>                
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

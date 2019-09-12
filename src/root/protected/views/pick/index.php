@@ -100,7 +100,7 @@ $(function() {
             <div class="text-center" id="delay-timer" style="font-weight:bold;font-size:200%"><?php echo $delayAmount;?></div>
             <br />
                 <p style="width:50%;margin:0 auto;">
-                Please Paypal your payment to kirk.hemmen@gmail.com or mail it to:<br />
+                Please pay your $25 entry fee via Venmo (@Kirk-Hemmen) or Paypal (kirk.hemmen@gmail.com), or mail it to:<br />
                 Kirk Hemmen<br />
                 11197 Hillsboro Ave N<br />
                 Champlin, MN 55316

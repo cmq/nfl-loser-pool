@@ -58,7 +58,7 @@ $_config = array(
 			'connectionString' => 'mysql:host=127.0.0.1;dbname=loserpool2',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => 's0methIng',
+			'password' => 's0methIng.3atme',
 			'charset' => 'utf8',
 		    'enableParamLogging' => true,
 		),

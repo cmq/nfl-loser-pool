@@ -42,7 +42,7 @@ class AdminController extends Controller
         
         $users = User::model()->active()->with(array(
             'picks' => array(
-                'on' => "picks.week = $week and picks.yr = $year",
+                'on' => "picks.week = $week and picks.yr = $year and picks.hardcore = " . (isHardcoreMode() ? '1' : '0'),
                 'with' => array(
                     'team' => array(
                         'select' => 'longname',
@@ -74,21 +74,22 @@ class AdminController extends Controller
             $week = (int) $_REQUEST['week'];
             $year = getCurrentYear();
             $data = json_decode($_REQUEST['data'], true);
+            $hc   = (isHardcoreMode() ? '1' : '0');
             
             $usersCorrect   = implode(',', listToIntegerArray(implode(',', $data['correct'])));
             $usersIncorrect = implode(',', listToIntegerArray(implode(',', $data['incorrect'])));
             $usersNotSet    = implode(',', listToIntegerArray(implode(',', $data['notset'])));
             
             if ($usersCorrect) {
-                $sql = "update loserpick set incorrect = 0 where yr = $year and week = $week and userid in ($usersCorrect)";
+                $sql = "update loserpick set incorrect = 0 where yr = $year and week = $week and userid in ($usersCorrect) and hardcore = $hc";
                 $results = Yii::app()->db->createCommand($sql)->query();
             }
             if ($usersIncorrect) {
-                $sql = "update loserpick set incorrect = 1 where yr = $year and week = $week and userid in ($usersIncorrect)";
+                $sql = "update loserpick set incorrect = 1 where yr = $year and week = $week and userid in ($usersIncorrect) and hardcore = $hc";
                 $results = Yii::app()->db->createCommand($sql)->query();
             }
             if ($usersNotSet) {
-                $sql = "update loserpick set incorrect = null where yr = $year and week = $week and userid in ($usersNotSet)";
+                $sql = "update loserpick set incorrect = null where yr = $year and week = $week and userid in ($usersNotSet) and hardcore = $hc";
                 $results = Yii::app()->db->createCommand($sql)->query();
             }
             
@@ -115,16 +116,6 @@ class AdminController extends Controller
     
     public function actionCreateUser()
     {
-        /*
-            email: $('#email').val(),
-            username: $('#username').val(),
-            password: $('#password').val(),
-            salt: $('#salt').val(),
-            firstname: $('#firstname').val(),
-            lastname: $('#lastname').val(),
-            referrer: $('#referrer').val(),
-            active: $('#active').prop('checked') ? 1 : 0
-        */
         $error = '';
         try {
             
@@ -138,6 +129,9 @@ class AdminController extends Controller
             $active     = (int) getRequestParameter('active', 1);
             $paid       = (int) getRequestParameter('paid', 0);
             $paidnote   = trim(getRequestParameter('paidnote', ''));
+            $hcactive   = (int) getRequestParameter('hcactive', 1);
+            $hcpaid     = (int) getRequestParameter('hcpaid', 0);
+            $hcpaidnote = trim(getRequestParameter('hcpaidnote', ''));
             
             // check the email
             if (!$error && !isEmail($email)) {
@@ -193,17 +187,24 @@ class AdminController extends Controller
                 $user->firstname = $firstname;
                 $user->lastname = $lastname;
                 $user->email = $email;
-                $user->active = $active;
+                $user->active = $active || $hacactive ? 1 : 0;
                 $user->created = date('YmdHis');
                 $user->power_points = 0;
                 $user->power_ranking = 999;
                 $user->referrer = $referrer;
                 $error = $this->saveRecord($user);
                 
-                if (!$error && $active) {
-                    // create a record for the user
-                    $sql = "insert into loseruser (userid, paid, paidnote, mov, yr) values (" . $user->getPrimaryKey() . ", $paid, '" . addslashes($paidnote) . "', 1, " . getCurrentYear() . ")";
-                    Yii::app()->db->createCommand($sql)->query();
+                if (!$error) {
+                    if ($active) {
+                        // create a record for the user in normal mode
+                        $sql = "insert into loseruser (userid, paid, paidnote, hardcore, yr) values (" . $user->getPrimaryKey() . ", $paid, '" . addslashes($paidnote) . "', 0, " . getCurrentYear() . ")";
+                        Yii::app()->db->createCommand($sql)->query();
+                    }
+                    if ($hcactive) {
+                        // create a record for the user in hardcore mode
+                        $sql = "insert into loseruser (userid, paid, paidnote, hardcore, yr) values (" . $user->getPrimaryKey() . ", $hcpaid, '" . addslashes($hcpaidnote) . "', 1, " . getCurrentYear() . ")";
+                        Yii::app()->db->createCommand($sql)->query();
+                    }
                 }
             }
             
@@ -221,7 +222,7 @@ class AdminController extends Controller
             $user       = User::model()->findByPk($userId);
             $paidnote   = addslashes(trim(getRequestParameter('paidnote', '')));
             if ($user && !empty($paidnote)) {
-                $sql = "update loseruser set paid=1, paidnote='$paidnote' where userid=$userId";
+                $sql = "update loseruser set paid=1, paidnote='$paidnote' where userid=$userId and hardcore=" . (isHardcoreMode() ? '1' : '0');
                 Yii::app()->db->createCommand($sql)->query();
             } else {
                 if ($user) {
@@ -246,7 +247,7 @@ class AdminController extends Controller
                 $user->active = 1;
                 $error = $this->saveRecord($user);
                 if (!$error) {
-                    $sql = "insert into loseruser (userid, mov, yr) values ($userId, 1, " . getCurrentYear() . ")";
+                    $sql = "insert into loseruser (userid, yr, hardcore) values ($userId, " . getCurrentYear() . ", " . (isHardcoreMode() ? '1' : '0') . ")";
                     Yii::app()->db->createCommand($sql)->query();
                 }
             } else {

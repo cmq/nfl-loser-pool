@@ -861,8 +861,8 @@ class MaintenanceController extends Controller
         $this->floatingBadges[] = 13;   // 13 - on fire
         $this->floatingBadges[] = 14;   // 14 - all-time on fire
         for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
-$sql = 'update userbadge set userid=0 where badgeid in (13,14)';
-Yii::app()->db->createCommand($sql)->query();
+            $sql = 'update userbadge set userid=0 where badgeid in (13,14)';    // reset the onfire badges before we re-calc them
+            Yii::app()->db->createCommand($sql)->query();
             $badge = $this->_calculateBadge_onfire($y);
             if ($badge) {
                 if ($badge['currentUserId']) {
@@ -1527,11 +1527,12 @@ Yii::app()->db->createCommand($sql)->query();
         $w    = getCurrentWeek() + 1;   // add 1 because we care about NEXT week (the week we're reminding for)
         $wn   = getWeekName($w, true);
         $bcc  = array();
+        $bcch = array();
         $send = isset($_GET['send']);
         
         if ($w < 22) {
             $sql = "
-                select      distinct u.id, u.email, u.receive_reminders, u.reminder_buffer, u.reminder_always, p.teamid
+                select      distinct u.id, u.email, u.receive_reminders, u.reminder_buffer, u.reminder_always, p.teamid, p.hardcore
                 from        user u
                 inner join  loseruser lu on lu.userid = u.id and lu.yr = $y
                 left join   loserpick p on p.userid = u.id and p.yr = $y and p.week = $w
@@ -1550,11 +1551,16 @@ Yii::app()->db->createCommand($sql)->query();
                 $now = new DateTime();
                 $now->add(new DateInterval("PT{$user['reminder_buffer']}H"));
                 $locktime = getLockTime($w);
-                if ($now < $locktime) continue; // we're not within the user's reminder buffer yet                
+                $hc = ($user['hardcore'] ? 1 : 0);
+                if ($now < $locktime) continue; // we're not within the user's reminder buffer yet
                 // if we get here, it's time to send this user an email
-                $bcc[] = $user['email'];
+                if ($hc) {
+                    $bcch[] = $user['email'];
+                } else {
+                    $bcc[] = $user['email'];
+                }
                 if ($send) {
-                    $sql = "insert into reminders (userid, email, yr, week, created) values ({$user['id']}, '" . addslashes($user['email']) . "', $y, $w, NOW())";
+                    $sql = "insert into reminders (userid, email, yr, week, hardcore, created) values ({$user['id']}, '" . addslashes($user['email']) . "', $y, $w, $hc, NOW())";
                     Yii::app()->db->createCommand($sql)->query();
                 }
             }
@@ -1565,17 +1571,30 @@ Yii::app()->db->createCommand($sql)->query();
             
             https://loserpool.kdhstuff.com
             <?php
-            $body    = ob_get_clean();
-            $bcc     = implode(',', array_unique($bcc));
-            $from    = param('systemEmail');
-            $subject = "$y NFL Loser Pool - $wn Reminder";
+            $body   = ob_get_clean();
+            $bcc    = implode(',', array_unique($bcc));
+            $bcch   = implode(',', array_unique($bcch));
+            $from   = param('systemEmail');
             
+            // send reminder to regulars
+            $subject = "$y NFL Loser Pool - $wn Reminder";
             if ($send && $bcc) {
                 mail($from, $subject, $body, "From: $from\r\nReply-To: $from\r\nBcc: $bcc\r\nX-Mailer: PHP/" . phpversion());
             }
             if (isSuperadmin()) {
                 echo "Week $w, $y<br />";
                 echo ($send ? 'SENT TO: ' : 'WOULD HAVE SENT TO: ') . "$bcc<br />";
+                echo "<hr /><strong>$subject</strong><br /><br />$body";
+            }
+            
+            // send reminder to hardcore players
+            $subject = "$y NFL Hardcore Loser Pool - $wn Reminder";
+            if ($send && $bcch) {
+                mail($from, $subject, $body, "From: $from\r\nReply-To: $from\r\nBcc: $bcch\r\nX-Mailer: PHP/" . phpversion());
+            }
+            if (isSuperadmin()) {
+                echo "Week $w, $y<br />";
+                echo ($send ? 'SENT TO: ' : 'WOULD HAVE SENT TO: ') . "$bcch<br />";
                 echo "<hr /><strong>$subject</strong><br /><br />$body";
             }
         }
@@ -1587,16 +1606,33 @@ Yii::app()->db->createCommand($sql)->query();
         
         if ($w > 1 && $w < 22) {
             if (isLocked($w)) {
-            	$sql = "delete from loserpick where yr = $y and week = $w and (teamid = 0 or teamid is null)";
+                
+                // normal mode
+            	$sql = "delete from loserpick where yr = $y and week = $w and (teamid = 0 or teamid is null) and hardcore = 0";
                 Yii::app()->db->createCommand($sql)->query();
                 if (isSuperadmin()) {
                     echo "RAN:<br />$sql<br /><br />";
                 }
 
-                $sql = "insert into loserpick (userid, week, yr, teamid, incorrect, setbysystem)
-                        (select userid, $w, $y, teamid, null, 1 from loserpick where yr = $y and week = " . ($w-1) . " and not exists (
+                $sql = "insert into loserpick (userid, week, yr, teamid, hardcore, incorrect, setbysystem)
+                        (select userid, $w, $y, teamid, 0, null, 1 from loserpick where yr = $y and week = " . ($w-1) . " and not exists (
                             select * from loserpick l2 where l2.yr = $y and l2.week = $w and l2.userid = loserpick.userid and l2.teamid > 0
                         ))";
+                Yii::app()->db->createCommand($sql)->query();
+                if (isSuperadmin()) {
+                    echo "RAN:<br />$sql";
+                    exit;
+                }
+                
+                // hardcore mode
+                $sql = "delete from loserpick where yr = $y and week = $w and (teamid = 0 or teamid is null) and hardcore = 1";
+                Yii::app()->db->createCommand($sql)->query();
+                if (isSuperadmin()) {
+                    echo "RAN:<br />$sql<br /><br />";
+                }
+                
+                $sql = "insert into loserpick (userid, week, yr, teamid, hardcore, incorrect, setbysystem)
+                        (select userid, $w, $y, 0, 1, 1, 1 from loserpick where yr = 2019 and week = 4 and hardcore=1)";
                 Yii::app()->db->createCommand($sql)->query();
                 if (isSuperadmin()) {
                     echo "RAN:<br />$sql";

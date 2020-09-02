@@ -29,7 +29,10 @@ $isPaid = isPaid();
                     within a given year.</li>
                 <?php
                 for ($i=param('earliestYear'); $i<getCurrentYear(); $i++) {
-                    ?><li><strong><?php echo $isPaid ? CHtml::link("Past Season: $i", array('archive/year', 'y'=>$i)) : "Past Season $i (Paid Players Only)";?></strong> - The final Pick Board and Talk Messages from <?php echo $i;?></li><?php
+                    ?><li><strong><?php echo $isPaid ? CHtml::link("Past Season: $i", array('archive/year', 'y'=>$i, 'hc'=>0)) : "Past Season $i (Paid Players Only)";?></strong> - The final Pick Board and Talk Messages from <?php echo $i;?></li><?php
+                }
+                for ($i=param('earliestYearHardcore'); $i<getCurrentYear(); $i++) {
+                    ?><li><strong><?php echo $isPaid ? CHtml::link("Past Hardcore Season: $i", array('archive/year', 'y'=>$i, 'hc'=>1)) : "Past Season $i (Paid Players Only)";?></strong> - The final Pick Board and Talk Messages from <?php echo $i;?> (Hardcore)</li><?php
                 }
                 ?>
             </ul>

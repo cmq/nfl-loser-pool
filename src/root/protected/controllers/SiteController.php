@@ -13,7 +13,7 @@ class SiteController extends Controller
     {
         // for some reason if these scopes aren't applied in exactly the right order, something gets missed.
         // ironically, if you apply them in the same order twice, the second time everything works properly... must be something jacked with Yii
-        $boardData = User::model()->withPicks(getCurrentYear(), isSuperadmin())->active()->withBadges()->withWins()->findAll(array(
+        $boardData = User::model()->withPicks(getCurrentYear(), null, isSuperadmin())->active()->withBadges()->withWins()->findAll(array(
             'condition' => (isPaid() ? '' : 't.id = ' . userId()),
             'select'    => 't.id, t.username, t.avatar_ext, t.power_points, t.power_ranking',
             'order'     => 't.username, t.id, picks.yr, picks.week, wins.place, wins.pot, wins.yr, badge.zindex',
@@ -40,8 +40,8 @@ class SiteController extends Controller
         } else {
             $boardData = $this->_getBoardData();
             $bandwagon = $this->_getBandwagon();
-            $talk = Talk::model()->withLikes()->findAll(array(
-                'condition' => 't.yr = ' . getCurrentYear() . ' and t.active = 1',
+            $talk = Talk::model()->current()->withLikes()->findAll(array(
+                'condition' => 't.active = 1',
                 'limit'     => 5,
                 'order'     => 't.sticky desc, case t.sticky when 1 then t.id else t.id * -1 end asc'
             ));
@@ -72,6 +72,38 @@ class SiteController extends Controller
     }
 
     /**
+     * This is the action to handle external exceptions.
+     */
+    public function actionSwitch()
+    {
+        $error  = '';
+        $mode   = isset($_POST['mode']) ? $_POST['mode'] : '';
+        
+        if ($mode == 'hardcore') {
+            // asking to switch to hardcore
+            if (!userHasHardcoreMode()) {
+                $error = 'You are not playing hardcore mode this year.';
+            } else if (isHardcoreMode()) {
+                $error = 'You are already in hardcore mode.';
+            } else {
+                $_SESSION['mode'] = 'hardcore';
+            }
+        } else {
+            // asking to switch to normal
+            if (!userHasNormalMode()) {
+                $error = 'You are not playing normal mode this year.';
+            } else if (isNormalMode()) {
+                $error = 'You are already in normal mode.';
+            } else {
+                $_SESSION['mode'] = 'normal';
+            }
+        }
+        
+        $this->writeJson(array('error'=>$error));
+        exit;
+    }
+
+    /**
      * Displays the login page
      */
     public function actionLogin()
@@ -87,6 +119,28 @@ class SiteController extends Controller
             $identity = new UserIdentity($_POST['username'], $_POST['password']);
             if ($identity->authenticate()) {
                 Yii::app()->user->login($identity, isset($_POST['rememberMe']) ? 3600*24*180 : 0);    // remember for 180 days if they say so
+                // default the game mode
+                $user = user();
+                $userHasNormal      = $user->thisYearNormal   ? true : false;
+                $userHasHardcore    = $user->thisYearHardcore ? true : false;
+                if (isset($_SESSION['mode'])) {
+                    $mode = $_SESSION['mode'];
+                    if ($mode == 'hardcore' && !$userHasHardcore) {
+                        //die('setting session to normal 1');
+                        $_SESSION['mode'] = 'normal';
+                    } else if ($mode != 'hardcore' && !$userHasNormal) {
+                        //die('setting session to hardcore 1');
+                        $_SESSION['mode'] = 'hardcore';
+                    }
+                } else {
+                    if ($userHasNormal) {
+                        //die('setting session to normal 2');
+                        $_SESSION['mode'] = 'normal';
+                    } else if ($userHasHardcore) {
+                        //die('setting session to hardcore 2');
+                        $_SESSION['mode'] = 'hardcore';
+                    }
+                }
                 if (!Yii::app()->request->isAjaxRequest) {
                     $this->redirect(Yii::app()->user->returnUrl);
                 }

@@ -19,6 +19,7 @@
  *  - Really need to work on the speed/performance of the home page.  It renders slowly on every redraw.  Perhaps certain unchanging things can be pre-rendered by the server?  Or maybe even just writing them with javascript as strings instead of jQuery constructs would help.
  *
  *  DISPLAY ISSUES/FEATURES
+ *  - Fix avatar display so it's not so huge for some users
  *  - Several pages (profiles list, pick stats, etc) still need a once-over in mobile/tablet
  *  - Payout breakdown is crap on mobile, shouldn't have to scroll
  *  - Need to check pages on tablets as well
@@ -145,7 +146,7 @@
         <script src="<?php echo baseUrl('/js/globals.js'); ?>"></script>
         <script src="<?php echo baseUrl('/js/init.js'); ?>"></script>
     </head>
-    <body>
+    <body<?php echo (isHardcoreMode() ? ' class="hardcore"' : '');?>>
         <?php
         $this->renderPartial('//_partials/Navigation', array());
         echo $content;

@@ -43,7 +43,7 @@ class Talk extends DeepActiveRecord
     {
         return array(
             'current' => array(
-                'condition' => 't.yr = ' . getCurrentYear(),
+                'condition' => 't.yr = ' . getCurrentYear() . ' and t.hardcore = ' . (isHardcoreMode() ? '1' : '0'),
             ),
             'withUsers' => array(
                 'with' => array(

@@ -12,7 +12,8 @@
         easier, but it was still clear that something had to change.  For all historical stats, this season is
         omitted.
         <small><small><ul>
-            <li>Entry fee: <strong>$10</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>$10</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>No</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -29,7 +30,8 @@
     <p>
         The Loser Pool did not run this year.  I'm not sure why.  Probably a case of laziness and/or procrastination.
         <small><small><ul>
-            <li>Entry fee: <strong>N/A</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>N/A</strong></li>
             <li>Stay-Alive Pot: <strong>N/A</strong></li>
             <li>Best Record Pot: <strong>N/A</strong></li>
             <li>Biggest Loser Pot: <strong>N/A</strong></li>
@@ -52,7 +54,8 @@
         no prize for second place.  Two players wound up splitting the top (and only) spot, and that was that.  Game
         over by week 9.
         <small><small><ul>
-            <li>Entry fee: <strong>$10</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>$10</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>No</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -80,7 +83,8 @@
         However, the tracking of that fact wouldn't be added until 2007, meaning that if you look at the Pick Boards on
         the season archives for 2005 or 2006, you won't see any picks as having been Set by System.  
         <small><small><ul>
-            <li>Entry fee: <strong>$10</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>$10</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -108,7 +112,8 @@
         automated email reminders were added, and the lock time for each week was changed to be what it is today:
         One hour prior to kickoff of the first game of that week.
         <small><small><ul>
-            <li>Entry fee: <strong>$20</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>$20</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -127,7 +132,8 @@
         place in a given pot will receive twice as much as any players finishing in 2nd place in that pot.  Additionally,
         I added the database tracking of Set-by-System picks.
         <small><small><ul>
-            <li>Entry fee: <strong>$20</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>$20</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -144,7 +150,8 @@
     <p>
         Based on all my research, I can't find anything new that happened in 2008.  I'm a slacker.
         <small><small><ul>
-            <li>Entry fee: <strong>$20</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>$20</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -164,7 +171,8 @@
         days the site was up and running on my personal webserver at home.  This was apparently enough stress for one
         year, as no other updates were made to the system.
         <small><small><ul>
-            <li>Entry fee: <strong>$20</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>$20</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -183,7 +191,8 @@
         could be properly decorated for the rest of time.  I also added the Past Winners page so users could find out
         who'd won the most times, the most money, etc.
         <small><small><ul>
-            <li>Entry fee: <strong>$20</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>$20</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -206,7 +215,8 @@
         to 2011.  Finally, a number of pieces of information were added, including the Statistics page, the Past Seasons
         archive pages, and the Season Outlook section on the homepage.
         <small><small><ul>
-            <li>Entry fee: <strong>$20</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>$20</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -224,7 +234,8 @@
         In 2012, a Profile/Options page was finally added, allowing users to change their Username or Password, and, more
         interestingly, upload an Avatar of their choosing.
         <small><small><ul>
-            <li>Entry fee: <strong>$20</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>$20</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>No</strong></li>
@@ -247,7 +258,8 @@
         pages for users that hadn't paid their entry fee to encourage people to pay early so I didn't have to keep
         hounding them.
         <small><small><ul>
-            <li>Entry fee: <strong>$25</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>$25</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>Yes</strong></li>
@@ -268,7 +280,8 @@
         several other changes were made.  Most importantly, the Bandwagon feature was added.  Also, the Power Ranking
         formula was rewritten and made public, the ability to "Like" posts was added, and player profile pages were added.
         <small><small><ul>
-            <li>Entry fee: <strong>$25</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>$25</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>Yes</strong></li>
@@ -281,11 +294,31 @@
         </ul></small></small>
     </p>
     
-    <h3>2015-current</h3>
+    <h3>2015-2019</h3>
     <p>
         With things largely stablizied, no major changes have been made.
         <small><small><ul>
-            <li>Entry fee: <strong>$25</strong></li>
+            <li>Hardcore Mode Available: <strong>No</strong></li>
+            <li>Entry Fee: <strong>$25</strong></li>
+            <li>Stay-Alive Pot: <strong>Yes</strong></li>
+            <li>Best Record Pot: <strong>Yes</strong></li>
+            <li>Biggest Loser Pot: <strong>Yes</strong></li>
+            <li>Payout Structure: <strong>Players finishing in 1st get twice as much as players finishing 2nd; pots are split 40/40/20</strong></li>
+            <li>Power Rankings: <strong>Yes</strong></li>
+            <li>Set by System Tracking: <strong>Yes</strong></li>
+            <li>Talk Messages: <strong>Yes</strong></li>
+            <li>Bandwagon: <strong>Yes</strong></li>
+            <li>Lock Time: <strong>One hour prior to kickoff of the first game of the week</strong></li>
+        </ul></small></small>
+    </p>
+    
+    <h3>2020-current</h3>
+    <p>
+        In 2020, hardcore mode was added, allowing a different version of the game where each player may only pick each
+        NFL team once for the entire season.  This added several badges as well, for the new mode.
+        <small><small><ul>
+            <li>Hardcore Mode Available: <strong>Yes</strong></li>
+            <li>Entry Fee: <strong>$25</strong></li>
             <li>Stay-Alive Pot: <strong>Yes</strong></li>
             <li>Best Record Pot: <strong>Yes</strong></li>
             <li>Biggest Loser Pot: <strong>Yes</strong></li>

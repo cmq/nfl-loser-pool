@@ -11,10 +11,30 @@ function isSuperadmin() {
     return (bool) userField('superadmin');
 }
 
-function isPaid() {
+function isPaid($hardcore=null) {
+    return true;
     $user = user();
-    $thisYear = $user ? $user->thisYear : null;
+    $hardcore = is_null($hardcore) ? isHardcoreMode() : (bool) $hardcore;
+    $thisYear = $user ? ($hardcore ? $user->thisYearHardcore : $user->thisYearNormal) : null;
     return $thisYear ? (bool) $thisYear->paid : false;
+}
+
+function isHardcoreMode() {
+    return (isset($_SESSION['mode']) && $_SESSION['mode'] == 'hardcore');
+}
+
+function isNormalMode() {
+    return !isHardcoreMode();
+}
+
+function userHasHardcoreMode() {
+    $user = user();
+    return $user->thisYearHardcore ? true : false;
+}
+
+function userHasNormalMode() {
+    $user = user();
+    return $user->thisYearNormal ? true : false;
 }
 
 function getCurrentYear() {
@@ -25,11 +45,6 @@ function getCurrentWeek() {
     $currentWeek = param('currentWeek');
     if ($currentWeek) {
         return $currentWeek;
-    }
-    
-    // remove the following section -- it is in place only for developing v2
-    if (!isProduction()) {
-        return 19;
     }
     
     $dInOneHour  = new DateTime('NOW');

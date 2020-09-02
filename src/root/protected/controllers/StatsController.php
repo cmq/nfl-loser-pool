@@ -29,7 +29,10 @@ class StatsController extends Controller
     public function actionProfile()
     {
         $userId  = (int) getRequestParameter('id', 0);
-        $user = User::model()->withYears()->withStats()->withBadges()->withWins()->findByPk($userId);
+        // we started getting a memory error for users with a lot of data.  Turns out chaining all these scopes together is overkill.
+        // For the simple ones like years and wins, the view will just lazy load them.  Nice.
+        //$user = User::model()->withYears()->withStats()->withBadges()->withWins()->findByPk($userId);
+        $user = User::model()->withStats()->withBadges()->findByPk($userId);
         $allStats = UserStat::model()->withUser()->findAll(array(
             'order' => 't.statid, t.place, user.username'
         ));

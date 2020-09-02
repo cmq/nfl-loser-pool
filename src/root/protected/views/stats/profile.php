@@ -28,8 +28,13 @@ foreach ($user->powerRanks as $powerRank) {
 
 function drawActiveYears($user) {
     $userYears = array();
+    $userYearsHardcore = array();
     foreach ($user->userYears as $userYear) {
-        $userYears[] = $userYear->yr;
+        if ($userYear->hardcore) {
+            $userYearsHardcore[] = $userYear->yr;
+        } else {
+            $userYears[] = $userYear->yr;
+        }
     }
     ?>
     <div class="row">
@@ -38,6 +43,16 @@ function drawActiveYears($user) {
             <?php
             for ($y=param('earliestYear'); $y<=getCurrentYear(); $y++) {
                 echo '<span class="loseryear badge' . (array_search($y, $userYears) === false ? ' inactive' : '') . '">' . $y . '</span>';
+            }
+            ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-4">Hardcore Seasons (<a title="Seasons" data-content="Shows all seasons of the Hardcore Loser Pool, with those in which the player has participated highlighted" href="#" class="stat-help-link spawns-popover">?</a>)</div>
+        <div class="col-xs-12 col-md-8">
+            <?php
+            for ($y=param('earliestYearHardcore'); $y<=getCurrentYear(); $y++) {
+                echo '<span class="loseryear badge hardcore' . (array_search($y, $userYearsHardcore) === false ? ' inactive' : '') . '">' . $y . '</span>';
             }
             ?>
         </div>

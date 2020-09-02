@@ -1,0 +1,74 @@
+************* SQL *************
+alter table loseruser change `mov` `hardcore` tinyint(1);
+update loseruser set hardcore = 0;
+alter table loserpick add `hardcore` tinyint(1) default 0 after teamid;
+alter table loserpick drop primary key, add primary key (`userid`, `week`, `yr`, `hardcore`);
+alter table losertalk add column `hardcore` tinyint(1) default 0;
+alter table winners add column `hardcore` tinyint(1) default 0 after `place`;
+alter table reminders add `hardcore` tinyint(1) default 0 after yr;
+/* insert into loseruser (userid, paid, paidnote, hardcore, yr) values (1, 1, 'me testing', 1, 2019); */
+
+
+************* GO LIVE *************
+- Run SQL queries
+- /protected/config/settings.php
+    change earliestYearHardcore to 2020 once testing is done for 2019
+
+
+************* NEXT *************
+- Archive->Past Winners (break down by hardcore match)
+- Clean up snapshot
+    - have they made a pick yet (if not, switch and pick in one motion)
+    - etc
+- New trophies
+- New badges
+- Figure out what to do with stats page and buildStats in maintenance controller
+- Other maintance routines
+
+
+************* IDEAS *************
+- Add a button to switch modes on the "make picks" page
+- Add a "snapshot" at the top of the homepage that shows the user's status:
+    - which modes they are playing, and a quick switch between them
+    - whether they've made a pick for the current week
+    - their record in each mode they're playing
+    - anything else?
+- Switch coloring scheme to red when in hardcore mode
+- Supernova badge for a perfect hardcore season
+    - Update overview page once it's in place
+
+
+************* TO DO *************
+Archive->Past Winners (what does this look like?)
+
+/root/protected/views/site/index.php
+    Move the drawing of the snapshot to the controller or some other include
+Format the snapshot
+/protected/controllers/MaintenanceController.php
+    actionRecalc (calls recalc badges, recalc bandwagon, etc)
+/protected/models/User.php
+    scopes need hardcore consideration; also need to search where each of these are used in the rest of the code
+        active
+        withThisYear
+        withYears
+/protected/views/stats/profiles.php
+    uses userYears property to determine whether the user is paid.  Needs to consider hardcore mode
+    whether or not a user is active (and whether the "show active users checkbox" affects them) needs to be aware of the current mode
+/protected/views/layouts/main.php
+    list of tons of other TODOs in this file
+Modify the intro email
+    Describe hardcore mode
+    Tell them their account won't be active so their login will be broken
+    Tell them that their display name is the same name they use to log in
+Modify the login page to tell them their account won't be active until they've signed up
+Modify all badge calculators
+Modify all saved queries (in google drive and saved on navicat)
+Bandwagon needs to be separated into hardcore/regular (search for "bandwagon")
+    Archived seasons needs to take this into account
+Clean up snapshot area
+add ability to stick or un-stick talk messages as superadmin
+reconsider power points
+need a way to show a pick of teamid=0 on hardcore mode (failed to make a pick before lock).  Some icon or something
+    note that it should only show if the current week is locked and the teamid is 0.  It's possible for a user to reset a future week back to teamid=0 and it not be wrong yet
+how does margin of victory work in hardcore mode?  Should you automatically lose xxx points for not making a pick?
+

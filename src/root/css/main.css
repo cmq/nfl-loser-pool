@@ -75,6 +75,10 @@ body {
 .panel-group .panel.talk + .panel.talk {
     margin-top: 20px;
 }
+table.snapshot td.danger a, table.snapshot th.danger a {
+    color: #ff0000;
+    background-color: #ffff00;
+}
 
 
 /*
@@ -501,4 +505,61 @@ img.user-badge {
 }
 .avatar-zoom img {
    max-width: 50%;
+}
+
+
+/*
+ * Some updates for hardcore mode, including overwriting some bootstrap stuff
+ */
+.loseryear.hardcore {
+    background-color: #e80000;
+}
+.loseryear.hardcore.inactive {
+    background-color: transparent;
+}
+body.hardcore .navbar-inverse {
+    background-image: -webkit-linear-gradient(#bf6d6d, #9b4444 50%, #8d3e3e);
+    background-image: linear-gradient(#bf6d6d, #9b4444 50%, #8d3e3e);
+    border: 1px solid #783434;
+}
+body.hardcore .navbar-inverse .navbar-collapse {
+    border-color: #823939;
+}
+body.hardcore .panel-primary>.panel-heading {
+    color: #ffffff;
+    background-color: #9b4444;
+    border-color: #9b4444;
+}
+body.hardcore .dropdown-menu>.active>a, body.hardcore .dropdown-menu>.active>a:hover, body.hardcore .dropdown-menu>.active>a:focus {
+    background-color: #9b4444;
+}
+body.hardcore .dropdown-menu>li>a:hover, body.hardcore .dropdown-menu>li>a:focus {
+    background-color: #9b4444;
+}
+body.hardcore a {
+    color: #f33333;
+}
+body.hardcore .panel-primary {
+    border-color: #9b4444;
+}
+body.hardcore .panel-primary>.panel-heading+.panel-collapse .panel-body {
+    border-top-color: #9b4444;
+}
+#hardcore-logo {
+    float: left;
+    margin-top: 9px;
+    padding-right: 10px;
+}
+body.hardcore .btn-primary {
+    background-image: -webkit-linear-gradient(#bf6d6d, #9b4444 50%, #8d3e3e);
+    background-image: linear-gradient(#bf6d6d, #9b4444 50%, #8d3e3e);
+    border: 1px solid #783434;
+}
+body.hardcore th.active-sort {
+    background: linear-gradient(#f0f0f0, #bf6d6d);
+}
+body.hardcore .btn-primary:hover, body.hardcore .btn-primary:focus, body.hardcore .btn-primary:active, body.hardcore .btn-primary.active, body.hardcore .open .dropdown-toggle.btn-primary {
+    color: #ffffff;
+    background-color: #7f3838;
+    border-color: #703131;
 }

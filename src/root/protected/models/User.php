@@ -28,22 +28,23 @@ class User extends DeepActiveRecord
     public function relations()
     {
         return array(
-            'picks'      => array(self::HAS_MANY, 'Pick', 'userid'),
-            'userBadges' => array(self::HAS_MANY, 'UserBadge', 'userid'),
-            'badges'     => array(self::HAS_MANY, 'Badge', array('badgeid'=>'id'), 'through'=>'userBadges'),
-            'userStats'  => array(self::HAS_MANY, 'UserStat', 'userid'),
-            'powerRanks' => array(self::HAS_MANY, 'PowerRank', 'userid'),
-            'stats'      => array(self::HAS_MANY, 'Stat', array('statid'=>'id'), 'through'=>'userStats'),
-            'userYears'  => array(self::HAS_MANY, 'UserYear', 'userid'),
-            'wins'       => array(self::HAS_MANY, 'Win', 'userid'),
-            'talks'      => array(self::HAS_MANY, 'Talk', 'postedby'),
-            'talkats'    => array(self::HAS_MANY, 'Talk', 'postedat'),
-            'thisYear'   => array(self::HAS_ONE, 'UserYear', 'userid', 'on'=>'thisYear.yr=' . getCurrentYear()),
-            'likes'      => array(self::HAS_MANY, 'Like', 'userid'),
-            'chiefs'     => array(self::HAS_MANY, 'Bandwagon', 'chiefid'),
-            'jumps'      => array(self::HAS_MANY, 'BandwagonJump', 'userid'),
-            'referrals'  => array(self::HAS_MANY, 'User', 'referrer'),
-            'referredBy' => array(self::BELONGS_TO, 'User', 'referrer'),
+            'picks'             => array(self::HAS_MANY, 'Pick', 'userid'),
+            'userBadges'        => array(self::HAS_MANY, 'UserBadge', 'userid'),
+            'badges'            => array(self::HAS_MANY, 'Badge', array('badgeid'=>'id'), 'through'=>'userBadges'),
+            'userStats'         => array(self::HAS_MANY, 'UserStat', 'userid'),
+            'powerRanks'        => array(self::HAS_MANY, 'PowerRank', 'userid'),
+            'stats'             => array(self::HAS_MANY, 'Stat', array('statid'=>'id'), 'through'=>'userStats'),
+            'userYears'         => array(self::HAS_MANY, 'UserYear', 'userid'),
+            'wins'              => array(self::HAS_MANY, 'Win', 'userid'),
+            'talks'             => array(self::HAS_MANY, 'Talk', 'postedby'),
+            'talkats'           => array(self::HAS_MANY, 'Talk', 'postedat'),
+            'thisYearNormal'    => array(self::HAS_ONE, 'UserYear', 'userid', 'on'=>'thisYearNormal.yr=' . getCurrentYear() . ' and thisYearNormal.hardcore=0'),
+            'thisYearHardcore'  => array(self::HAS_ONE, 'UserYear', 'userid', 'on'=>'thisYearHardcore.yr=' . getCurrentYear() . ' and thisYearHardcore.hardcore=1'),
+            'likes'             => array(self::HAS_MANY, 'Like', 'userid'),
+            'chiefs'            => array(self::HAS_MANY, 'Bandwagon', 'chiefid'),
+            'jumps'             => array(self::HAS_MANY, 'BandwagonJump', 'userid'),
+            'referrals'         => array(self::HAS_MANY, 'User', 'referrer'),
+            'referredBy'        => array(self::BELONGS_TO, 'User', 'referrer'),
         );
     }
     
@@ -85,7 +86,7 @@ class User extends DeepActiveRecord
                 'with'      => array(
                     'userYears' => array(
                         'joinType' => 'INNER JOIN',
-                        'on'       => 'userYears.yr = ' . getCurrentYear(),
+                        'on'       => 'userYears.yr = ' . getCurrentYear() . ' and userYears.hardcore = ' . (isHardcoreMode() ? '1' : '0'),
                     ),
                 ),
             ),
@@ -94,14 +95,14 @@ class User extends DeepActiveRecord
                     'userYears' => array(
                         'select'   => 'paid',
                         'joinType' => 'LEFT JOIN',
-                        'on'       => 'userYears.yr = ' . getCurrentYear(),
+                        'on'       => 'userYears.yr = ' . getCurrentYear() . ' and userYears.hardcore = ' . (isHardcoreMode() ? '1' : '0'),
                     ),
                 ),
             ),
             'withYears' => array(
                 'with' => array(
                     'userYears' => array(
-                        'select'   => 'userYears.yr',
+                        'select'   => 'userYears.yr, userYears.hardcore',
                         'joinType' => 'INNER JOIN'
                     ),
                 ),
@@ -146,9 +147,14 @@ class User extends DeepActiveRecord
         );
     }
     
-    public function withPicks($year = 0, $future = false, $innerJoin = false)
+    public function withPicks($year = 0, $hardcore = null, $future = false, $innerJoin = false)
     {
-        $condition = '';
+        if (is_null($hardcore)) {
+            $hardcore = isHardcoreMode() ? 1 : 0;
+        }
+        $hardcore = min(max((int) $hardcore, 0), 1);
+        
+        $condition = "picks.hardcore = $hardcore";
         if ($year > 0) {
             $condition .= ($condition ? ' AND ' : '') . 'picks.yr = ' . (int) $year;
         }

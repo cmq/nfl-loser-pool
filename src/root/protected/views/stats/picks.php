@@ -8,6 +8,7 @@ var users           = <?php echo CJSON::encode($users);?>,
     byTeam          = {},
     mode            = 'byteam',
     showInactive    = false,
+    showAllModes    = false,
     sortProp        = 'total',
     sortPropN       = 'total',
     sortRev         = true,
@@ -130,6 +131,7 @@ function filter() {
     for (i=0; i<picks.length; i++) {
         pick = picks[i];
         if (!showInactive && parseInt(usersById[pick.userid].active, 10) !== 1) continue;
+        if (!showAllModes && parseInt(pick.hardcore, 10) !== <?php echo (isHardcoreMode() ? 1 : 0);?>) continue;
         if (pick.teamid > 0) {
             if (!byUser.hasOwnProperty(pick.userid)) {
                 byUser[pick.userid] = newByUser();
@@ -286,7 +288,8 @@ function draw() {
         $('.details-link[primaryid=' + expanded.replace('team-', '').replace('user-', '') + ']').trigger('click');
     }
     $('#change-mode').html(teamMode ? 'View by User' : 'View by Team');
-    $('#change-active').html(showInactive ? 'Hide Inactive Users' : 'Show Inactive Users');
+    $('#change-active').html(showInactive ? 'Exclude Inactive Users' : 'Include Inactive Users');
+    $('#change-allmodes').html(showAllModes ? 'Restrict Results to <?php echo (isHardcoreMode() ? 'Hardcore' : 'Normal');?> Mode' : 'Include Picks from All Modes');
     $('#sort-description').html(getSortDescription());
 }
 
@@ -298,6 +301,12 @@ function toggleMode() {
 
 function toggleActive() {
     showInactive = !showInactive;
+    filter();
+    draw();
+}
+
+function toggleAllModes() {
+    showAllModes = !showAllModes;
     filter();
     draw();
 }
@@ -323,6 +332,10 @@ $(function() {
         e.preventDefault();
         toggleActive();
     });
+    $('#change-allmodes').on('click', function(e) {
+        e.preventDefault();
+        toggleAllModes();
+    });
 });
 </script>
 <div class="container">
@@ -334,6 +347,7 @@ $(function() {
         <div class="col-xs-6 text-right">
             <button id="change-mode" class="btn btn-primary"></button>
             <button id="change-active" class="btn btn-primary"></button>
+            <button id="change-allmodes" class="btn btn-primary"></button>
         </div>
     </div>
     <br />

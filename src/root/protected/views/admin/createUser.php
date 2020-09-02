@@ -18,7 +18,10 @@ $(function() {
             referrer:   $('#referrer').val(),
             active:     $('#active').prop('checked') ? 1 : 0,
             paid:       $('#paid').prop('checked') ? 1 : 0,
-            paidnote:   $('#paidnote').val()
+            paidnote:   $('#paidnote').val(),
+            hcactive:   $('#hcactive').prop('checked') ? 1 : 0,
+            hcpaid:     $('#hcpaid').prop('checked') ? 1 : 0,
+            hcpaidnote: $('#hcpaidnote').val()
         };
         if (saving) {
             // we're already saving
@@ -105,6 +108,18 @@ $(function() {
         <tr>
             <th>Paid Note</th>
             <td><input type="text" id="paidnote" maxlength="255" /></td>
+        </tr>
+        <tr>
+            <th><label for="hcactive">Hardcore Active for <? echo getCurrentYear()?>?</label></th>
+            <td><input type="checkbox" checked="checked" id="hcactive" /></td>
+        </tr>
+        <tr>
+            <th><label for="hcpaid">Hardcore Paid</label></th>
+            <td><input type="checkbox" id="hcpaid" /></td>
+        </tr>
+        <tr>
+            <th>Hardcore Paid Note</th>
+            <td><input type="text" id="hcpaidnote" maxlength="255" /></td>
         </tr>
         <tr>
             <td colspan="2" align="center">

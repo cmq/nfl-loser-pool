@@ -9,7 +9,8 @@ $(function() {
             url:        '<?php echo Yii::app()->createAbsoluteUrl('talk/save')?>',
             data:       {
                             user:    $('#talkuser').val(),
-                            message: $('#talkmessage').val()<?php
+                            message: $('#talkmessage').val(),
+                            hc:      <?php echo (isHardcoreMode() ? '1' : '0');
                             echo isSuperadmin() ? ",admin: $('#talksuperadmin').is(':checked') ? 1 : 0" : '';
                             echo isSuperadmin() ? ",sticky: $('#talksticky').is(':checked') ? 1 : 0" : '';?>
                         },

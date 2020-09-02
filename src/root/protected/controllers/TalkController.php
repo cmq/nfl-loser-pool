@@ -29,6 +29,7 @@ class TalkController extends Controller
         
         $userId  = (int) getRequestParameter('user', 0);
         $message = trim((string) getRequestParameter('message', ''));
+        $hc      = (int) getRequestParameter('hc', 0);
         $admin   = isSuperadmin() ? (int) getRequestParameter('admin', 0) : 0;
         $sticky  = isSuperadmin() ? (int) getRequestParameter('sticky', 0) : 0;
         
@@ -41,6 +42,7 @@ class TalkController extends Controller
             $record->postedby = userId();
             $record->postedat = $userId;
             $record->post     = $message;
+            $record->hardcore = $hc;
             $record->admin    = $admin;
             $record->sticky   = $sticky;
             

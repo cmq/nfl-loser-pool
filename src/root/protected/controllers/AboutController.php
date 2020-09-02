@@ -12,8 +12,8 @@ class AboutController extends Controller
     
     public function actionOverview()
     {
-        $totalSeasons = Yii::app()->db->createCommand('select count(distinct yr) num from loseruser')->queryRow();
-        $totalPlayerSeasons = Yii::app()->db->createCommand('select count(*) num from loseruser')->queryRow();
+        $totalSeasons = Yii::app()->db->createCommand('select count(distinct yr) num from loseruser where hardcore=0')->queryRow();
+        $totalPlayerSeasons = Yii::app()->db->createCommand('select count(*) num from loseruser where hardcore=0')->queryRow();
         $perfectSeasons = Yii::app()->db->createCommand('select count(*) num from userbadge where badgeid=9')->queryRow();
         $this->render('overview', array('totalSeasons'=>$totalSeasons['num'], 'totalPlayerSeasons'=>$totalPlayerSeasons['num'], 'perfectSeasons'=>$perfectSeasons['num']));
     }

@@ -25,7 +25,7 @@ $(function() {
 
 <div class="container-fluid">
 
-    <h2><?php echo $year;?> Archived Season</h2>
+    <h2><?php echo $year;?> Archived <?php echo ((int) getRequestParameter('hc', 0) > 0 ? ' Hardcore' : 'Normal');?> Season</h2>
 
     <div class="panel-group">
         <?php

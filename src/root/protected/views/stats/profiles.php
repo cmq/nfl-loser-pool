@@ -21,16 +21,21 @@ function aggregate() {
         }
         users[i].money = money;
         users[i].flare = users[i].wins.length + users[i].userBadges.length;
-        users[i].active = !!(parseInt(users[i].active, 10));
+        // now that there are two modes (normal and hardcore) it's possible for
+        // user.active to be true, but the user to be inactivate in the current mode,
+        // so we need to set the user's active property a different way
+        //users[i].active = !!(parseInt(users[i].active, 10));
+        if (users[i].hasOwnProperty('userYears') && users[i].userYears.length > 0) {
+            users[i].active = 1;
+        } else {
+            users[i].active = 0;
+        }
         users[i].shown = true;
         if (!users[i].hasOwnProperty('firstname')) {
             users[i].firstname = '';
         }
         if (!users[i].hasOwnProperty('lastname')) {
             users[i].lastname = '';
-        }
-        if (!users[i].hasOwnProperty('active')) {
-            users[i].active = 0;
         }
         if (users[i].hasOwnProperty('userYears') && users[i].userYears.length > 0) {
             users[i].paid = parseInt(users[i].userYears[0].paid, 10);
@@ -181,6 +186,14 @@ function draw() {
                     .append($('<button title="Reset User\'s Password">PW</button>')
                         .on('click', userPassword.bind(this, users[i]))
                     )
+                    .append(' ')
+                    .append($('<button title="Change User\'s Settings">S</button>')
+                        .on('click', function(userid) { location.href = '<?php echo (Yii::app()->createAbsoluteUrl('profile/index'));?>?uid=' + userid; }.bind(this, users[i].id))
+                    )
+                    .append(' ')
+                    .append($('<button title="Make Picks for User">+</button>')
+                        .on('click', function(userid) { location.href = '<?php echo (Yii::app()->createAbsoluteUrl('pick/index'));?>?uid=' + userid; }.bind(this, users[i].id))
+                    )
                 )
                 <?php } ?>
             );
@@ -192,7 +205,7 @@ function draw() {
 
 <?php if (isSuperadmin()) { ?>
 function userPaid(user) {
-    var paidnote = $.trim(prompt('Please enter a note about the payment.'));
+    var paidnote = $.trim(prompt('Please enter a note about the <?php echo (isHardcoreMode() ? 'hardcore' : 'normal');?> mode payment.'));
     if (paidnote != null & paidnote != '') {
         $.ajax({
             url:        '<?php echo Yii::app()->createAbsoluteUrl('admin/markPaid')?>',
@@ -226,7 +239,7 @@ function userPaid(user) {
 }
 
 function userActive(user) {
-    if (confirm('Are you sure you want to activate ' + user.username + ' for <?php echo getCurrentYear() ?>?')) {
+    if (confirm('Are you sure you want to activate ' + user.username + ' for <?php echo getCurrentYear() ?> in <?php echo (isHardcoreMode() ? 'hardcore' : 'normal');?> mode?')) {
         $.ajax({
             url:        '<?php echo Yii::app()->createAbsoluteUrl('admin/activateUser')?>',
             data:       {
@@ -310,10 +323,6 @@ $(function() {
 </div>
 
 <?php
-if (count($users)) {
-    foreach ($users as $user) {
-//        echo getProfileLink($user) . '<br />';
-    }
-} else {
+if (count($users) < 1) {
     echo 'No users found.';
 }

@@ -47,7 +47,19 @@ class Pick extends DeepActiveRecord
     {
         return array(
             'current' => array(
-                'condition' => 't.yr = ' . getCurrentYear() . ' and t.userid = ' . userId(),
+                'condition' => 't.yr = ' . getCurrentYear() . ' and t.userid = ' . userId() . ' and t.hardcore = ' . (isHardcoreMode() ? '1' : '0'),
+                'with'      => array('team', 'mov'),
+            ),
+            'currentNormal' => array(
+                'condition' => 't.yr = ' . getCurrentYear() . ' and t.userid = ' . userId() . ' and t.hardcore = 0',
+                'with'      => array('team', 'mov'),
+            ),
+            'currentHardcore' => array(
+                'condition' => 't.yr = ' . getCurrentYear() . ' and t.userid = ' . userId() . ' and t.hardcore = 1',
+                'with'      => array('team', 'mov'),
+            ),
+            'currentForQSUser' => array(
+                'condition' => 't.yr = ' . getCurrentYear() . ' and t.userid = ' . (isset($_GET['uid']) ? (int) $_GET['uid'] : 0) . ' and t.hardcore = ' . (isHardcoreMode() ? '1' : '0'),
                 'with'      => array('team', 'mov'),
             ),
         );
@@ -77,6 +89,7 @@ class Pick extends DeepActiveRecord
         $this->userid               = (int) $this->userid;
         $this->week                 = (int) $this->week;
         $this->yr                   = (int) $this->yr;
+        $this->hardcore             = (int) $this->hardcore;
         $this->setbysystem          = (int) $this->setbysystem;
         $this->weeks_on_bandwagon   = (int) $this->weeks_on_bandwagon;
     }

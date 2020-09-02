@@ -6,6 +6,68 @@ foreach ($bandwagon as $b) {
         break;
     }
 }
+
+// set up some snapshot data
+$hasNormalMode      = userHasNormalMode();
+$pickNormal         = 0;
+$rightNormal        = 0;
+$wrongNormal        = 0;
+$weekNormal         = 0;
+$userPicksNormal    = Pick::model()->currentNormal()->findAll();
+$hasHardcoreMode    = userHasHardcoreMode();
+$pickHardcore       = 0;
+$rightHardcore      = 0;
+$wrongHardcore      = 0;
+$weekHardcore       = 0;
+$userPicksHardcore  = Pick::model()->currentHardcore()->findAll();
+foreach ($userPicksNormal as $pick) {
+    if (!is_null($pick['incorrect'])) {
+        if ($pick['incorrect'] == 1) {
+            $wrongNormal++;
+            if ($weekNormal == 0) {
+                $weekNormal = $pick['week'];
+            }
+        } else {
+            $rightNormal++;
+        }
+    }
+}
+foreach ($userPicksHardcore as $pick) {
+    if (!is_null($pick['incorrect'])) {
+        if ($pick['incorrect'] == 1) {
+            $wrongHardcore++;
+            if ($weekHardcore == 0) {
+                $weekHardcore = $pick['week'];
+            }
+        } else {
+            $rightHardcore++;
+        }
+    }
+}
+if ($hasNormalMode) {
+    $pick = Pick::model()->findByAttributes(array(
+        'yr'        => getCurrentYear(),
+        'week'      => getHeaderWeek(),
+        'userid'    => userId(),
+        'hardcore'  => 0
+    ));
+    if ($pick) {
+        $pickNormal = Team::model()->find(array('condition'=>"id = " . $pick->teamid));
+    }
+}
+if ($hasHardcoreMode) {
+    $pick = Pick::model()->findByAttributes(array(
+        'yr'        => getCurrentYear(),
+        'week'      => getHeaderWeek(),
+        'userid'    => userId(),
+        'hardcore'  => 1
+    ));
+    if ($pick) {
+        $pickHardcore = Team::model()->find(array('condition'=>"id = " . $pick->teamid));
+    }
+}
+
+
 ?>
 <script src="<?php echo baseUrl('/js/Board.js'); ?>"></script>
 <script>
@@ -37,6 +99,35 @@ $(function() {
     if (!globals.isSectionCollapsed('collapseBandwagon')) {
         $('#collapseBandwagon').addClass('in');
     }
+    $('button.switchMode').on('click', function(e) {
+        var $button = $(this),
+            oldHtml = $button.html(),
+            mode    = $button.data('mode');
+        e.preventDefault();
+        $button.prop('disabled', true).html('Switching...');
+        $.ajax({
+            url:        '<?php echo Yii::app()->createAbsoluteUrl('site/switch')?>',
+            data:       {
+                            mode:   mode
+                        },
+            type:       'post',
+            cache:      false,
+            success:    function(response) {
+                            if (response.hasOwnProperty('error') && response.error != '') {
+                                alert(response.error);
+                                $button.prop('disabled', false).html(oldHtml);
+                            } else {
+                                window.location.reload();
+                            }
+                        },
+            error:      function() {
+                            alert('An error occurred, please try again.');
+                            $button.prop('disabled', false).html(oldHtml);
+                        },
+            dataType:   'json'
+        });
+            
+    });
 });
 </script>
 
@@ -49,6 +140,115 @@ $(function() {
     <h2>Loser Pool Home</h2>
     
     <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title">User Snapshot</h4>
+            </div>
+            <div>
+                <table class="table table-condensed table-bordered table-striped snapshot">
+                    <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <?php echo (isNormalMode() ? '<th>Normal Game Mode</th>' : '<td>Normal Game Mode</td>');?>
+                            <?php echo (isHardcoreMode() ? '<th>Hardcore Game Mode</th>' : '<td>Hardcore Game Mode</td>');?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Playing?</th>
+                            <?php echo (isNormalMode() ? '<th>' : '<td>');?>
+                                <?php
+                                if ($hasNormalMode) {
+                                    echo 'Yes';
+                                    if (isNormalMode()) {
+                                        echo ' (Currently Active)';
+                                    } else {
+                                        ?> <button class="switchMode" data-mode="normal">Switch to Normal</button><?php
+                                    }
+                                } else {
+                                    echo 'No';
+                                }
+                                ?>
+                            <?php echo (isNormalMode() ? '</th>' : '</td>');?>
+                            <?php echo (isHardcoreMode() ? '<th>' : '<td>');?>
+                                <?php
+                                if ($hasHardcoreMode) {
+                                    echo 'Yes';
+                                    if (isHardcoreMode()) {
+                                        echo ' (Currently Active)';
+                                    } else {
+                                        ?> <button class="switchMode" data-mode="hardcore">Switch to Hardcore</button><?php
+                                    }
+                                } else {
+                                    echo 'No';
+                                }
+                                ?>
+                            <?php echo (isNormalMode() ? '</th>' : '</td>');?>
+                        </tr>
+                        <tr>
+                            <th>Paid?</th>
+                            <?php echo (isNormalMode() ? '<th>' : '<td>');?>
+                            <?php echo ($hasNormalMode ? (isPaid(0) ? 'Yes' : 'No') : 'N/A');?>
+                            <?php echo (isNormalMode() ? '</th>' : '</td>');?>
+                            <?php echo (isHardcoreMode() ? '<th>' : '<td>');?>
+                            <?php echo ($hasHardcoreMode ? (isPaid(1) ? 'Yes' : 'No') : 'N/A');?>
+                            <?php echo (isNormalMode() ? '</th>' : '</td>');?>
+                        </tr>
+                        <tr>
+                            <th>Pick for <?php echo getWeekName(getHeaderWeek(), true)?></th>
+                            <?php echo (isNormalMode() ? '<th' : '<td') . ($hasNormalMode && !$pickNormal ? ' class="danger"' : '') . '>';?>
+                                <?php
+                                if ($hasNormalMode) {
+                                    if ($pickNormal) {
+                                        ?>
+                                        <div class="logo logo-small" style="float:left;background-position:<?php echo getTeamLogoOffset($pickNormal, 'small');?>" title="<?php echo $pickNormal['longname'];?>"></div>
+                                        <?php
+                                    } else {
+                                        echo (isNormalMode() ? '<a href="/pick/index">Not Yet Made</a>' : 'Not Yet Made');
+                                    }
+                                } else {
+                                    echo 'N/A';
+                                }
+                                ?>
+                            <?php echo (isNormalMode() ? '</th>' : '</td>');?>
+                            <?php echo (isHardcoreMode() ? '<th' : '<td') . ($hasHardcoreMode && !$pickHardcore ? ' class="danger"' : '') . '>';?>
+                                <?php
+                                if ($hasHardcoreMode) {
+                                    if ($pickHardcore) {
+                                        ?>
+                                        <div class="logo logo-small" style="float:left;background-position:<?php echo getTeamLogoOffset($pickHardcore, 'small');?>" title="<?php echo $pickHardcore['longname'];?>"></div>
+                                        <?php
+                                    } else {
+                                        echo (isHardcoreMode() ? '<a href="/pick/index">Not Yet Made</a>' : 'Not Yet Made');
+                                    }
+                                } else {
+                                    echo 'N/A';
+                                }
+                                ?>
+                            <?php echo (isNormalMode() ? '</th>' : '</td>');?>
+                        </tr>
+                        <tr>
+                            <th>First Wrong</th>
+                            <?php echo (isNormalMode() ? '<th>' : '<td>');?>
+                            <?php echo ($hasNormalMode ? ($wrongNormal > 0 ? getWeekName($wrongNormal, true) : 'Still Alive') : 'N/A');?>
+                            <?php echo (isNormalMode() ? '</th>' : '</td>');?>
+                            <?php echo (isHardcoreMode() ? '<th>' : '<td>');?>
+                            <?php echo ($hasHardcoreMode ? ($wrongHardcore > 0 ? getWeekName($wrongHardcore, true) : 'Still Alive') : 'N/A');?>
+                            <?php echo (isNormalMode() ? '</th>' : '</td>');?>
+                        </tr>
+                        <tr>
+                            <th>Record</th>
+                            <?php echo (isNormalMode() ? '<th>' : '<td>');?>
+                            <?php echo ($hasNormalMode ? "$rightNormal-$wrongNormal" : 'N/A');?>
+                            <?php echo (isNormalMode() ? '</th>' : '</td>');?>
+                            <?php echo (isHardcoreMode() ? '<th>' : '<td>');?>
+                            <?php echo ($hasHardcoreMode ? "$rightHardcore-$wrongHardcore" : 'N/A');?>
+                            <?php echo (isNormalMode() ? '</th>' : '</td>');?>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <?php
         if (count($talk)) {
             $recent = null;

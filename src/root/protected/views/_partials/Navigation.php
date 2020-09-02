@@ -35,7 +35,7 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
 
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <a href="<?php echo Yii::app()->createAbsoluteUrl('site/index');?>"><img src="/images/loser-logo-small.png" id="navbar-logo"<?php echo (isGuest() ? ' style="visibility:hidden;"' : '');?> /></a>
+    <a href="<?php echo Yii::app()->createAbsoluteUrl('site/index');?>"><img alt="Loser Pool" src="/images/loser-logo-small.png" id="navbar-logo"<?php echo (isGuest() ? ' style="visibility:hidden;"' : '');?> /></a>
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -45,7 +45,10 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="<?php echo Yii::app()->createAbsoluteUrl('site/index');?>"><?php echo getCurrentYear()?> NFL Loser Pool</a>
+            <a class="navbar-brand" href="<?php echo Yii::app()->createAbsoluteUrl('site/index');?>"><?php echo getCurrentYear() . (isHardcoreMode() ? ' Hardcore' : '');?> NFL Loser Pool</a>
+            <?php if (isHardcoreMode()) { ?>
+                <img id="hardcore-logo" alt="Hardcore Mode" src="/images/hardcore.png" />
+            <?php } ?>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -78,8 +81,19 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                             <li><a href="#">Past Season Results</a></li>
                             <?php
                             $onYear = (int) getRequestParameter('y', 0);
+                            $onHc   = (int) getRequestParameter('hc', 0);
                             for ($y=param('earliestYear'); $y<getCurrentYear(); $y++) {
-                                echo navItem($y, 'archive/year', array('y'=>$y), $controllerName == 'archive' && $actionName == 'year' && $onYear == $y, !$isGuest, !$isPaid, true);
+                                echo navItem($y, 'archive/year', array('y'=>$y, 'hc'=>0), $controllerName == 'archive' && $actionName == 'year' && $onYear == $y && $onHc === 0, !$isGuest, !$isPaid, true);
+                            }
+                            $ehc = param('earlistYearHardcore');
+                            if ($ehc < getCurrentYear()) {
+                                ?>
+                                <li class="divider"></li>
+                                <li><a href="#">Past Hardcore Season Results</a></li>
+                                <?php
+                                for ($y=param('earliestYearHardcore'); $y<getCurrentYear(); $y++) {
+                                    echo navItem($y, 'archive/year', array('y'=>$y, 'hc'=>1), $controllerName == 'archive' && $actionName == 'year' && $onYear == $y && $onHc > 0, !$isGuest, !$isPaid, true);
+                                }
                             }
                             ?>
                         </ul>

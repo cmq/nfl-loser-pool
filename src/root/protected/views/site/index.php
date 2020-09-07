@@ -47,7 +47,7 @@ foreach ($userPicksHardcore as $pick) {
 if ($hasNormalMode) {
     $pick = Pick::model()->findByAttributes(array(
         'yr'        => getCurrentYear(),
-        'week'      => getHeaderWeek(),
+        'week'      => max(1, getHeaderWeek()),
         'userid'    => userId(),
         'hardcore'  => 0
     ));
@@ -58,7 +58,7 @@ if ($hasNormalMode) {
 if ($hasHardcoreMode) {
     $pick = Pick::model()->findByAttributes(array(
         'yr'        => getCurrentYear(),
-        'week'      => getHeaderWeek(),
+        'week'      => max(1, getHeaderWeek()),
         'userid'    => userId(),
         'hardcore'  => 1
     ));

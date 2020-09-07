@@ -195,7 +195,7 @@ $(function() {
                             <?php echo (isNormalMode() ? '</th>' : '</td>');?>
                         </tr>
                         <tr>
-                            <th>Pick for <?php echo getWeekName(getHeaderWeek(), true)?></th>
+                            <th>Pick for <?php echo getWeekName(max(1, getHeaderWeek()), true)?></th>
                             <?php echo (isNormalMode() ? '<th' : '<td') . ($hasNormalMode && !$pickNormal ? ' class="danger"' : '') . '>';?>
                                 <?php
                                 if ($hasNormalMode) {

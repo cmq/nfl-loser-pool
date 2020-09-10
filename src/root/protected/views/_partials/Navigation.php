@@ -32,6 +32,38 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
     return ob_get_clean();
 }
 ?>
+<script>
+$(function() {
+    $('button.navSwitchMode').on('click', function(e) {
+        var $button = $(this),
+            oldHtml = $button.html(),
+            mode    = '<?php echo (isHardcoreMode() ? 'normal' : 'hardcore');?>';
+        e.preventDefault();
+        $button.prop('disabled', true).html('Switching...');
+        $.ajax({
+            url:        '<?php echo Yii::app()->createAbsoluteUrl('site/switch')?>',
+            data:       {
+                            mode:   mode
+                        },
+            type:       'post',
+            cache:      false,
+            success:    function(response) {
+                            if (response.hasOwnProperty('error') && response.error != '') {
+                                alert(response.error);
+                                $button.prop('disabled', false).html(oldHtml);
+                            } else {
+                                window.location.reload();
+                            }
+                        },
+            error:      function() {
+                            alert('An error occurred, please try again.');
+                            $button.prop('disabled', false).html(oldHtml);
+                        },
+            dataType:   'json'
+        });
+            
+    });
+});</script>
 
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -133,6 +165,9 @@ function navItem($name, $link, $params=null, $isActive=false, $isVisible=true, $
                         </ul>
                     </li>
                     <?
+                }
+                if (userHasHardcoreMode() && userHasNormalMode()) {
+                    ?><button style="margin-top:10px;" class="navSwitchMode">Switch to <?php echo (isHardcoreMode() ? 'Normal' : 'Hardcore');?> Mode</button><?php
                 }
                 ?>
                 <li class="hidden-md hidden-lg"><?php echo (isGuest() ? CHtml::link('Login', array('site/login')) : CHtml::link('Logout', array('site/logout')));?></li>

@@ -1532,16 +1532,17 @@ class MaintenanceController extends Controller
         
         if ($w < 22) {
             $sql = "
-                select      distinct u.id, u.email, u.receive_reminders, u.reminder_buffer, u.reminder_always, p.teamid, p.hardcore
+                select      distinct u.id, u.email, u.receive_reminders, u.reminder_buffer, u.reminder_always, p.teamid, lu.hardcore
                 from        user u
                 inner join  loseruser lu on lu.userid = u.id and lu.yr = $y
-                left join   loserpick p on p.userid = u.id and p.yr = $y and p.week = $w
+                left join   loserpick p on p.userid = u.id and p.yr = $y and p.week = $w and p.hardcore = lu.hardcore
                 where       u.active = 1
                             and not exists (
                                 select * from reminders r where
                                     r.userid = u.id
                                     and r.yr = $y
                                     and r.week = $w
+                                    and r.hardcore = lu.hardcore
                             )";
             $users = Yii::app()->db->createCommand($sql)->query();
             foreach ($users as $user) {
@@ -1615,8 +1616,8 @@ class MaintenanceController extends Controller
                 }
 
                 $sql = "insert into loserpick (userid, week, yr, teamid, hardcore, incorrect, setbysystem)
-                        (select userid, $w, $y, teamid, 0, null, 1 from loserpick where yr = $y and week = " . ($w-1) . " and not exists (
-                            select * from loserpick l2 where l2.yr = $y and l2.week = $w and l2.userid = loserpick.userid and l2.teamid > 0
+                        (select userid, $w, $y, teamid, 0, null, 1 from loserpick where yr = $y and week = " . ($w-1) . " and hardcore = 0 and not exists (
+                            select * from loserpick l2 where l2.yr = $y and l2.week = $w and l2.userid = loserpick.userid and l2.teamid > 0 and l2.hardcore = 0
                         ))";
                 Yii::app()->db->createCommand($sql)->query();
                 if (isSuperadmin()) {
@@ -1631,8 +1632,13 @@ class MaintenanceController extends Controller
                     echo "RAN:<br />$sql<br /><br />";
                 }
                 
+/*                $sql = "insert into loserpick (userid, week, yr, teamid, hardcore, incorrect, setbysystem)
+                        (select userid, $w, $y, 0, 1, 1, 1 from loserpick where yr = $y and week = " . ($w-1) . " and hardcore=1)";
+                        */
                 $sql = "insert into loserpick (userid, week, yr, teamid, hardcore, incorrect, setbysystem)
-                        (select userid, $w, $y, 0, 1, 1, 1 from loserpick where yr = 2019 and week = 4 and hardcore=1)";
+                        (select userid, $w, $y, teamid, 1, 1, 1 from loserpick where yr = $y and week = " . ($w-1) . " and hardcore = 1 and not exists (
+                            select * from loserpick l2 where l2.yr = $y and l2.week = $w and l2.userid = loserpick.userid and l2.teamid > 0 and l2.hardcore = 1
+                        ))";
                 Yii::app()->db->createCommand($sql)->query();
                 if (isSuperadmin()) {
                     echo "RAN:<br />$sql";

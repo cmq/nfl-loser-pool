@@ -29,12 +29,12 @@ function isNormalMode() {
 
 function userHasHardcoreMode() {
     $user = user();
-    return $user->thisYearHardcore ? true : false;
+    return $user ? ($user->thisYearHardcore ? true : false) : false;
 }
 
 function userHasNormalMode() {
     $user = user();
-    return $user->thisYearNormal ? true : false;
+    return $user ? ($user->thisYearNormal ? true : false) : false;
 }
 
 function getCurrentYear() {
@@ -373,6 +373,7 @@ function getLiveScoring($week=null) {
     }
     */
     // Here's the new way as of 2018
+    /* they broke it again
     try {
 		$scoreJson = file_get_contents('https://feeds.nfl.com/feeds-rs/scores.json?random=' . rand(10000000, 99999999));
 		$scoresRaw = json_decode($scoreJson, true);
@@ -396,6 +397,9 @@ function getLiveScoring($week=null) {
     } catch (Exception $e) {
         $scoresFinal = null;
     }
+    */
+    return array(); // 2020 they broke the API
+    
     return $scoresFinal;
 }
 

@@ -35,6 +35,9 @@ tr.sortable th {
     background-color: #3399f3;
     color: white;
 }
+select option:disabled {
+    color: #ccc;
+}
 
 /*
  * Updates to help work with Twitter Bootstrap

@@ -140,6 +140,9 @@ $(function() {
 	    	mov = parseInt($this.val(), 10);
         fnMov();
         $('select.correction[teamid=' + $this.attr('teamid') + ']').val(mov == 0 ? 'null' : (mov < 0 ? 0 : 1));
+        <?php if (isHardcoreMode()) { ?>
+            $('select.correction.setbysystem').val(1);
+        <?php } ?>
         fnSave();
     }).keyup(fnMov);
     
@@ -147,6 +150,9 @@ $(function() {
     $('select.correction').on('change', function() {
         var $this = $(this);
         $('select.correction[teamid=' + $this.attr('teamid') + ']').val($this.val());
+        <?php if (isHardcoreMode()) { ?>
+            $('select.correction.setbysystem').val(1);
+        <?php } ?>
         fnSave();
     });
 
@@ -187,7 +193,7 @@ $(function() {
             				<td><?php echo $user->username?></td>
             				<td<?php echo $thisPick && $thisPick->setbysystem ? ' class="setbysystem"' : ''?>><?php echo $thisPick ? $thisPick->team->longname : ''?></td>
             				<td>
-            					<select class="correction form-control" userid="<?php echo $user->id?>" teamid="<?php echo $thisPick ? $thisPick->teamid : 0?>">
+            					<select class="correction form-control<?php echo $thisPick && $thisPick->setbysystem ? ' setbysystem' : ''?>" userid="<?php echo $user->id?>" teamid="<?php echo $thisPick ? $thisPick->teamid : 0?>">
             						<option value="null"<?php echo (is_null($incorrect) ? " selected=\"selected\"" : "")?>>-</option>
             						<option value="0"<?php echo (!is_null($incorrect) && (int) $incorrect === 0 ? " selected=\"selected\"" : "")?>>Correct</option>
             						<option value="1"<?php echo (!is_null($incorrect) && (int) $incorrect === 1 ? " selected=\"selected\"" : "")?>>Incorrect</option>

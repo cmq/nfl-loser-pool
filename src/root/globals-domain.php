@@ -20,6 +20,9 @@ function isPaid($hardcore=null) {
 }
 
 function isHardcoreMode() {
+    if (userHasHardcoreMode() && !userHasNormalMode()) {
+        return true;
+    }
     return (isset($_SESSION['mode']) && $_SESSION['mode'] == 'hardcore');
 }
 

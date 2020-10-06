@@ -20,6 +20,7 @@ $rightHardcore      = 0;
 $wrongHardcore      = 0;
 $weekHardcore       = 0;
 $userPicksHardcore  = Pick::model()->currentHardcore()->findAll();
+
 foreach ($userPicksNormal as $pick) {
     if (!is_null($pick['incorrect'])) {
         if ($pick['incorrect'] == 1) {
@@ -230,10 +231,10 @@ $(function() {
                         <tr>
                             <th>First Wrong</th>
                             <?php echo (isNormalMode() ? '<th>' : '<td>');?>
-                            <?php echo ($hasNormalMode ? ($wrongNormal > 0 ? getWeekName($wrongNormal, true) : 'Still Alive') : 'N/A');?>
+                            <?php echo ($hasNormalMode ? ($weekNormal > 0 ? getWeekName($weekNormal, true) : 'Still Alive') : 'N/A');?>
                             <?php echo (isNormalMode() ? '</th>' : '</td>');?>
                             <?php echo (isHardcoreMode() ? '<th>' : '<td>');?>
-                            <?php echo ($hasHardcoreMode ? ($wrongHardcore > 0 ? getWeekName($wrongHardcore, true) : 'Still Alive') : 'N/A');?>
+                            <?php echo ($hasHardcoreMode ? ($weekHardcore > 0 ? getWeekName($weekHardcore, true) : 'Still Alive') : 'N/A');?>
                             <?php echo (isNormalMode() ? '</th>' : '</td>');?>
                         </tr>
                         <tr>

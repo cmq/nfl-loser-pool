@@ -6,8 +6,15 @@
 class Controller extends CController
 {
     public $layout='//layouts/main';
+    
 	
-	
+    public function runAction($action) {
+        if (isHardcoreMode() && !isNormalMode()) {
+            $_SESSION['mode'] = 'hardcore';
+        }
+        parent::runAction($action);
+    }
+    
     /**
      * Check if an action is allowed
      */

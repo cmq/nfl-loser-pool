@@ -76,9 +76,10 @@ class MaintenanceController extends Controller
         return array_search(array_search($key, $this->STATS), $this->reverseStats) !== false;
     }
     
-    private function _getPreviousWeek($user, $endYear, $endWeek) {
+    private function _getPreviousWeek($user, $endYear, $endWeek, $hardcore=0) {
         $previous = null;
-        foreach ($user['years'] as $y=>$year) {
+        $yearKey = $hardcore ? 'yearsHardcore' : 'years';
+        foreach ($user[$yearKey] as $y=>$year) {
             foreach ($year['weeks'] as $w=>$week) {
                 if ($y > $endYear || ($y == $endYear && $w >= $endWeek)) {
                     break;
@@ -102,24 +103,25 @@ class MaintenanceController extends Controller
         return $highestUser;
     }
     
-    private function _userHasPick($user, $year, $week, $teams, $searchPending=false) {
+    private function _userHasPick($user, $year, $week, $teams, $searchPending=false, $hardcore=0) {
+        $yearKey = $hardcore ? 'yearsHardcore' : 'years';
         if (!is_array($teams)) {
             $teams = array($teams);
         }
-        if (array_key_exists($year, $user['years']) &&
-            isset($user['years'][$year]['weeks']) &&    // this can happen when it's week 0 and users exist for a year but haven't made any picks for it yet
-            is_array($user['years'][$year]['weeks']) && // this can happen when it's week 0 and users exist for a year but haven't made any picks for it yet
-            array_key_exists($week, $user['years'][$year]['weeks']) &&
-            array_search($user['years'][$year]['weeks'][$week]['teamid'], $teams) !== false) {
+        if (array_key_exists($year, $user[$yearKey]) &&
+            isset($user[$yearKey][$year]['weeks']) &&    // this can happen when it's week 0 and users exist for a year but haven't made any picks for it yet
+            is_array($user[$yearKey][$year]['weeks']) && // this can happen when it's week 0 and users exist for a year but haven't made any picks for it yet
+            array_key_exists($week, $user[$yearKey][$year]['weeks']) &&
+            array_search($user[$yearKey][$year]['weeks'][$week]['teamid'], $teams) !== false) {
             // this user has this year/week and one of the teams in the list
             return true;
         }
         if ($searchPending) {
-            if (array_key_exists($year, $user['years']) &&
-                isset($user['years'][$year]['pendingPicks']) &&     // this can happen when it's week 0 and users exist for a year but haven't made any picks for it yet
-                is_array($user['years'][$year]['pendingPicks']) &&  // this can happen when it's week 0 and users exist for a year but haven't made any picks for it yet
-                array_key_exists($week, $user['years'][$year]['pendingPicks']) &&
-                array_search($user['years'][$year]['pendingPicks'][$week], $teams) !== false) {
+            if (array_key_exists($year, $user[$yearKey]) &&
+                isset($user[$yearKey][$year]['pendingPicks']) &&     // this can happen when it's week 0 and users exist for a year but haven't made any picks for it yet
+                is_array($user[$yearKey][$year]['pendingPicks']) &&  // this can happen when it's week 0 and users exist for a year but haven't made any picks for it yet
+                array_key_exists($week, $user[$yearKey][$year]['pendingPicks']) &&
+                array_search($user[$yearKey][$year]['pendingPicks'][$week], $teams) !== false) {
                 // this user has this year/week and one of the teams in the list
                 return true;
             }
@@ -127,16 +129,17 @@ class MaintenanceController extends Controller
         return false;
     }
     
-    private function _weeksOnBandwagon($user, $toYear, $toWeek) {        
+    private function _weeksOnBandwagon($user, $toYear, $toWeek, $hardcore=0) {
         $b = array_reverse($this->bandwagons);
+        $yearKey = $hardcore ? 'yearsHardcore' : 'years';
         $weeksOn = 0;
         foreach ($b as $bandwagon) {
             if ($bandwagon['year'] > $toYear || ($bandwagon['year'] == $toYear && $bandwagon['week'] > $toWeek)) {
                 // we haven't traveled backwards far enough yet
                 continue;
             }
-            if (isset($user['years'][$bandwagon['year']]['weeks'][$bandwagon['week']]) || isset($user['years'][$bandwagon['year']]['pendingPicks'][$bandwagon['week']])) {
-                if ($this->_userHasPick($user, $bandwagon['year'], $bandwagon['week'], $bandwagon['teamid'], true)) {
+            if (isset($user[$yearKey][$bandwagon['year']]['weeks'][$bandwagon['week']]) || isset($user[$yearKey][$bandwagon['year']]['pendingPicks'][$bandwagon['week']])) {
+                if ($this->_userHasPick($user, $bandwagon['year'], $bandwagon['week'], $bandwagon['teamid'], true, $hardcore)) {
                     // the user has the bandwagon pick for this week
                     if ($weeksOn < 0) {
                         // the user was previously NOT on the bandwagon, and that streak is now over
@@ -158,7 +161,8 @@ class MaintenanceController extends Controller
         return $weeksOn;
     }
     
-    private function _buildStreaks(&$user) {
+    private function _buildStreaks(&$user, $hardcore=0) {
+        $yearKey = $hardcore ? 'yearsHardcore' : 'years';
         $correct = array(
             'length'    => 0,
             'startYear' => 0,
@@ -175,7 +179,7 @@ class MaintenanceController extends Controller
         );
         
         // find the longest of each type of streak
-        foreach ($user['years'] as $y=>$year) {
+        foreach ($user[$yearKey] as $y=>$year) {
             foreach ($year['weeks'] as $w=>$week) {
                 if ($week['streak'] > $correct['length']) {
                     $correct['length']  = $week['streak'];
@@ -195,11 +199,11 @@ class MaintenanceController extends Controller
             $correct['startWeek'] = $correct['endWeek'];
             $correct['startYear'] = $correct['endYear'];
             while (!$done) {
-                $previousWeek = $this->_getPreviousWeek($user, $correct['startYear'], $correct['startWeek']);
-                if ($previousWeek && $user['years'][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] > 0) {
+                $previousWeek = $this->_getPreviousWeek($user, $correct['startYear'], $correct['startWeek'], $hardcore);
+                if ($previousWeek && $user[$yearKey][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] > 0) {
                     $correct['startYear'] = $previousWeek['y'];
                     $correct['startWeek'] = $previousWeek['w'];
-                    if ($user['years'][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] === 1) {
+                    if ($user[$yearKey][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] === 1) {
                         $done = true;
                     }
                 } else {
@@ -212,11 +216,11 @@ class MaintenanceController extends Controller
             $incorrect['startWeek'] = $incorrect['endWeek'];
             $incorrect['startYear'] = $incorrect['endYear'];
             while (!$done) {
-                $previousWeek = $this->_getPreviousWeek($user, $incorrect['startYear'], $incorrect['startWeek']);
-                if ($previousWeek && $user['years'][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] < 0) {
+                $previousWeek = $this->_getPreviousWeek($user, $incorrect['startYear'], $incorrect['startWeek'], $hardcore);
+                if ($previousWeek && $user[$yearKey][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] < 0) {
                     $incorrect['startYear'] = $previousWeek['y'];
                     $incorrect['startWeek'] = $previousWeek['w'];
-                    if ($user['years'][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] === -1) {
+                    if ($user[$yearKey][$previousWeek['y']]['weeks'][$previousWeek['w']]['streak'] === -1) {
                         $done = true;
                     }
                 } else {
@@ -228,14 +232,15 @@ class MaintenanceController extends Controller
         $incorrect['length'] = abs($incorrect['length']);
         
         // save the streaks in the user
-        $user['longCorrectStreak']   = $correct;
-        $user['longIncorrectStreak'] = $incorrect;
+        $user['longCorrectStreak']   = max(isset($user['longCorrectStreak']) ? $user['longCorrectStreak'] : 0, $correct);
+        $user['longIncorrectStreak'] = max(isset($user['longIncorrectStreak']) ? $user['longIncorrectStreak'] : 0, $incorrect);
     }
     
-    private function _getStatFromUser($user, $key, $y=null) {
+    private function _getStatFromUser($user, $key, $y=null, $hardcore=0) {
         $value      = null;
         $collection = $user;
         $fetchKey   = $key;
+        $yearKey    = $hardcore ? 'yearsHardcore' : 'years';
         
         // pre-fetch modifications
         switch ($key) {
@@ -259,9 +264,10 @@ class MaintenanceController extends Controller
             case 'percentsetbysystemincorrect':
             case 'totalMargin':
             case 'averageMargin':
-                if ($y && array_key_exists($y, $collection['years'])) {
-                    $collection = $user['years'][$y]['pickTotals'];
+                if ($y && array_key_exists($y, $user[$yearKey])) {
+                    $collection = $user[$yearKey][$y]['pickTotals'];
                 } else {
+                    $y = null;
                     $collection = $user['pickTotals'];
                 }
                 $fetchKey = str_replace('average', 'total', str_replace('percent', '', str_replace('picks', '', $key)));
@@ -289,8 +295,8 @@ class MaintenanceController extends Controller
                 $value = $collection[$fetchKey];
             }
         } else {
-            if (array_key_exists($y, $collection['years']) && array_key_exists($fetchKey, $collection['years'][$y])) {
-                $value = $collection['years'][$y][$fetchKey];
+            if (array_key_exists($y, $collection[$yearKey]) && array_key_exists($fetchKey, $collection[$yearKey][$y])) {
+                $value = $collection[$yearKey][$y][$fetchKey];
             }
         }
         
@@ -308,7 +314,7 @@ class MaintenanceController extends Controller
             case 'averageMargin':
             case 'percentBandwagons':
             case 'percentChief':
-                $totalPicks = $this->_getStatFromUser($user, 'pickstotal', $y);
+                $totalPicks = $this->_getStatFromUser($user, 'pickstotal', $y, $hardcore);
                 if ($totalPicks) {
                     $value = ((int) $value / $totalPicks);
                 } else {
@@ -342,7 +348,7 @@ class MaintenanceController extends Controller
         $ties = array_unique($ties);
     }
     
-    private function _calculatePlaces($key, $y=null) {
+    private function _calculatePlaces($key, $y=null, $hardcore=0) {
         $places     = array();  // keyed on the place, with the value equal to the value in that place
         $placesa    = array();  // keyed on the place, with the value equal to the value in that place -- active users only
         $ties       = array();  // simple array of values representing places in which there's a tie
@@ -351,7 +357,7 @@ class MaintenanceController extends Controller
         $allValuesa = array();
     
         foreach ($this->users as $user) {
-            $val = $this->_getStatFromUser($user, $key, $y);
+            $val = $this->_getStatFromUser($user, $key, $y, $hardcore);
             if (!is_null($val)) {
                 $allValues[] = $val;
                 if ($user['active']) {
@@ -409,11 +415,11 @@ class MaintenanceController extends Controller
         return $y == param('earliestYear') ? param('firstYearEntryFee') : (param('entryFee') + ($y >= param('movFirstYear') ? param('movFee') : 0));
     }
     
-    private function _insertStat($statId) {
+    private function _insertStat($statId, $hardcore=0) {
         $statKey   = $this->STATS[$statId];
-        $placeData = $this->_calculatePlaces($statKey);
+        $placeData = $this->_calculatePlaces($statKey, $hardcore);
         foreach ($this->users as $u=>$user) {
-            $userValue   = $this->_getStatFromUser($user, $statKey);
+            $userValue   = $this->_getStatFromUser($user, $statKey, $hardcore);
             $place       = array_search($userValue, $placeData['places']);
             $activePlace = array_search($userValue, $placeData['activePlaces']);
             $tied        = array_search($place, $placeData['ties']) !== false ? 1 : 0;
@@ -430,7 +436,7 @@ class MaintenanceController extends Controller
                 $userValue = 0;
                 $place = 999;
             }
-            $sql = "insert into userstat (userid, statid, place, placeactive, tied, tiedactive, value, meta1, meta2) values ($u, $statId, $place, $activePlace, $tied, $activeTied, $userValue, '$meta1', '$meta2')";
+            $sql = "insert into userstat (userid, statid, hardcore, place, placeactive, tied, tiedactive, value, meta1, meta2) values ($u, $statId, $hardcore, $place, $activePlace, $tied, $activeTied, $userValue, '$meta1', '$meta2')";
             $rs = Yii::app()->db->createCommand($sql)->query();
         }
     }
@@ -453,13 +459,15 @@ class MaintenanceController extends Controller
         		            and p.week = mov.week
                 where       1 = 1
                             ' . ($userId ? " and u.id = $userId" : '') . '
-        		order by    u.id, p.yr, p.week';
+        		order by    u.id, p.hardcore, p.yr, p.week';
         $lastUserId = 0;
         $rsAll = Yii::app()->db->createCommand($sql)->query();
         foreach ($rsAll as $row) {    // there will only be one
             $u = $row['id'];
             $y = $row['yr'];
             $w = $row['week'];
+            $h = $row['hardcore'];
+            $yearKey = $h ? 'yearsHardcore' : 'years';
             
             // on a new user?
             if ($u != $lastUserId) {
@@ -489,48 +497,51 @@ class MaintenanceController extends Controller
                     'bandwagonJumper' => 0,
                     'badges'          => array(),
                     'years'           => array(),
+                    'yearsHardcore'   => array(),
                     'pickTotals'      => $this->_pickTotalsArray(),
                 );
                 $currentStreak = 0;
                 $lastUserId    = $u;
                 $lastYear      = 0;
+                $lastHardcore  = 0;
             }
             
-            // on a new year?
-            if ($y != $lastYear) {
+            // on a new year or new hardcore?
+            if ($h != $lastHardcore || $y != $lastYear) {
                 $user['firstYear'] = min($user['firstYear'], $y);
                 $user['lastYear']  = max($user['lastYear'],  $y);
-                $user['years'][$y] = array(
+                $user[$yearKey][$y] = array(
                     'weeks'           => array(),
                     'pendingPicks'    => array(),    // key = week#, value = teamid
                     'entryFee'        => $this->_getEntryFee($y),
                     'money'           => 0,
                     'firstPlace'      => 0,
                     'secondPlace'     => 0,
-                    'postsBy'         => 0,
-                    'postsAt'         => 0,
-                    'likesBy'         => 0,
-                    'likesAt'         => 0,
-                    'referrals'       => 0,
+                    'postsBy'         => 0,     // cumulative told is only stored in 'years' array, not 'yearsHardcore' array
+                    'postsAt'         => 0,     // cumulative told is only stored in 'years' array, not 'yearsHardcore' array
+                    'likesBy'         => 0,     // cumulative told is only stored in 'years' array, not 'yearsHardcore' array
+                    'likesAt'         => 0,     // cumulative told is only stored in 'years' array, not 'yearsHardcore' array
+                    'referrals'       => 0,     // cumulative told is only stored in 'years' array, not 'yearsHardcore' array
                     'numBandwagons'   => 0,
                     'bandwagonChief'  => 0,
                     'bandwagonJumper' => 0,
                     'firstIncorrect'  => 22,
-                    'badges'          => array(),
+                    'badges'          => array(),     // cumulative told is only stored in 'years' array, not 'yearsHardcore' array
                     'pickTotals'      => $this->_pickTotalsArray(),
                 );
-                $user['entryFee'] += $user['years'][$y]['entryFee'];
+                $user['entryFee'] += $user[$yearKey][$y]['entryFee'];
                 $lastYear = $y;
+                $lastHardcore = $h;
             }
             
             // record the pick itself
             if (is_null($row['incorrect'])) {
                 // this is a pending pick.  We don't want it recorded as part of the normal set of picks,
                 // but we still want to hold onto it because the bandwagon calculations use it
-                $user['years'][$y]['pendingPicks'][$w] = $row['teamid'];
+                $user[$yearKey][$y]['pendingPicks'][$w] = $row['teamid'];
             } else {
                 // this is a normal pick that we want to record for all normal calculations
-                $user['years'][$y]['weeks'][$w] = array(
+                $user[$yearKey][$y]['weeks'][$w] = array(
                     'teamid'      => $row['teamid'],
                     'mov'         => (int)  $row['mov'],
                     'incorrect'   => (bool) $row['incorrect'],
@@ -540,9 +551,9 @@ class MaintenanceController extends Controller
                 );
                 
                 // update totals and other counters
-                $user['years'][$y]['firstIncorrect'] = ($row['incorrect'] ? min($row['week'], $user['years'][$y]['firstIncorrect']) : $user['years'][$y]['firstIncorrect']);
+                $user[$yearKey][$y]['firstIncorrect'] = ($row['incorrect'] ? min($row['week'], $user[$yearKey][$y]['firstIncorrect']) : $user[$yearKey][$y]['firstIncorrect']);
                 $this->_updatePickTotals($row, $user['pickTotals']);
-                $this->_updatePickTotals($row, $user['years'][$y]['pickTotals']);
+                $this->_updatePickTotals($row, $user[$yearKey][$y]['pickTotals']);
                 
                 // check for streaks
                 if ($currentStreak == 0 || ((bool) $row['incorrect'] === (bool) ($currentStreak < 0))) {
@@ -554,7 +565,7 @@ class MaintenanceController extends Controller
                 }
                 $user['currentStreak'] = $currentStreak;
                 if (!is_null($row['incorrect'])) {
-                    $user['years'][$y]['weeks'][$w]['streak'] = $currentStreak;
+                    $user[$yearKey][$y]['weeks'][$w]['streak'] = $currentStreak;
                 }
             }
         }
@@ -567,13 +578,18 @@ class MaintenanceController extends Controller
         $sql = 'select * from winners' . ($userId ? " where userid = $userId" : '');
         $rsMoney = Yii::app()->db->createCommand($sql)->query();
         foreach ($rsMoney as $row) {
-            $users[$row['userid']]['numTrophies'] += 1;
-            $users[$row['userid']]['money']       += $row['winnings'];
-            $users[$row['userid']]['firstPlace']  += $row['place'] == 1 ? 1 : 0;
-            $users[$row['userid']]['secondPlace'] += $row['place'] == 2 ? 1 : 0;
-            $users[$row['userid']]['years'][$row['yr']]['money']       += $row['winnings'];
-            $users[$row['userid']]['years'][$row['yr']]['firstPlace']  += $row['place'] == 1 ? 1 : 0;
-            $users[$row['userid']]['years'][$row['yr']]['secondPlace'] += $row['place'] == 2 ? 1 : 0;
+            try {
+                $yearKey = $row['hardcore'] ? 'yearsHardcore' : 'years';
+                $users[$row['userid']]['numTrophies'] += 1;
+                $users[$row['userid']]['money']       += $row['winnings'];
+                $users[$row['userid']]['firstPlace']  += $row['place'] == 1 ? 1 : 0;
+                $users[$row['userid']]['secondPlace'] += $row['place'] == 2 ? 1 : 0;
+                $users[$row['userid']][$yearKey][$row['yr']]['money']       += $row['winnings'];
+                $users[$row['userid']][$yearKey][$row['yr']]['firstPlace']  += $row['place'] == 1 ? 1 : 0;
+                $users[$row['userid']][$yearKey][$row['yr']]['secondPlace'] += $row['place'] == 2 ? 1 : 0;
+            } catch (Exception $e) {
+                echo '<pre>';var_dump($users[$row['userid']]);exit;
+            }
         }
         
         
@@ -625,15 +641,18 @@ class MaintenanceController extends Controller
         
         // calculate stats that are based on counting/grouping
         foreach ($users as &$user) {
-            $user['numSeasons'] = count($user['years']);
+            $user['numSeasons'] = count($user['years']) + count($user['yearsHardcore']);
             $user['roi']        = $user['money'] / $user['entryFee'];
             
             $has2004            = false;
-            $countableSeasons   = count($user['years']);
+            $countableSeasons   = count($user['years']) + count($user['yearsHardcore']);
             $countableCorrect   = $user['pickTotals']['correct'];
             $countableIncorrect = $user['pickTotals']['incorrect'];
             $totalWeekIncorrect = 0;
             foreach ($user['years'] as $y=>$year) {
+                $totalWeekIncorrect += $year['firstIncorrect'];
+            }
+            foreach ($user['yearsHardcore'] as $y=>$year) {
                 $totalWeekIncorrect += $year['firstIncorrect'];
             }
             $user['averageWeekIncorrect'] = $totalWeekIncorrect / $countableSeasons;
@@ -652,7 +671,8 @@ class MaintenanceController extends Controller
                 $user['averageIncorrect'] = 9999;
             }
             
-            $this->_buildStreaks($user);
+            $this->_buildStreaks($user, 0);
+            $this->_buildStreaks($user, 1);
         }
         unset($user);
 
@@ -667,7 +687,8 @@ class MaintenanceController extends Controller
         $this->_recalcPower();
         
         // recalculate bandwagons and bandwagon badges/stats
-        $this->_recalcBandwagon();
+        $this->_recalcBandwagon(0);
+        $this->_recalcBandwagon(1);
         
         // empty out any previous userstat values
         $sql = 'delete from userstat';
@@ -675,7 +696,8 @@ class MaintenanceController extends Controller
         
         // insert all the new values
         foreach ($this->STATS as $s=>$stat) {
-            $this->_insertStat($s);
+            $this->_insertStat($s, 0);
+            $this->_insertStat($s, 1);
         }
     }
     
@@ -937,20 +959,21 @@ class MaintenanceController extends Controller
         
     }
     
-    private function _recalcBandwagon() {
-        
-        $sql = 'select * from bandwagon order by yr, week';
+    private function _recalcBandwagon($hardcore=0) {
+        $sql = 'select * from bandwagon where hardcore = ' . $hardcore . ' order by yr, week';
         $rsExistingBandwagons = Yii::app()->db->createCommand($sql)->query();
         $existingBandwagons = array();
         foreach ($rsExistingBandwagons as $eb) {
             $existingBandwagons[] = $eb;
         }
+        $yearKey = $hardcore ? 'yearsHardcore' : 'years';
         
         // collect new bandwagons for every year/week that hasn't already been calculated (including multiple teams if there are ties)
         $sql = '
             select      loserpick.teamid, loserpick.yr, loserpick.week, count(*) total
             from        loserpick
             where       loserpick.teamid > 0
+                        and loserpick.hardcore = ' . $hardcore . '
             group by    teamid, yr, week
             order by    loserpick.yr, loserpick.week, total desc';
         $rsBandwagon = Yii::app()->db->createCommand($sql)->query();
@@ -993,7 +1016,7 @@ class MaintenanceController extends Controller
                 // collect all the users that have any of these teams
                 $users = array();
                 foreach ($this->users as $user) {
-                    if ($this->_userHasPick($user, $newBandwagon['year'], $newBandwagon['week'], $newBandwagon['teams'], true)) {
+                    if ($this->_userHasPick($user, $newBandwagon['year'], $newBandwagon['week'], $newBandwagon['teams'], true, $hardcore)) {
                         // this user has this year/week and one of the teams in the bandwagon
                         $users[] = $user;
                     }
@@ -1001,10 +1024,10 @@ class MaintenanceController extends Controller
                 // find which of these users has the highest power ranking and take their team as the only candidate
                 $highestRankedUser = $this->_getHighestRankedUser($users);
                 if ($highestRankedUser) {
-                    if (isset($highestRankedUser['years'][$newBandwagon['year']]['weeks'][$newBandwagon['week']])) {
-                        $newBandwagon['teams'] = array($highestRankedUser['years'][$newBandwagon['year']]['weeks'][$newBandwagon['week']]['teamid']);
-                    } else if (isset($highestRankedUser['years'][$newBandwagon['year']]['pendingPicks'][$newBandwagon['week']])) {
-                        $newBandwagon['teams'] = array($highestRankedUser['years'][$newBandwagon['year']]['pendingPicks'][$newBandwagon['week']]);
+                    if (isset($highestRankedUser[$yearKey][$newBandwagon['year']]['weeks'][$newBandwagon['week']])) {
+                        $newBandwagon['teams'] = array($highestRankedUser[$yearKey][$newBandwagon['year']]['weeks'][$newBandwagon['week']]['teamid']);
+                    } else if (isset($highestRankedUser[$yearKey][$newBandwagon['year']]['pendingPicks'][$newBandwagon['week']])) {
+                        $newBandwagon['teams'] = array($highestRankedUser[$yearKey][$newBandwagon['year']]['pendingPicks'][$newBandwagon['week']]);
                     }
                 }
             }
@@ -1012,6 +1035,7 @@ class MaintenanceController extends Controller
         unset($newBandwagon);
         
         // figure out the chief of each bandwagon and insert it
+
         foreach ($newBandwagons as $bandwagon) {
             $teamId          = $bandwagon['teams'][0];
             $chiefId         = 0;
@@ -1019,7 +1043,7 @@ class MaintenanceController extends Controller
             
             // get all the candidates (users who selected the bandwagon team for this week)
             foreach ($this->users as $user) {
-                if ($this->_userHasPick($user, $bandwagon['year'], $bandwagon['week'], $teamId, true)) {
+                if ($this->_userHasPick($user, $bandwagon['year'], $bandwagon['week'], $teamId, true, $hardcore)) {
                     $chiefCandidates[] = $user;
                 }
             }
@@ -1028,7 +1052,7 @@ class MaintenanceController extends Controller
             $maxTimeOnBandwagon     = -9999;
             $revisedChiefCandidates = array();
             foreach ($chiefCandidates as $chief) {
-                $timeOnBandwagon = $this->_weeksOnBandwagon($chief, $bandwagon['year'], $bandwagon['week']);
+                $timeOnBandwagon = $this->_weeksOnBandwagon($chief, $bandwagon['year'], $bandwagon['week'], $hardcore);
                 $maxTimeOnBandwagon = max($maxTimeOnBandwagon, $timeOnBandwagon);
                 $revisedChiefCandidates[] = array(
                     'chief'   => $chief,
@@ -1058,8 +1082,8 @@ class MaintenanceController extends Controller
             
             // add this new bandwagon to the global array
             $incorrect = null;
-            if ($this->_userHasPick($this->users[$chiefId], $bandwagon['year'], $bandwagon['week'], $teamId, false)) {
-                $incorrect = $this->users[$chiefId]['years'][$bandwagon['year']]['weeks'][$bandwagon['week']]['incorrect'];
+            if ($this->_userHasPick($this->users[$chiefId], $bandwagon['year'], $bandwagon['week'], $teamId, false, $hardcore)) {
+                $incorrect = $this->users[$chiefId][$yearKey][$bandwagon['year']]['weeks'][$bandwagon['week']]['incorrect'];
                 if (!is_null($incorrect)) {
                     $incorrect = (int) $incorrect;
                 }
@@ -1069,7 +1093,8 @@ class MaintenanceController extends Controller
                 'week'      => $bandwagon['week'],
                 'chiefid'   => $chiefId,
                 'teamid'    => $teamId,
-                'incorrect' => $incorrect
+                'incorrect' => $incorrect,
+                'hardcore'  => $hardcore
             );
             
             // insert the bandwagon into the database if necessary
@@ -1092,9 +1117,8 @@ class MaintenanceController extends Controller
                     break;
                 }
             }
-            if ($insert) { 
-                $sql = "replace into bandwagon (yr, week, chiefid, teamid, incorrect) values ({$bandwagon['year']}, {$bandwagon['week']}, $chiefId, $teamId, " . (is_null($incorrect) ? 'null' : $incorrect) . ")";
-                // echo "$sql<br />";
+            if ($insert) {
+                $sql = "replace into bandwagon (yr, week, chiefid, teamid, hardcore, incorrect) values ({$bandwagon['year']}, {$bandwagon['week']}, $chiefId, $teamId, $hardcore, " . (is_null($incorrect) ? 'null' : $incorrect) . ")";
                 Yii::app()->db->createCommand($sql)->query();
             }
         }
@@ -1102,23 +1126,24 @@ class MaintenanceController extends Controller
         // figure out each user that is on each bandwagon
         foreach ($this->bandwagons as $bandwagon) {
             $teamId = $bandwagon['teamid'];
+            if ($bandwagon['hardcore'] != $hardcore) continue;
             foreach ($this->users as &$user) {
-                if ($this->_userHasPick($user, $bandwagon['year'], $bandwagon['week'], $teamId)) {
-                    $user['years'][$bandwagon['year']]['weeks'][$bandwagon['week']]['onBandwagon'] = true;
-                    $user['years'][$bandwagon['year']]['numBandwagons']++;
+                if ($this->_userHasPick($user, $bandwagon['year'], $bandwagon['week'], $teamId, false, $hardcore)) {
+                    $user[$yearKey][$bandwagon['year']]['weeks'][$bandwagon['week']]['onBandwagon'] = true;
+                    $user[$yearKey][$bandwagon['year']]['numBandwagons']++;
                     $user['numBandwagons']++;
                 }
                 if ($bandwagon['chiefid'] == $user['id']) {
-                    $user['years'][$bandwagon['year']]['bandwagonChief']++;
+                    $user[$yearKey][$bandwagon['year']]['bandwagonChief']++;
                     $user['bandwagonChief']++;
                 }
             }
             unset($user);
             // set chief of the bandwagon floating badge
             if ($bandwagon['year'] == getCurrentYear() && $bandwagon['week'] == getCurrentWeek()) {
-                $this->users[$bandwagon['chiefid']]['years'][$bandwagon['year']]['badges'][] = 19;
+                $this->users[$bandwagon['chiefid']][$yearKey][$bandwagon['year']]['badges'][] = 19;
                 $this->users[$bandwagon['chiefid']]['badges'][] = 19;
-                $sql = "update userbadge set userid = {$bandwagon['chiefid']}, display = 'Chief of the Bandwagon: " . $this->_weeksOnBandwagon($this->users[$bandwagon['chiefid']], $bandwagon['year'], $bandwagon['week']) . " Consecutive Weeks Riding' where badgeid = 19";
+                $sql = "update userbadge set userid = {$bandwagon['chiefid']}, display = 'Chief of the Bandwagon: " . $this->_weeksOnBandwagon($this->users[$bandwagon['chiefid']], $bandwagon['year'], $bandwagon['week'], $hardcore) . " Consecutive Weeks Riding' where badgeid = 19";
                 Yii::app()->db->createCommand($sql)->query();
             }
         }
@@ -1127,6 +1152,7 @@ class MaintenanceController extends Controller
         // first, sort bandwagons into a structure so we don't have to constantly loop over them
         $bandwagonsByYear = array();
         foreach ($this->bandwagons as $bandwagon) {
+            if ($bandwagon['hardcore'] != $hardcore) continue;
             if (!array_key_exists($bandwagon['year'], $bandwagonsByYear)) {
                 $bandwagonsByYear[$bandwagon['year']] = array();
             }
@@ -1138,7 +1164,7 @@ class MaintenanceController extends Controller
             $lastBandwagonYear      = 0;
             $bandwagonCorrectStreak = 0;
             $wasOnBandwagonLastWeek = false;
-            foreach ($user['years'] as $y=>$year) {
+            foreach ($user[$yearKey] as $y=>$year) {
                 if (!isset($year['weeks']) || !is_array($year['weeks'])) {
                     // this happens when it's week 0 and users exist for a year but haven't made any picks for it yet
                     continue;
@@ -1164,9 +1190,9 @@ class MaintenanceController extends Controller
                             // - the user got their pick right this week
                             // - the bandwagon was WRONG this week!
                             // echo "{$user['username']} hopped off the crashing bandwagon on week $w $y after riding for $bandwagonCorrectStreak weeks!<br />";                $sql = "replace into bandwagon (yr, week, chiefid, teamid, incorrect) values ({$bandwagon['year']}, {$bandwagon['week']}, $chiefId, $teamId, " . (is_null($incorrect) ? 'null' : $incorrect) . ")";
-                            $sql = "replace into bandwagonjump (yr, week, userid, previous_weeks) values ($y, $w, {$user['id']}, $bandwagonCorrectStreak)";
+                            $sql = "replace into bandwagonjump (yr, week, userid, hardcore, previous_weeks) values ($y, $w, {$user['id']}, $hardcore, $bandwagonCorrectStreak)";
                             Yii::app()->db->createCommand($sql)->query();
-                            $user['years'][$y]['bandwagonJumper']++;
+                            $user[$yearKey][$y]['bandwagonJumper']++;
                             $user['bandwagonJumper']++;
                         }
                         $bandwagonCorrectStreak = 0;
@@ -1181,10 +1207,10 @@ class MaintenanceController extends Controller
         /*
         foreach ($this->users as $user) {
             if ($user['id'] < 121 || $user['id'] > 150) continue;
-            foreach ($user['years'] as $y=>$year) {
+            foreach ($user[$yearKey] as $y=>$year) {
                 foreach ($year['weeks'] as $w=>$week) {
-                    if (isset($user['years'][$y]['weeks'][$w]) || isset($user['years'][$y]['pendingPicks'][$w])) {
-                        $weeksOnBandwagon = $this->_weeksOnBandwagon($user, $y, $w);
+                    if (isset($user[$yearKey][$y]['weeks'][$w]) || isset($user[$yearKey][$y]['pendingPicks'][$w])) {
+                        $weeksOnBandwagon = $this->_weeksOnBandwagon($user, $y, $w, $hardcore);
                         $sql = "update loserpick set weeks_on_bandwagon = $weeksOnBandwagon where userid = {$user['id']} and week = $w and yr = $y";
                         Yii::app()->db->createCommand($sql)->query();
                     }
@@ -1199,9 +1225,9 @@ class MaintenanceController extends Controller
         $curYear = getCurrentYear();
         $curWeek = getCurrentWeek();
         foreach ($this->users as $user) {
-            if (isset($user['years'][$curYear]['weeks'][$curWeek]) || isset($user['years'][$curYear]['pendingPicks'][$curWeek])) {
-                $weeksOnBandwagon = $this->_weeksOnBandwagon($user, $curYear, $curWeek);
-                $sql = "update loserpick set weeks_on_bandwagon = $weeksOnBandwagon where userid = {$user['id']} and week = $curWeek and yr = $curYear";
+            if (isset($user[$yearKey][$curYear]['weeks'][$curWeek]) || isset($user[$yearKey][$curYear]['pendingPicks'][$curWeek])) {
+                $weeksOnBandwagon = $this->_weeksOnBandwagon($user, $curYear, $curWeek, $hardcore);
+                $sql = "update loserpick set weeks_on_bandwagon = $weeksOnBandwagon where userid = {$user['id']} and week = $curWeek and yr = $curYear and hardcore = $hardcore";
                 Yii::app()->db->createCommand($sql)->query();
             }
         }

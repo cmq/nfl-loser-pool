@@ -24,7 +24,7 @@ class SiteController extends Controller
     private function _getBandwagon()
     {
         $bandwagon = Bandwagon::model()->with(array('team', 'chief'))->findAll(array(
-            'condition' => 't.yr = ' . getCurrentYear(),
+            'condition' => 't.yr = ' . getCurrentYear() . ' and t.hardcore = ' . (isHardcoreMode() ? '1' : '0')
         ));
         return $bandwagon;
     }

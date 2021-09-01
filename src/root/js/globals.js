@@ -46,19 +46,33 @@ globals.ordinal = function(number) {
     return number + ends[number % 10];
 }
 
-globals.getWeekName = function(i) {
+globals.getMaxWeeks = function(y) {
+    if (typeof y === 'undefined') {
+        y = CONF.currentYear;
+    }
+    return (y >= CONF.earliestYear17Games ? 22 : 21);
+};
+
+globals.getWeekName = function(i, y) {
+    var weeksLeftInSeason;
     i = types.integer(i, 0);
-    switch (i) {
-        case 21:
+    if (typeof y === undefined) {
+        y = CONF.currentYear;
+    } else {
+        y = types.integer(y, CONF.currentYear);
+    }
+    weeksLeftInSeason = globals.getMaxWeeks(y) - i;
+    switch (weeksLeftInSeason) {
+        case 0:
             return 'Superbowl';
             break;
-        case 20:
+        case 1:
             return 'Conf Champ';
             break;
-        case 19:
+        case 2:
             return 'Divisional';
             break;
-        case 18:
+        case 3:
             return 'Wild Card';
             break;
         default:

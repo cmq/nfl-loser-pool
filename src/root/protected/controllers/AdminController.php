@@ -187,7 +187,7 @@ class AdminController extends Controller
                 $user->firstname = $firstname;
                 $user->lastname = $lastname;
                 $user->email = $email;
-                $user->active = $active || $hacactive ? 1 : 0;
+                $user->active = $active || $hcactive ? 1 : 0;
                 $user->created = date('YmdHis');
                 $user->power_points = 0;
                 $user->power_ranking = 999;

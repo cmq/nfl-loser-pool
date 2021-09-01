@@ -44,6 +44,13 @@ function getCurrentYear() {
     return param('currentYear');
 }
 
+function getMaxWeeks($year=null) {
+    if ($year === null) {
+        $year = getCurrentYear();
+    }
+    return ($year >= param('earliestYear17Games') ? 22 : 21);
+}
+
 function getCurrentWeek() {
     $currentWeek = param('currentWeek');
     if ($currentWeek) {
@@ -52,10 +59,11 @@ function getCurrentWeek() {
     
     $dInOneHour  = new DateTime('NOW');
     $firstGames  = $GLOBALS['firstGame'];
+    $maxWeeks    = getMaxWeeks();
     $currentWeek = 0;
     
     $dInOneHour->add(new DateInterval('PT1H'));
-    for ($i=1; $i<=21; $i++) {
+    for ($i=1; $i<=$maxWeeks; $i++) {
     	if ($dInOneHour > $firstGames[$i]) {
     		// in one hour, the game of week $i will have started
     		$currentWeek = $i;
@@ -74,22 +82,23 @@ function getHeaderWeek() {
     $dIn5Days    = new DateTime('NOW');
     $dIn12Days   = new DateTime('NOW');
     $firstGames  = $GLOBALS['firstGame'];
-    $headerWeek = 0;
+    $headerWeek  = 0;
+    $maxWeeks    = getMaxWeeks();
     
     $dIn5Days->add(new DateInterval('P5D'));
     $dIn12Days->add(new DateInterval('P12D'));
     
-    for ($i=1; $i<=21; $i++) {
+    for ($i=1; $i<=$maxWeeks; $i++) {
     	if ($dIn5Days > $firstGames[$i]) {
     	    // the first game of week $i is within 5 days
     		$headerWeek = $i;
-    	} else if ($i > 20 && $dIn12Days > $firstGames[$i]) {
+    	} else if ($i > ($maxWeeks-1) && $dIn12Days > $firstGames[$i]) {
     		// otherwise, a special case for the superbowl week... if we're within 12 days
     		$headerWeek = $i;
     	}
     }
-    $headerWeek = min(max(1, $headerWeek), 21);
-    if ($headerWeek < 18 && $firstGames[$headerWeek]->format('w') > 1) {
+    $headerWeek = min(max(1, $headerWeek), $maxWeeks);
+    if ($headerWeek < ($maxWeeks-3) && $firstGames[$headerWeek]->format('w') > 1) {
     	// the first game of the header week is on a Tuesday-Saturday (i.e., not Sunday) -- if the current day is not yet Tuesday,
     	// continue to show the previous week in the header, because even though we're within 5 days of the next week's games starting,
     	// the current week is still going on!
@@ -101,19 +110,20 @@ function getHeaderWeek() {
     return $headerWeek;
 }
 
-function getWeekName($week, $label=false) {
+function getWeekName($week, $year=null, $label=false) {
 	$name = $week;
-	switch ($week) {
-		case 18:
+    $weeksLeftInSeason = getMaxWeeks($year) - $week;
+	switch ($weeksLeftInSeason) {
+		case 3:
 			$name = 'Wild Card' . ($label ? ' Week' : '');
 			break;
-		case 19:
+		case 2:
 			$name = 'Divisional' . ($label ? ' Week' : '');
 			break;
-		case 20:
+		case 1:
 			$name = 'Conf Champ' . ($label ? ' Week' : '');
 			break;
-		case 21:
+		case 0:
 			$name = ($label ? 'The ' : '') . 'Superbowl';
 			break;
 		default:
@@ -451,11 +461,12 @@ function getTeamLogoOffset($team, $size) {
 
 function getBestWorst($year)
 {
+    $year = (int) $year;
     if ($year <= param('earliestYear')) {
         return null;
     }
     
-    $sql = 'select mov.yr, mov.week, mov.teamid, mov.mov, t.shortname, t.longname, t.image_offset
+    $sql = "select mov.yr, mov.week, mov.teamid, mov.mov, t.shortname, t.longname, t.image_offset
                 from mov
                 inner join (
                     select yr, week, min(mov) as mov
@@ -463,13 +474,14 @@ function getBestWorst($year)
                     group by yr, week
                 ) as top on mov.yr= top.yr and mov.week = top.week and mov.mov = top.mov
                 inner join loserteam t on mov.teamid = t.id
-                where mov.yr = ' . (int)$year . '
-                order by mov.yr, mov.week';
+                where mov.yr = $year
+                order by mov.yr, mov.week";
     $bestMov = Yii::app()->db->createCommand($sql)->queryAll();
     $sql = str_replace('min(', 'max(', $sql);
     $worstMov = Yii::app()->db->createCommand($sql)->queryAll();
     
-    $bestWorst = array('best'=>array_fill(0, 21, null), 'worst'=>array_fill(0, 21, null));
+    $weeksThisYear = getMaxWeeks($year);
+    $bestWorst = array('best'=>array_fill(0, $weeksThisYear, null), 'worst'=>array_fill(0, $weeksThisYear, null));
     
     foreach ($bestMov as $game) {
         if ($game['mov'] < 0) {

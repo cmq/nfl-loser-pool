@@ -94,7 +94,7 @@ function draw() {
     $tr1.append(drawHead('1st Places', 'firsts', 'firsts', true, 1, 2));
     $tr1.append(drawHead('2nd Places', 'seconds', 'seconds', true, 1, 2));
 
-    for (i=CONF.currentYear-(CONF.currentWeek < 21 ? 1 : 0); i>=CONF.earliestYear; i--) {
+    for (i=CONF.currentYear-(CONF.currentWeek < CONF.maxWeeks ? 1 : 0); i>=CONF.earliestYear; i--) {
         $tr1.append(drawHead(i, 'year'+i+'pot0', buildSortFunction(i, 0), true, 1 + (i > CONF.earliestYear ? 1 : 0) + (i >= CONF.movFirstYear ? 1 : 0)));
         $tr2.append(drawHead('Stay-<br />Alive', 'year'+i+'pot1', buildSortFunction(i, 1)));
         if (i > CONF.earliestYear) {
@@ -116,7 +116,7 @@ function draw() {
             .append('<td class="text-right">' + users[key].firsts + '</td>')
             .append('<td class="text-right">' + users[key].seconds + '</td>')
         );
-        for (y=CONF.currentYear-(CONF.currentWeek < 21 ? 1 : 0); y>=CONF.earliestYear; y--) {
+        for (y=CONF.currentYear-(CONF.currentWeek < CONF.maxWeeks ? 1 : 0); y>=CONF.earliestYear; y--) {
             for (p=1; p<=3; p++) {
                 if (p === 1 || (p === 2 && y > CONF.earliestYear) || (p === 3 && y >= CONF.movFirstYear)) {
                     if (users[key].years[y][p].place > 0) {

@@ -151,7 +151,7 @@ $(function() {
                     </ul>
                 </li>
                 <?php
-                echo navItem('NFL Schedule', 'http://www.nfl.com/schedules/' . getCurrentYear() . (getHeaderWeek() <= 17 ? '/REG/' . max(getHeaderWeek(), 1) : '/POST' . (getHeaderWeek()-17)), null, false, true, false, false, true);
+                echo navItem('NFL Schedule', 'http://www.nfl.com/schedules/' . getCurrentYear() . (getHeaderWeek() <= getMaxWeeks() ? '/REG/' . max(getHeaderWeek(), 1) : '/POST' . (getHeaderWeek()-getMaxWeeks())), null, false, true, false, false, true);
                 if (isAdmin()) {
                     ?>
                     <li class="dropdown<?php echo ($controllerName == 'admin' ? ' active' : '')?>">

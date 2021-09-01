@@ -64,7 +64,7 @@ class PickController extends Controller
             ));
             if ($alreadyUsedTeam && $alreadyUsedTeam->week != $week) {
                 $team = Team::model()->find(array('condition'=>"id = $teamId"));
-                $error = 'You have already selected the ' . $team->longname . ' (' . getWeekName($alreadyUsedTeam->week, true) . ')';
+                $error = 'You have already selected the ' . $team->longname . ' (' . getWeekName($alreadyUsedTeam->week, $year, true) . ')';
             }
         }
         

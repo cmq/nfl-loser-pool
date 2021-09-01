@@ -76,7 +76,7 @@ class Pick extends DeepActiveRecord
         return array(
             array('yr, week, teamid', 'required'),
             array('yr, week, teamid', 'type', 'type'=>'integer'),
-            array('week', 'numerical', 'integerOnly'=>true, 'min'=>1, 'max'=>21),
+            array('week', 'numerical', 'integerOnly'=>true, 'min'=>1, 'max'=>22),
         );
     }
     

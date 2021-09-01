@@ -428,8 +428,8 @@ class MaintenanceController extends Controller
             $meta2       = '';
             if ($statKey == 'streakcorrect' || $statKey == 'streakincorrect') {
                 $streakKey = ($statKey == 'streakcorrect' ? 'longCorrectStreak' : 'longIncorrectStreak');
-                $meta1 = getWeekName($user[$streakKey]['startWeek'], true) . ', ' . $user[$streakKey]['startYear'];
-                $meta2 = getWeekName($user[$streakKey]['endWeek'], true) . ', ' . $user[$streakKey]['endYear'];
+                $meta1 = getWeekName($user[$streakKey]['startWeek'], $user[$streakKey]['startYear'], true) . ', ' . $user[$streakKey]['startYear'];
+                $meta2 = getWeekName($user[$streakKey]['endWeek'], $user[$streakKey]['endYear'], true) . ', ' . $user[$streakKey]['endYear'];
             }
             $activePlace = $activePlace === false ? 0 : $activePlace;
             if (!$userValue) {
@@ -1551,7 +1551,7 @@ class MaintenanceController extends Controller
     {
         $y    = getCurrentYear();
         $w    = getCurrentWeek() + 1;   // add 1 because we care about NEXT week (the week we're reminding for)
-        $wn   = getWeekName($w, true);
+        $wn   = getWeekName($w, $y, true);
         $bcc  = array();
         $bcch = array();
         $send = isset($_GET['send']);

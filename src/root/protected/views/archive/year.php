@@ -11,7 +11,7 @@ $(function() {
         collapsable: true,
         showPayout: false,
         currentYear: <?php echo $year;?>,
-        currentWeek: <?php echo ($year == param('earliestYear') ? 9 : 21);?>,
+        currentWeek: <?php echo ($year == param('earliestYear') ? 9 : getMaxWeeks($year));?>,
         viewOptions: {
             collapseHistory: <?php echo userField('collapse_history') ? 'true' : 'false'?>,
             showBadges:      <?php echo userField('show_badges') ? 'true' : 'true'?>,

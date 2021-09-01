@@ -196,7 +196,7 @@ $(function() {
                             <?php echo (isNormalMode() ? '</th>' : '</td>');?>
                         </tr>
                         <tr>
-                            <th>Pick for <?php echo getWeekName(max(1, getHeaderWeek()), true)?></th>
+                            <th>Pick for <?php echo getWeekName(max(1, getHeaderWeek()), getCurrentYear(), true)?></th>
                             <?php echo (isNormalMode() ? '<th' : '<td') . ($hasNormalMode && !$pickNormal ? ' class="danger"' : '') . '>';?>
                                 <?php
                                 if ($hasNormalMode) {
@@ -231,10 +231,10 @@ $(function() {
                         <tr>
                             <th>First Wrong</th>
                             <?php echo (isNormalMode() ? '<th>' : '<td>');?>
-                            <?php echo ($hasNormalMode ? ($weekNormal > 0 ? getWeekName($weekNormal, true) : 'Still Alive') : 'N/A');?>
+                            <?php echo ($hasNormalMode ? ($weekNormal > 0 ? getWeekName($weekNormal, getCurrentYear(), true) : 'Still Alive') : 'N/A');?>
                             <?php echo (isNormalMode() ? '</th>' : '</td>');?>
                             <?php echo (isHardcoreMode() ? '<th>' : '<td>');?>
-                            <?php echo ($hasHardcoreMode ? ($weekHardcore > 0 ? getWeekName($weekHardcore, true) : 'Still Alive') : 'N/A');?>
+                            <?php echo ($hasHardcoreMode ? ($weekHardcore > 0 ? getWeekName($weekHardcore, getCurrentYear(), true) : 'Still Alive') : 'N/A');?>
                             <?php echo (isNormalMode() ? '</th>' : '</td>');?>
                         </tr>
                         <tr>
@@ -332,7 +332,7 @@ $(function() {
                 <div id="collapseBandwagon" class="panel-collapse collapse">
                     <div class="panel-body">
                         <div class="col-xs-12">
-                            <h4 class="text-center">Bandwagon Team for <?php echo getWeekName(getCurrentWeek(), true);?>:  <strong><?php echo $thisWeekBandwagon->team->longname;?></strong></h4>
+                            <h4 class="text-center">Bandwagon Team for <?php echo getWeekName(getCurrentWeek(), getCurrentYear(), true);?>:  <strong><?php echo $thisWeekBandwagon->team->longname;?></strong></h4>
                         </div>
                         <div id="the-bandwagon" class="clearfix"> 
                             <div class="row hidden-xs hidden-sm">

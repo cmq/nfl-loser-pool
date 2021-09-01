@@ -10,37 +10,39 @@ $easternTimezone = new DateTimeZone('America/New_York');
 // this needs to be accessed via globals
 $GLOBALS['firstGame'] = array(
     // Enter the times in EASTERN time
-    1  => new DateTime('2020-09-10 20:20', $easternTimezone),
-    2  => new DateTime('2020-09-17 20:20', $easternTimezone),
-    3  => new DateTime('2020-09-24 20:20', $easternTimezone),
-    4  => new DateTime('2020-10-01 20:20', $easternTimezone),
-    5  => new DateTime('2020-10-08 20:20', $easternTimezone),
-    6  => new DateTime('2020-10-18 13:00', $easternTimezone),
-    7  => new DateTime('2020-10-22 20:20', $easternTimezone),
-    8  => new DateTime('2020-10-29 20:20', $easternTimezone),
-    9  => new DateTime('2020-11-05 20:20', $easternTimezone),
-    10 => new DateTime('2020-11-12 20:20', $easternTimezone),
-    11 => new DateTime('2020-11-19 20:20', $easternTimezone),
-    12 => new DateTime('2020-11-26 12:30', $easternTimezone),
-    13 => new DateTime('2020-12-03 20:20', $easternTimezone),
-    14 => new DateTime('2020-12-10 20:20', $easternTimezone),
-    15 => new DateTime('2020-12-17 20:20', $easternTimezone),
-    16 => new DateTime('2020-12-25 16:30', $easternTimezone),
-    17 => new DateTime('2021-01-03 13:00', $easternTimezone),
-    18 => new DateTime('2021-01-09 16:30', $easternTimezone),   // Wild Card
-    19 => new DateTime('2021-01-16 16:30', $easternTimezone),   // Quarter Finals
-    20 => new DateTime('2021-01-25 15:05', $easternTimezone),   // Conference Championship
-    21 => new DateTime('2021-02-07 18:30', $easternTimezone),   // Superbowl
+    1  => new DateTime('2021-09-09 20:20', $easternTimezone),
+    2  => new DateTime('2021-09-16 20:20', $easternTimezone),
+    3  => new DateTime('2021-09-23 20:20', $easternTimezone),
+    4  => new DateTime('2021-09-30 20:20', $easternTimezone),
+    5  => new DateTime('2021-10-07 20:20', $easternTimezone),
+    6  => new DateTime('2021-10-14 20:20', $easternTimezone),
+    7  => new DateTime('2021-10-21 20:20', $easternTimezone),
+    8  => new DateTime('2021-10-28 20:20', $easternTimezone),
+    9  => new DateTime('2021-11-04 20:20', $easternTimezone),
+    10 => new DateTime('2021-11-11 20:20', $easternTimezone),
+    11 => new DateTime('2021-11-18 20:20', $easternTimezone),
+    12 => new DateTime('2021-11-25 12:30', $easternTimezone),
+    13 => new DateTime('2021-12-02 20:20', $easternTimezone),
+    14 => new DateTime('2021-12-09 20:20', $easternTimezone),
+    15 => new DateTime('2021-12-16 20:20', $easternTimezone),
+    16 => new DateTime('2021-12-23 20:20', $easternTimezone),
+    17 => new DateTime('2022-01-02 13:00', $easternTimezone),
+    18 => new DateTime('2022-01-09 13:00', $easternTimezone),
+    19 => new DateTime('2022-01-16 12:05', $easternTimezone),   // Wild Card
+    20 => new DateTime('2022-01-22 16:30', $easternTimezone),   // Quarter Finals
+    21 => new DateTime('2022-01-29 15:05', $easternTimezone),   // Conference Championship
+    22 => new DateTime('2022-02-13 18:30', $easternTimezone),   // Superbowl
 );
 
 
 return array(
     'production'            => isProduction(),
-    'currentYear'           => 2020,
+    'currentYear'           => 2021,
     'currentWeek'           => getCurrentWeek(),
     'headerWeek'            => getHeaderWeek(),
     'earliestYear'          => 2004,
     'earliestYearHardcore'  => 2020,
+    'earliestYear17Games'   => 2021,
     'adminEmail'            => 'kirk.hemmen@gmail.com',
     'systemEmail'           => 'kirk@loserpool.kdhstuff.com',
     'firstYearEntryFee'     => 10,

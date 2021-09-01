@@ -1,7 +1,7 @@
 <?php
 $delayAmount = (!isPaid() ? getCurrentWeek() * 10 : 0);
 $pickByWeek = array();
-for ($i=1; $i<=21; $i++) {
+for ($i=1; $i<=getMaxWeeks(); $i++) {
     $pickByWeek[$i] = null;
 }
 foreach ($picks as $pick) {
@@ -9,7 +9,7 @@ foreach ($picks as $pick) {
 }
 ?>
 <script>
-var picksByWeek = Array(22);   // 0-based array, 0 will be empty, 1-21 will be the weeks
+var picksByWeek = Array(globals.getMaxWeeks()+1);   // 0-based array, 0 will be empty, 1-21 (now 22) will be the weeks
 <?php
 foreach ($picks as $pick) {
     echo "picksByWeek[" . $pick['week'] . "] = " . (int) $pick['teamid'] . ";\n";
@@ -47,7 +47,7 @@ function hardcoreAdjust() {
 }
 
 $(function() {
-    var previousValues = Array(22);     // 0-based, index is the week number 1-21
+    var previousValues = Array(globals.getMaxWeeks()+1);     // 0-based, index is the week number 1-21 (now 22)
     $('.team-pick').on('focus', function() {
         // save the previous logo and selected value for the dropdown in case there is an error changing it
         var $select = $(this),

@@ -318,7 +318,7 @@ function Board(options) {
             incorrect = 0;
             margin    = 0;
             lastPick  = '';
-            for (j=1; j<=21; j++) {
+            for (j=1; j<=globals.getMaxWeeks(settings.currentYear); j++) {
                 pick = getPick(user, j);
                 if (pick) {
                     if (pick.week > settings.currentWeek && settings.currentYear >= CONF.currentYear) {
@@ -533,10 +533,10 @@ function Board(options) {
                 })
             );
         }
-        for (i=startWeek; i<=21; i++) {
+        for (i=startWeek; i<=globals.getMaxWeeks(settings.currentYear); i++) {
             $tr.append($('<th/>')
                 .addClass(getSortHeadClass('pick' + i))
-                .html(globals.getWeekName(i))
+                .html(globals.getWeekName(i, settings.currentYear))
                 .on('click', (function(i) {
                     return function(e) {
                         e.preventDefault();
@@ -604,7 +604,7 @@ function Board(options) {
             if (settings.viewOptions.collapseHistory) {
                 $tr.append('<th/>');
             }
-            for (i=startWeek; i<=21; i++) {
+            for (i=startWeek; i<=globals.getMaxWeeks(settings.currentYear); i++) {
                 $tr.append($('<th/>')
                     .html('<a href="' + CONF.url.showCorrect + '?week=' + i + '"><span class="glyphicon glyphicon-flash"></span></a>')
                 );
@@ -627,7 +627,7 @@ function Board(options) {
                 $tr.append('<th>' + globals.getOldRecord(bwuser, settings.currentWeek) + '</th>');
             }
             // week-by-week view
-            for (i=startWeek; i<=21; i++) {
+            for (i=startWeek; i<=globals.getMaxWeeks(settings.currentYear); i++) {
                 bwfound = false;
                 if (i <= settings.currentWeek) {
                     for (j=0; j<settings.bandwagon.length; j++) {
@@ -659,7 +659,7 @@ function Board(options) {
                 }
             }
             // calculate the summaries
-            for (i=1; i<=21; i++) {
+            for (i=1; i<=globals.getMaxWeeks(settings.currentYear); i++) {
                 if (i <= settings.currentWeek) {
                     for (j=0; j<settings.bandwagon.length; j++) {
                         if (settings.bandwagon[j].week == i) {
@@ -684,7 +684,7 @@ function Board(options) {
                 }
             }
             // show the summaries
-            $tr.append('<th>' + (firstWeek > 21 ? '...' : 'Week ' + firstWeek) + '</th>');
+            $tr.append('<th>' + (firstWeek > globals.getMaxWeeks(settings.currentYear) ? '...' : 'Week ' + firstWeek) + '</th>');
             $tr.append('<th' + (countPot2() ? '' : ' class="unused-column"') + '>' + correct + '-' + incorrect + '</th>');
             $tr.append('<th class="text-right' + (countPot3() ? '' : ' unused-column') + '">' + margin + '</th>');
             $tr.append('<th colspan="3">N/A</th>');
@@ -707,7 +707,7 @@ function Board(options) {
                 $tr.append('<th>' + settings.currentWeek-1 + '-0</th>');
             }
             // week-by-week view
-            for (i=startWeek-1; i<21; i++) {
+            for (i=startWeek-1; i<globals.getMaxWeeks(settings.currentYear); i++) {
                 bwfound = false;
                 if (i < settings.currentWeek) {
                     try {
@@ -755,7 +755,7 @@ function Board(options) {
                 $tr.append('<th>' + settings.currentWeek-1 + '-0</th>');
             }
             // week-by-week view
-            for (i=startWeek-1; i<21; i++) {
+            for (i=startWeek-1; i<globals.getMaxWeeks(settings.currentYear); i++) {
                 bwfound = false;
                 if (i < settings.currentWeek) {
                     try {
@@ -822,7 +822,7 @@ function Board(options) {
             if (settings.viewOptions.collapseHistory) {
                 $tr.append('<td class="text-center">' + globals.getOldRecord(user, settings.currentWeek) + '</td>');
             }
-            for (j=startWeek; j<=21; j++) {
+            for (j=startWeek; j<=globals.getMaxWeeks(settings.currentYear); j++) {
                 pick = getPick(user, j);
                 onBandwagon = isOnBandwagon(user, j);
                 if (pick) {
@@ -858,7 +858,7 @@ function Board(options) {
             
             // show the end columns
             bwStreak = getBandwagonStreak(user);
-            $tr.append('<td class="text-center" nowrap="nowrap">' + (user.stayAlive > 21 ? '...' : 'Week ' + user.stayAlive) + '</td>');
+            $tr.append('<td class="text-center" nowrap="nowrap">' + (user.stayAlive > globals.getMaxWeeks(settings.currentYear) ? '...' : 'Week ' + user.stayAlive) + '</td>');
             $tr.append('<td class="text-center' + (countPot2() ? '' : ' unused-column') + '">' + user.record + '</td>');
             $tr.append('<td class="text-right' + (countPot3() ? '' : ' unused-column') + '">' + user.margin + '</td>');
             $tr.append('<td class="text-right">' + (settings.userPaid ? globals.dollarFormat(user.money) : '$0.00') + '</td>');

@@ -734,7 +734,7 @@ class MaintenanceController extends Controller
     
     private function _calculateBadge_onfire($y) {
         $sql = '
-        	select		user.id, loserpick.yr, loserpick.week, loserpick.incorrect
+        	select		user.id, loserpick.yr, loserpick.week, loserpick.incorrect, loserpick.hardcore
         	from		user
         	inner join	loserpick on loserpick.userid = user.id
         				and loserpick.incorrect is not null
@@ -743,14 +743,15 @@ class MaintenanceController extends Controller
             inner join  loseruser on loseruser.userid = user.id
                         and loseruser.yr = ' . $y . '
             where		1 = 1
-        	order by	user.id, loserpick.yr, loserpick.week';
+        	order by	user.id, loserpick.yr, loserpick.week, loserpick.hardcore';
         $rsStreak = Yii::app()->db->createCommand($sql)->query();
         $streaks = array();
         $highCurrent = 0;
         $highAlltime = 0;
         $lastUserId = 0;
+        $lastHardcore = null;
         foreach ($rsStreak as $row) {
-            if ($row['id'] != $lastUserId) {
+            if ($row['id'] != $lastUserId || $row['hardcore'] != $lastHardcore) {
                 if ($lastUserId > 0) {
                     $thisStreakData['maxStreak'] = max($thisStreakData['maxStreak'], $thisStreakData['currentStreak']);
                     $highCurrent = max($highCurrent, $thisStreakData['currentStreak']);
@@ -762,6 +763,7 @@ class MaintenanceController extends Controller
                     'maxStreak'     => 0
                 );
                 $lastUserId = $row['id'];
+                $lastHardcore = $row['hardcore'];
             }
             if ($row['incorrect'] == 1) {
                 $thisStreakData['maxStreak'] = max($thisStreakData['maxStreak'], $thisStreakData['currentStreak']);

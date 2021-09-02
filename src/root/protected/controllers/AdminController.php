@@ -221,8 +221,9 @@ class AdminController extends Controller
             $userId     = (int) getRequestParameter('id', 0);
             $user       = User::model()->findByPk($userId);
             $paidnote   = addslashes(trim(getRequestParameter('paidnote', '')));
+            $yr         = getCurrentYear();
             if ($user && !empty($paidnote)) {
-                $sql = "update loseruser set paid=1, paidnote='$paidnote' where userid=$userId and hardcore=" . (isHardcoreMode() ? '1' : '0');
+                $sql = "update loseruser set paid=1, paidnote='$paidnote' where userid=$userId and yr = $yr and hardcore=" . (isHardcoreMode() ? '1' : '0');
                 Yii::app()->db->createCommand($sql)->query();
             } else {
                 if ($user) {

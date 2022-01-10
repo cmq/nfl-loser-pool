@@ -72,7 +72,7 @@ function getCurrentWeek() {
     return $currentWeek;
 }
 
-function getHeaderWeek() {
+function getHeaderWeek_old() {
     $headerWeek = param('headerWeek');
     if ($headerWeek) {
         return $headerWeek;
@@ -109,6 +109,46 @@ function getHeaderWeek() {
     }
     return $headerWeek;
 }
+
+
+function getHeaderWeek() {
+    $headerWeek = param('headerWeek');
+    if ($headerWeek) {
+        return $headerWeek;
+    }
+    
+    $dNow        = new DateTime('NOW');
+    $dIn1Day     = new DateTime('NOW');
+    $firstGames  = $GLOBALS['firstGame'];
+    $maxWeeks    = getMaxWeeks();
+
+    $dIn1Day->add(new DateInterval('P1D'));
+
+    for ($i=1; $i<=$maxWeeks; $i++) {
+        if ($dNow > $firstGames[$i]) {
+            // we are beyond the first game of week $i
+            $headerWeek = $i;
+        } else {
+            break;
+        }
+    }
+    
+    // we probably want to show next week in the header unless this week's games are still going on
+    if ($headerWeek < $maxWeeks) {
+        if ($dIn1Day < $firstGame[$headerWeek] && $dNow->format('w') <= 1) {
+            // next week's game is more than a day out, and it's Sunday or Monday, continue showing current week
+        } else {
+            // if we get here, next week's game is within a day, or today's day of the week is later than a Monday, so we'll show next week
+            $headerWeek++;
+        }
+    }
+    
+    $headerWeek = min(max(1, $headerWeek), $maxWeeks);
+    
+    return $headerWeek;
+}
+
+
 
 function getWeekName($week, $year=null, $label=false) {
 	$name = $week;
